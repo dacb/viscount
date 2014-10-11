@@ -1,20 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 {% include "navbar.html" %}
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-
-        {% for message in messages %}
-	<div class="alert alert-warning">
-    		<a href="#" class="close" data-dismiss="alert">&times;</a>
-    		<strong>Warning!</strong> {{ message }}
-	</div>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-
+{% include "messages.html" %}
 {% include "footer.html" %}
 {% endblock %}

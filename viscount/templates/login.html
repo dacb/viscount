@@ -1,19 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-warning">
-                <a href="#" class="close" data-dismiss="alert">&times;</a>
-                {{ message }}
-        </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-
-
+{% include "messages.html" %}
 	<br>
       <div class="container">
         <div class="row">
