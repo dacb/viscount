@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning">
+                <a href="#" class="close" data-dismiss="alert">&times;</a>
+                {{ message }}
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+
+
+	<br>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Please sign in</h3>
+              </div>
+              <div class="panel-body">
+                <form accept-charset="UTF-8" role="form" action="" method="post" name="login">
+                  {{ form.hidden_tag() }}
+                  <fieldset>
+                    <div class="form-group">
+                      <input class="form-control" placeholder="Username" name="username" type="text">
+                    </div>
+                    <div class="form-group">
+                      <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input name="remember_me" type="checkbox" value="Remember Me"> Remember Me
+                      </label>
+                    </div>
+                    <input class="btn btn-lg btn-info btn-block" type="submit" value="Login">
+                  </fieldset>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
