@@ -39,7 +39,7 @@ class User(db.Model):
 	current_login = db.Column(db.DateTime())
 	last_login_ip = db.Column(db.String(15))
 	current_login_ip = db.Column(db.String(15))
-	login_count = db.Column(db.Integer)
+	login_count = db.Column(db.Integer, default=0)
 	role = db.Column(db.Enum('admin', 'user', 'guest'))
 	
 	def is_authenticated(self):
@@ -63,7 +63,7 @@ class User(db.Model):
 class LoginForm(Form):
 	username = fields.StringField('username', validators=[validators.required()])
 	password = fields.PasswordField('username', validators=[validators.required()])
-	remember_me = fields.BooleanField('remember_me', default=False)
+	remember_me = fields.BooleanField('remember_me', default=True)
 
 # login form
 @app.route('/login', methods = ['GET', 'POST'])
@@ -74,15 +74,14 @@ def login():
 	if form.validate_on_submit():
 		user = db.session.query(User).filter_by(username = form.username.data).first()
 		if user and user.password == form.password.data:
-			print "login count: " + str(user.login_count)
 			session['remember_me'] = form.remember_me.data
 			user.authenticated = True
 			user.current_login = datetime.datetime.utcnow()
 			user.current_login_ip = request.remote_addr
-			#user.login_count += 1
+			user.login_count += 1
 			db.session.add(user)
 			db.session.commit()
-			login_user(user, remember=True)
+			login_user(user, remember=form.remember_me.data)
 			return redirect(url_for('.index'))
 		flash('Username or password invalid')
 	return render_template("login.html", title='Login', form=form)
