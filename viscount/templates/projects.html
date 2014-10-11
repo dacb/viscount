@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+{% include "messages.html" %}
+<div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
+<div class="row">
+  <div class="table-wrapper">
+  <table class="table table-striped table-condensed table-bordered">
+    <caption>Projects</caption>
+    <thead>
+      <tr>
+        <th width="10%">Project ID</th>
+        <th width="20%">Name</th>
+        <th width="50%">Description</th>
+        {% if user.role == "admin" %}
+        <th>Admin</th>
+	{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+          <tr>
+            <td>{{ project.id }}</td>
+            <td>{{ project.name }}</td>
+            <td>{{ project.description }}</td>
+            {% if user.role == "admin" %}
+            <td>
+		<a href="{{ url_for('index') }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+		&nbsp;
+		&nbsp;
+		&nbsp;
+		<a href="{{ url_for('index') }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+	    </td>
+	    {% endif %}
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>
+{% include "footer.html" %}
+{% endblock %}
