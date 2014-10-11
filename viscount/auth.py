@@ -82,7 +82,7 @@ def login():
 			db.session.add(user)
 			db.session.commit()
 			login_user(user, remember=form.remember_me.data)
-			return redirect(url_for('.index'))
+			return redirect(url_for('index'))
 		flash('Username or password invalid')
 	return render_template("login.html", title='Login', form=form)
 
