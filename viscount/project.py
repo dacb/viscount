@@ -17,12 +17,12 @@ def projects():
 	projects = db.session.query(Project).all()
 	return render_template('projects.html', user=user, projects=db.session.query(Project).all())
 
-@app.route('/project/<name>')
+@app.route('/project/<id>')
 @login_required
-def project(name):
+def project(id):
 	user = g.user
-	project = db.session.query(Project).filter_by(name = name).first()
+	project = db.session.query(Project).filter_by(id = id).first()
 	if project == None:
-		flash('Project %s not found.' % name)
+		flash('Project with ID %s not found.' % id)
 		return redirect(url_for('projects'))
 	return render_template('project.html', user=user, project=project)

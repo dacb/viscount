@@ -12,9 +12,7 @@
         <th width="10%">Project ID</th>
         <th width="20%">Name</th>
         <th width="50%">Description</th>
-        {% if user.role == "admin" %}
-        <th>Admin</th>
-	{% endif %}
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -23,15 +21,15 @@
             <td>{{ project.id }}</td>
             <td>{{ project.name }}</td>
             <td>{{ project.description }}</td>
-            {% if user.role == "admin" %}
             <td>
-		<a href="{{ url_for('index') }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
-		&nbsp;
-		&nbsp;
-		&nbsp;
-		<a href="{{ url_for('index') }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
-	    </td>
+		<a href="{{ 'project/' ~ project.id }}"><i class="glyphicon glyphicon-play"></i> Use</a>
+            {% if user.role == "admin" %}
+		&nbsp; &nbsp;
+		<a href="{{ 'project/' ~ project.id ~ '/edit' }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+		&nbsp; &nbsp;
+		<a href="{{ 'project/' ~ project.id ~ '/delete' }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
 	    {% endif %}
+	    </td>
           </tr>
         {% endfor %}
     </tbody>
