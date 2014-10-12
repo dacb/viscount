@@ -22,7 +22,7 @@ class Server():
 
 		app.debug = self._debug
 
-		app.run(host = self._host, port = self._port)
+		app.run(host=self._host, port=self._port)
 
 	def _checkForRoot(self):
 		if "geteuid" in dir(os) and os.geteuid() == 0:
