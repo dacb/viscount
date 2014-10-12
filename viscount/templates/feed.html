@@ -15,6 +15,7 @@
       <tr>
         <th width="10%">User</th>
         <th width="20%">Time (UTC)</th>
+	<th width="10%">Type</th>
         <th width="20%">Project</th>
         <th>Message</th>
       </tr>
@@ -24,6 +25,7 @@
           <tr>
             <td>{{ entry.user.username }}</td>
             <td>{{ entry.timestamp.strftime('%c') }}</td>
+	    <td>{{ entry.type }} </td>
             <td>{{ entry.project.name }}</td>
             <td>{{ entry.message }}</td>
           </tr>
