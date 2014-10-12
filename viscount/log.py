@@ -18,13 +18,13 @@ class Log(db.Model):
 
 	def message(self):
 		msg = []
-		if self.user:
+		if self.user is not None:
 			msg.append('user %s' % self.user.username)
-		if self.type:
+		if self.type is not None:
 			msg.append(self.type)
-		if self.project:
+		if self.project is not None:
 			msg.append('project %s' % self.project.name)
-		if self.file:
+		if self.file is not None:
 			msg.append('file %s' % self.file.filename)
 		return ' '.join(msg)
 
@@ -32,11 +32,11 @@ def logEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=None
 	user_id = None
 	project_id = None
 	file_id = None
-	if user:
+	if user is not None:
 		user_id = user.id
-	if project:
+	if project is not None:
 		project_id = project.id
-	if file:
+	if file is not None:
 		file_id = file.id
 	entry = Log(user_id=user_id, timestamp=timestamp, project_id=project_id, file_id=file_id, type=type)
 	db.session.add(entry)

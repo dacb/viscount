@@ -28,14 +28,14 @@ def projectCreate(name, description, user):
 def projects():
 	user = g.user
 	projects = db.session.query(Project).all()
-	return render_template('projects.html', user=user, projects=db.session.query(Project).all())
+	return render_template('projects.html', user=user, projects=projects)
 
 @app.route('/project/<id>')
 @login_required
 def project(id):
 	user = g.user
 	project = db.session.query(Project).filter_by(id = id).first()
-	if project == None:
+	if project is None:
 		flash('Project with ID %s not found.' % id)
 		return redirect(url_for('projects'))
         logEntry(user=user, project=project, type='accessed')
