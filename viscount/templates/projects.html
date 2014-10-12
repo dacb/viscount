@@ -22,12 +22,12 @@
             <td>{{ project.name }}</td>
             <td>{{ project.description }}</td>
             <td>
-		<a href="{{ 'project/' ~ project.id }}"><i class="glyphicon glyphicon-play"></i> Use</a>
+		<a href="{{ url_for('project', id=project.id) }}"><i class="glyphicon glyphicon-play"></i> Use</a>
             {% if user.role == "admin" %}
 		&nbsp; &nbsp;
-		<a href="{{ 'project/' ~ project.id ~ '/edit' }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+		<a href="{{ url_for('project', id=project.id) }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
 		&nbsp; &nbsp;
-		<a href="{{ 'project/' ~ project.id ~ '/delete' }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+		<a href="{{ url_for('project', id=project.id) }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
 	    {% endif %}
 	    </td>
           </tr>

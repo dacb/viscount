@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required
 from .server import app, db
+from .logging import Log
 
 class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -27,4 +28,7 @@ def project(id):
 	if project == None:
 		flash('Project with ID %s not found.' % id)
 		return redirect(url_for('projects'))
+	log_entry = Log(user_id = user.id, type = 'accessed', project_id = project.id)
+	db.session.add(log_entry)
+	db.session.commit()
 	return render_template('project.html', user=user, project=project)
