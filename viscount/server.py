@@ -7,7 +7,7 @@ app = Flask("viscount")
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-from viscount import auth, views, project, logging
+from viscount import auth, views, project, logging, file
 
 class Server():
 	def __init__(self, host=None, port=None, debug=False, allowRoot=False):
