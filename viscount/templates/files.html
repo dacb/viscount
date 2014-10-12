@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+{% include "messages.html" %}
+<div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
+<div class="row">
+	<input id="input-1a" type="file" class="file" data-show-preview="false">
+  <div class="table-wrapper">
+  <table class="table table-striped table-condensed table-bordered">
+    <caption>Files</caption>
+    <thead>
+      <tr>
+        <th>File ID</th>
+        <th>Filename</th>
+        <th>Description</th>
+        <th>md5sum</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for file in files %}
+          <tr>
+            <td>{{ file.id }}</td>
+            <td>{{ file.filename }}</td>
+            <td>{{ file.description }}</td>
+            <td>{{ file.md5sum }}</td>
+            <td>
+		<a href="{{ url_for('file', id=file.id) }}"><i class="glyphicon glyphicon-download"></i> Download</a>
+            {% if user.role == "admin" %}
+		&nbsp; &nbsp;
+		<a href="{{ url_for('file', id=file.id) }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+	    {% endif %}
+	    </td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>
+{% include "footer.html" %}
+{% endblock %}
