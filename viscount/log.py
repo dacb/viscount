@@ -11,6 +11,7 @@ class Log(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
 	job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
+	worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'))
 	type = db.Column(db.Enum('created', 'modified', 'deleted', 'accessed', 'login', 'logout', 'queued', 'started', 'finished', 'failed'), index=True)
 
 	def __repr__(self):
@@ -18,6 +19,8 @@ class Log(db.Model):
 
 	def message(self):
 		msg = []
+		if self.worker is not None:
+			msg.append('woker %d' % self.worker.id)
 		if self.user is not None:
 			msg.append('user %s' % self.user.username)
 		if self.type is not None:
@@ -26,7 +29,7 @@ class Log(db.Model):
 			msg.append('project %s' % self.project.name)
 		if self.file is not None:
 			msg.append('file %s' % self.file.filename)
-		return ' '.join(msg)
+		return ' : '.join(msg)
 
 def logEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=None, file=None):
 	user_id = None
