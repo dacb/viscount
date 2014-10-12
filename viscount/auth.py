@@ -84,7 +84,7 @@ def login():
 			user.current_login_ip = request.remote_addr
 			user.login_count += 1
 			db.session.add(user)
-			log_entry = Log(user_id = user.id, type = 'modified', message = 'login')
+			log_entry = Log(user_id = user.id, type = 'login')
 			db.session.add(log_entry)
 			db.session.commit()
 			login_user(user, remember=form.remember_me.data)
@@ -101,7 +101,7 @@ def logout():
 	user.last_login = user.current_login
 	user.last_login_ip = user.current_login_ip
 	db.session.add(user)
-	log_entry = Log(user_id = user.id, type = 'modified', message = 'logout')
+	log_entry = Log(user_id = user.id, type = 'logout')
 	db.session.add(log_entry)
 	db.session.commit()
 	logout_user()
