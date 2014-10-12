@@ -7,8 +7,8 @@ from .logging import Log
 @app.route('/index')
 @login_required
 def index():
-	my_log = db.session.query(Log).filter_by(user_id = g.user.id).all()
-	global_log = db.session.query(Log).all()
+	my_log = db.session.query(Log).filter_by(user_id = g.user.id).limit(5).all()
+	global_log = db.session.query(Log).limit(5).all()
 	return render_template("index.html", title='Home', user=g.user, my_log=my_log, global_log=global_log)
 
 @app.route("/robots.txt")

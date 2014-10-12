@@ -6,6 +6,8 @@ class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(32), index=True, unique=True)
 	description = db.Column(db.Text, index=False, unique=False)
+        # setup relationships
+        log_entries = db.relationship('Log', backref='project', lazy='dynamic')
 
 	def __repr__(self):
 		return '<Project %r>' % (self.name)

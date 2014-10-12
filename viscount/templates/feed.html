@@ -14,7 +14,7 @@
     <thead>
       <tr>
         <th width="10%">User</th>
-        <th width="20%">Time</th>
+        <th width="20%">Time (UTC)</th>
         <th width="20%">Project</th>
         <th>Message</th>
       </tr>
@@ -22,9 +22,9 @@
     <tbody>
         {% for entry in my_log %}
           <tr>
-            <td>{{ entry.user_id }}</td>
-            <td>{{ entry.timestamp }}</td>
-            <td>{{ entry.project_id }}</td>
+            <td>{{ entry.user.username }}</td>
+            <td>{{ entry.timestamp.strftime('%c') }}</td>
+            <td>{{ entry.project.name }}</td>
             <td>{{ entry.message }}</td>
           </tr>
         {% endfor %}
@@ -55,9 +55,9 @@
     <tbody>
         {% for entry in global_log %}
           <tr>
-            <td>{{ entry.user_id }}</td>
-            <td>{{ entry.timestamp }}</td>
-            <td>{{ entry.project_id }}</td>
+            <td>{{ entry.user.username }}</td>
+            <td>{{ entry.timestamp.strftime('%c') }}</td>
+            <td>{{ entry.project.name }}</td>
             <td>{{ entry.message }}</td>
           </tr>
         {% endfor %}

@@ -41,6 +41,8 @@ class User(db.Model):
 	current_login_ip = db.Column(db.String(15))
 	login_count = db.Column(db.Integer, default=0)
 	role = db.Column(db.Enum('admin', 'user', 'guest'))
+	# setup relationships
+	log_entries = db.relationship('Log', backref='user', lazy='dynamic')
 	
 	def is_authenticated(self):
 		return True
