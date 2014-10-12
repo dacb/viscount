@@ -30,7 +30,7 @@ db.session.add(user)
 
 # create a log message
 admin = db.session.query(User).filter_by(username = 'admin').first()
-log_entry = Log(user_id = admin.id, type = 'created', message='Database (re)initialized')
+log_entry = Log(user_id = admin.id, type = 'created')
 db.session.add(log_entry)
 
 # create an example project
