@@ -7,6 +7,7 @@ from flask.ext.wtf import Form
 from wtforms import form, fields, validators
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+from flask.ext.bcrypt import Bcrypt
 import datetime
 from .server import app, db
 
@@ -14,6 +15,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.session_protection = "strong"
+
+bcrypt = Bcrypt()
 
 # fetch user info
 @login_manager.user_loader
@@ -69,7 +72,7 @@ class User(db.Model):
 from .log import Log, logEntry
 
 def userCreate(username, password, role, lastName=None, firstName=None, email=None):
-	user = User(username=username, lastName=lastName, firstName=firstName, password=password, email=email, role=role)
+	user = User(username=username, lastName=lastName, firstName=firstName, password=bcrypt.generate_password_hash(password), email=email, role=role)
 	db.session.add(user)
 	db.session.commit()
 	logEntry(user=user, type='created')
@@ -88,7 +91,7 @@ def login():
 	form = LoginForm()
 	if form.validate_on_submit():
 		user = db.session.query(User).filter_by(username = form.username.data).first()
-		if user and user.password == form.password.data:
+		if user and bcrypt.check_password_hash(user.password, form.password.data):
 			session['remember_me'] = form.remember_me.data
 			user.authenticated = True
 			user.current_login = datetime.datetime.utcnow()
