@@ -1,14 +1,17 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required
 from .server import app, db
-from .logging import logEntry
+from .log import logEntry
 
 class Project(db.Model):
+	__tablename__ = 'project'
+
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(32), index=True, unique=True)
 	description = db.Column(db.Text, index=False, unique=False)
         # setup relationships
         log_entries = db.relationship('Log', backref='project', lazy='dynamic')
+        jobs = db.relationship('Job', backref='project', lazy='dynamic')
 
 	def __repr__(self):
 		return '<Project %r>' % (self.name)

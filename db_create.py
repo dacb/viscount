@@ -8,9 +8,9 @@ from config import SQLALCHEMY_DATABASE_URI
 from config import SQLALCHEMY_MIGRATE_REPO
 
 from viscount.server import db
-from viscount.auth import userCreate
+from viscount.user import userCreate
 from viscount.project import projectCreate
-from viscount.logging import logEntry
+from viscount.log import logEntry
 
 db.create_all()
 if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):

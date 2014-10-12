@@ -27,6 +27,8 @@ def before_request():
 
 # models
 class User(db.Model):
+	__tablename__ = 'user'
+
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(32), index=True, unique=True)
 	firstName = db.Column(db.String(64))
@@ -44,6 +46,7 @@ class User(db.Model):
 	# setup relationships
 	log_entries = db.relationship('Log', backref='user', lazy='dynamic')
 	files = db.relationship('File', backref='user', lazy='dynamic')
+	jobs = db.relationship('Job', backref='user', lazy='dynamic')
 	
 	def is_authenticated(self):
 		return True
@@ -63,7 +66,7 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
-from .logging import Log, logEntry
+from .log import Log, logEntry
 
 def userCreate(username, password, role, lastName=None, firstName=None, email=None):
 	user = User(username=username, lastName=lastName, firstName=firstName, password=password, email=email, role=role)
