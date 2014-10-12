@@ -1,4 +1,6 @@
-from viscount.server import db
+from flask import render_template, flash, redirect, session, url_for, request, g
+from flask.ext.login import login_required
+from .server import app, db
 
 class Log(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -9,5 +11,4 @@ class Log(db.Model):
 	message = db.Column(db.Text, index=False, unique=False)
 
 	def __repr__(self):
-		return '<ChangeLog %r>' % (self.id)
-
+		return '<Log %r>' % (self.id)
