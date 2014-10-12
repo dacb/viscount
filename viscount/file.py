@@ -22,7 +22,7 @@ def fileCreate(filename, description, md5sum, user):
 	file = File(filename=filename, description=description, md5sum=md5sum, user_id=user.id)
 	db.session.add(file)
 	db.session.commit()
-	logEntry(user=user, file=project, type='created')
+	logEntry(user=user, file=file, type='created')
 	return file
 
 @app.route('/file/<id>')

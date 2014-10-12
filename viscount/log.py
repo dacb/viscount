@@ -11,7 +11,7 @@ class Log(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
 	job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
-	type = db.Column(db.Enum('created', 'modified', 'deleted', 'accessed', 'login', 'logout', 'queued', 'started', 'finished', 'failed'))
+	type = db.Column(db.Enum('created', 'modified', 'deleted', 'accessed', 'login', 'logout', 'queued', 'started', 'finished', 'failed'), index=True)
 
 	def __repr__(self):
 		return '<Log %r>' % (self.id)

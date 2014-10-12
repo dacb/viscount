@@ -8,7 +8,7 @@ class Job(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
-	state = db.Column(db.Enum('queued', 'running', 'finished', 'failed'))
+	state = db.Column(db.Enum('queued', 'running', 'finished', 'failed'), index=True)
 	command = db.Column(db.Text)
 	input_file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
 	output_file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
@@ -18,11 +18,29 @@ class Job(db.Model):
 	log_entries = db.relationship('Log', backref='job', lazy='dynamic')
 
 	def __repr__(self):
-		return '<File %r>' % (self.name)
+		return '<Job %r>' % (self.name)
 
-def fileCreate(filename, description, md5sum, user):
-	file = File(filename=filename, description=description, md5sum=md5sum, user_id=user.id)
-        db.session.add(file)
+def jobCreate(user, project, command, input_file):
+	job = Job(user_id=user.id, project_id=project.id, command=command, input_file_id=input_file.id)
+        db.session.add(job)
         db.session.commit()
-        logEntry(user=user, file=project, type='created')
+        logEntry(user=user, project=project, job=job, type='created')
 	return file
+
+@app.route('/job/<id>')
+@login_required
+def job(id):
+	job = db.session.query(Job).get(id)
+	if file is None:
+		flash('Job with ID %s not found.' % id)
+		return redirect(url_for('jobs'))
+	return render_template('job.html', user=g.user, job=job)
+
+@app.route('/jobs')
+@login_required
+def jobs():
+	queued_jobs = db.session.query(Job).filter_by(state='queued').all()
+	running_jobs = db.session.query(Job).filter_by(state='running').all()
+	finished_jobs = db.session.query(Job).filter_by(state='finished').all()
+	failed_jobs = db.session.query(Job).filter_by(state='failed').all()
+	return render_template('jobs.html', user=g.user, jobs=jobs)

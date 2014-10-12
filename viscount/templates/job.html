@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+{% include "messages.html" %}
+{% with job = job %}
+  {{ job.description }}
+{% endwith %}
+{% include "footer.html" %}
+{% endblock %}
