@@ -62,6 +62,8 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
+from .logging import Log
+
 class LoginForm(Form):
 	username = fields.StringField('username', validators=[validators.required()])
 	password = fields.PasswordField('username', validators=[validators.required()])
@@ -82,6 +84,8 @@ def login():
 			user.current_login_ip = request.remote_addr
 			user.login_count += 1
 			db.session.add(user)
+			log_entry = Log(user_id = user.id, type = 'modified', message = 'login')
+			db.session.add(log_entry)
 			db.session.commit()
 			login_user(user, remember=form.remember_me.data)
 			return redirect(url_for('index'))
@@ -97,6 +101,8 @@ def logout():
 	user.last_login = user.current_login
 	user.last_login_ip = user.current_login_ip
 	db.session.add(user)
+	log_entry = Log(user_id = user.id, type = 'modified', message = 'logout')
+	db.session.add(log_entry)
 	db.session.commit()
 	logout_user()
 	flash('You have logged out')
