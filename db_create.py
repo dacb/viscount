@@ -8,10 +8,9 @@ from config import SQLALCHEMY_DATABASE_URI
 from config import SQLALCHEMY_MIGRATE_REPO
 
 from viscount.server import db
-from viscount.auth import User
-from viscount.project import Project
-from viscount.logging import Log
-from viscount.file import File
+from viscount.auth import userCreate
+from viscount.project import projectCreate
+from viscount.logging import logEntry
 
 db.create_all()
 if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
@@ -21,21 +20,9 @@ else:
     api.version_control(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO, api.version(SQLALCHEMY_MIGRATE_REPO))
 
 # add default user
-admin = User(username='admin', password='admin', active=True, role='admin')
-db.session.add(admin)
-user = User(username='user', password='user', active=True, role='user')
-db.session.add(user)
-user = User(username='guest', password='guest', active=True, role='guest')
-db.session.add(user)
-
-# create a log message
-admin = db.session.query(User).filter_by(username = 'admin').first()
-log_entry = Log(user_id = admin.id, type = 'created')
-db.session.add(log_entry)
+admin = userCreate(username='admin', password='admin', role='admin')
+userCreate(username='user', password='user', role='user')
+userCreate(username='guest', password='guest', role='guest')
 
 # create an example project
-project = Project(name='example', description='example project')
-db.session.add(project)
-
-# save the data
-db.session.commit()
+projectCreate(name='example', description='example project', user=admin)

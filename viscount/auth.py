@@ -43,6 +43,7 @@ class User(db.Model):
 	role = db.Column(db.Enum('admin', 'user', 'guest'))
 	# setup relationships
 	log_entries = db.relationship('Log', backref='user', lazy='dynamic')
+	files = db.relationship('File', backref='user', lazy='dynamic')
 	
 	def is_authenticated(self):
 		return True
@@ -62,7 +63,14 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
-from .logging import Log
+from .logging import Log, logEntry
+
+def userCreate(username, password, role, lastName=None, firstName=None, email=None):
+	user = User(username=username, lastName=lastName, firstName=firstName, password=password, email=email, role=role)
+	db.session.add(user)
+	db.session.commit()
+	logEntry(user=user, type='created')
+	return user
 
 class LoginForm(Form):
 	username = fields.StringField('username', validators=[validators.required()])
@@ -84,9 +92,8 @@ def login():
 			user.current_login_ip = request.remote_addr
 			user.login_count += 1
 			db.session.add(user)
-			log_entry = Log(user_id = user.id, type = 'login')
-			db.session.add(log_entry)
 			db.session.commit()
+			logEntry(user=user, type='login')
 			login_user(user, remember=form.remember_me.data)
 			return redirect(url_for('index'))
 		flash('Username or password invalid')
@@ -101,9 +108,8 @@ def logout():
 	user.last_login = user.current_login
 	user.last_login_ip = user.current_login_ip
 	db.session.add(user)
-	log_entry = Log(user_id = user.id, type = 'logout')
-	db.session.add(log_entry)
 	db.session.commit()
+	logEntry(user=user, type='logout')
 	logout_user()
 	flash('You have logged out')
 	return redirect(url_for('login'))

@@ -26,3 +26,17 @@ class Log(db.Model):
 		if self.file:
 			msg.append('file %s' % self.file.filename)
 		return ' '.join(msg)
+
+def logEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=None, file=None):
+	user_id = None
+	project_id = None
+	file_id = None
+	if user:
+		user_id = user.id
+	if project:
+		project_id = project.id
+	if file:
+		file_id = file.id
+	entry = Log(user_id=user_id, timestamp=timestamp, project_id=project_id, file_id=file_id, type=type)
+	db.session.add(entry)
+	db.session.commit()
