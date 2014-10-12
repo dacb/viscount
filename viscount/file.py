@@ -20,12 +20,31 @@ class File(db.Model):
 
 def fileCreate(filename, description, md5sum, user):
 	file = File(filename=filename, description=description, md5sum=md5sum, user_id=user.id)
-        db.session.add(file)
-        db.session.commit()
-        logEntry(user=user, file=project, type='created')
+	db.session.add(file)
+	db.session.commit()
+	logEntry(user=user, file=project, type='created')
 	return file
 
 @app.route('/file/<id>')
+@login_required
 def fileSend(id):
-	file = db.session.query(Files).get(id)
-	return send_from_directory(app.config['FILE_DIR'], file.filename)
+	file = db.session.query(File).get(id)
+	if file is None:
+		flash('File with ID %s not found.' % id)
+		return redirect(url_for('files'))
+	return send_from_directory(app.config['UPLOADED_FILES_DEST'], file.filename)
+
+@app.route('/files')
+@login_required
+def files():
+	files = db.session.query(File).all()
+	return render_template('files.html', user=g.user, files=files);
+
+@app.route('/upload', methods=['POST'])
+@login_required
+def upload():
+	file = request.files['file']
+	if file is not None and fileAllowed(file.filename):
+		filename = secure_filename(file.filename)
+		file.save(os.path.join(app.config['UPLOADED_FILES_DEST'], filename))
+		return redirect(url_for('files'))
