@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+{% include "messages.html" %}
+{% with project = project %}
+  {{ project.name }}
+{% endwith %}
+{% include "footer.html" %}
+{% endblock %}
