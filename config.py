@@ -11,3 +11,4 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SECURITY_CONFIRMABLE = True
 SECURITY_TRACKABLE = True
 
+FILE_DIR = 'data'
