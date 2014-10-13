@@ -4,7 +4,6 @@
 {% include "messages.html" %}
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
 <div class="row">
-	<input id="input-1a" type="file" class="file" data-show-preview="false">
   <div class="table-wrapper">
   <table class="table table-striped table-condensed table-bordered">
     <caption>Files</caption>
@@ -25,10 +24,14 @@
             <td>{{ file.description }}</td>
             <td>{{ file.md5sum }}</td>
             <td>
-		<a href="{{ url_for('file', id=file.id) }}"><i class="glyphicon glyphicon-download"></i> Download</a>
-            {% if user.role == "admin" %}
+		<a href="{{ url_for('fileAction', id=file.id, action='download') }}"><i class="glyphicon glyphicon-download"></i> Download</a>
+            {% if user.role == 'user' or user.role == 'admin' %}
 		&nbsp; &nbsp;
-		<a href="{{ url_for('file', id=file.id) }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+		<a href="{{ url_for('fileAction', id=file.id, action='edit') }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+	    {% endif %}
+            {% if user.role == 'admin' %}
+		&nbsp; &nbsp;
+		<a href="{{ url_for('fileAction', id=file.id, action='delete') }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
 	    {% endif %}
 	    </td>
           </tr>
@@ -37,6 +40,22 @@
   </table>
   </div>
 </div>
+{% if user.role != 'guest' %}
+<div class="row">
+<div class="col-md-6 col-center-block">
+
+<form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    <span class="btn btn-info fileinput-button">
+       <input id="fileuplad" type="file" name="file" class="file" data-show-preview="false">
+    </span>
+    <span class="btn btn-normal fileinput-button">
+	<input class="btn btn-sm btn-success btn-block" type="submit" value="Upload">
+    </span>
+</form>
+
+</div>
+</div>
+{% endif %}
 </div>
 {% include "footer.html" %}
 {% endblock %}
