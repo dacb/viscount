@@ -2,10 +2,12 @@ import os
 
 from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.restful import Api
 
 app = Flask("viscount")
 app.config.from_object('config')
 db = SQLAlchemy(app)
+api = Api(app)
 
 from viscount import user, views, project, log, file, job, worker
 
