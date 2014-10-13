@@ -21,6 +21,8 @@ class Log(db.Model):
 		msg = []
 		if self.worker is not None:
 			msg.append('woker %d' % self.worker.id)
+		if self.job is not None:
+			msg.append('job %d' % self.job.id)
 		if self.user is not None:
 			msg.append('user %s' % self.user.username)
 		if self.type is not None:
@@ -31,16 +33,20 @@ class Log(db.Model):
 			msg.append('file %s' % self.file.filename)
 		return ' : '.join(msg)
 
-def logEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=None, file=None):
+def logEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=None, file=None, job=None):
 	user_id = None
 	project_id = None
 	file_id = None
+	job_id = None
+	worker_id = None
 	if user is not None:
 		user_id = user.id
 	if project is not None:
 		project_id = project.id
 	if file is not None:
 		file_id = file.id
-	entry = Log(user_id=user_id, timestamp=timestamp, project_id=project_id, file_id=file_id, type=type)
+	if job is not None:
+		job_id = job.id
+	entry = Log(user_id=user_id, timestamp=timestamp, project_id=project_id, file_id=file_id, type=type, job_id=job_id, worker_id=worker_id)
 	db.session.add(entry)
 	db.session.commit()
