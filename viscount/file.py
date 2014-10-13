@@ -49,7 +49,7 @@ def fileAction(id, action):
 			return redirect(url_for('files'))
 		flash('File deleting is not currently supported.')
 		return redirect(url_for('files'))
-	return send_from_directory(os.path.join(app.config['UPLOAD_DEST'], str(file.id)), file.filename)
+	return send_from_directory(os.path.join(app.config['UPLOAD_DEST'], str(file.id)), file.filename, as_attachment=True, attachment_filename=file.filename)
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
