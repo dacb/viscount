@@ -8,6 +8,7 @@ from wtforms import form, fields, validators
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask.ext.bcrypt import Bcrypt
+from flask.views import MethodView
 import datetime
 from .server import app, db
 
@@ -38,7 +39,7 @@ class User(db.Model):
 	lastName = db.Column(db.String(64))
 	email = db.Column(db.String(255), index=True, unique=True)
 	password = db.Column(db.String(255))
-	active = db.Column(db.Boolean())
+	isActive = db.Column(db.Boolean(), default=True)
 	created = db.Column(db.DateTime(), default=datetime.datetime.utcnow())
 	last_login = db.Column(db.DateTime())
 	current_login = db.Column(db.DateTime())
@@ -91,7 +92,7 @@ def login():
 	form = LoginForm()
 	if form.validate_on_submit():
 		user = db.session.query(User).filter_by(username = form.username.data).first()
-		if user and bcrypt.check_password_hash(user.password, form.password.data):
+		if user and user.isActive and bcrypt.check_password_hash(user.password, form.password.data):
 			session['remember_me'] = form.remember_me.data
 			user.authenticated = True
 			user.current_login = datetime.datetime.utcnow()
@@ -119,3 +120,55 @@ def logout():
 	logout_user()
 	flash('You have logged out')
 	return redirect(url_for('login'))
+
+
+
+class UserAPI(MethodView):
+	decorators = [login_required]
+
+	def get(self, user_id):
+		if user_id is None:
+			# return a list of users
+			users = db.session.query(User).all()
+			return render_template("users.html", title='Users', user=g.user, users=users)
+		else:
+			# expose a single user
+			user = db.session.query(User).get(user_id)
+			return render_template("user.html", title='User', user=g.user, user_target=user)
+
+	def post(self):
+		if g.user.role != 'admin':
+			flash('You must be in the admin role to create a user.')
+			return redirect(url_for('users'))
+		else:
+			flash('Created a user "test" with password "test".')
+			# create a new user
+			# WARNING: testing stub only
+			new = createUser(username='test', password='test', role='user')
+			# redirect to the user view page
+			return redirect(url_for('user_api', user_id=new.id))
+
+	def delete(self, user_id):
+		# delete a single user
+		if g.user.role != 'admin':
+			flash('You must be in the admin role to delete a user.')
+			return redirect(url_for('users'))
+		else:
+			if g.user.id == user_id:
+				flash('You cannot delete yourself!')
+			user = db.session.query(User).get(user_id)
+			if user is not None:
+				user.isActive = False
+				db.session.commit()
+			else:
+				flash('User %d does not exist!' % user_id)
+			return redirect(url_for('users'))
+		pass
+
+	def put(self, user_id):
+		# update a single user
+		flash('Not supported!')
+		return redirect(url_for('users'))
+
+from .views import register_api
+register_api(UserAPI, 'user_api', '/users/', pk='user_id')
