@@ -1,6 +1,15 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required
 from .server import app, db
+from .file import File
+from .log import logEntry
+
+class JobFiles(db.Model):
+	__tablename__ = 'job_files'
+
+	job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False, primary_key=True)
+	file_id = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, primary_key=True)
+	type = db.Column(db.Enum('input', 'output'), index=True)
 
 class Job(db.Model):
 	__tablename__ = 'job'
@@ -8,20 +17,17 @@ class Job(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
-	state = db.Column(db.Enum('queued', 'running', 'finished', 'failed'), index=True)
+	state = db.Column(db.Enum('queued', 'running', 'finished', 'failed'), index=True, nullable=False)
 	command = db.Column(db.Text)
-	input_file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
-	output_file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
-	input_file = db.relationship('File', foreign_keys='Job.input_file_id')
-	output_file = db.relationship('File', foreign_keys='Job.output_file_id')
 	# setup relationships
 	log_entries = db.relationship('Log', backref='job', lazy='dynamic')
+	files = db.relationship('JobFiles', backref='job', lazy='dynamic')
 
 	def __repr__(self):
-		return '<Job %r>' % (self.name)
+		return '<Job %r>' % (self.id)
 
-def jobCreate(user, project, command, input_file):
-	job = Job(user_id=user.id, project_id=project.id, command=command, input_file_id=input_file.id)
+def jobCreate(user, project, command, input_files=[]):
+	job = Job(user_id=user.id, project_id=project.id, command=command, files=input_files, state='queued')
         db.session.add(job)
         db.session.commit()
         logEntry(user=user, project=project, job=job, type='created')
@@ -43,4 +49,4 @@ def jobs():
 	running_jobs = db.session.query(Job).filter_by(state='running').all()
 	finished_jobs = db.session.query(Job).filter_by(state='finished').all()
 	failed_jobs = db.session.query(Job).filter_by(state='failed').all()
-	return render_template('jobs.html', user=g.user, jobs=jobs)
+	return render_template('jobs.html', user=g.user, queued_jobs=queued_jobs, running_jobs=running_jobs, finished_jobs=finished_jobs, failed_jobs=failed_jobs)
