@@ -8,9 +8,10 @@ from wtforms import form, fields, validators
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask.ext.bcrypt import Bcrypt
-from flask.views import MethodView
-import datetime
-from .server import app, db
+from flask.ext.restful import Resource
+
+from datetime import datetime
+from .server import app, db, api
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -40,7 +41,7 @@ class User(db.Model):
 	email = db.Column(db.String(255), index=True, unique=True)
 	password = db.Column(db.String(255))
 	isActive = db.Column(db.Boolean(), default=True)
-	created = db.Column(db.DateTime(), default=datetime.datetime.utcnow())
+	created = db.Column(db.DateTime(), default=datetime.utcnow())
 	last_login = db.Column(db.DateTime())
 	current_login = db.Column(db.DateTime())
 	last_login_ip = db.Column(db.String(15))
@@ -67,6 +68,9 @@ class User(db.Model):
 		except NameError:
 			return str(self.id)  # python 3
 
+	def as_dict(self):
+		return { c.name: getattr(self, c.name) if not isinstance(getattr(self, c.name), datetime) else getattr(self, c.name).strftime('%c') for c in self.__table__.columns }
+
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
@@ -77,6 +81,16 @@ def userCreate(username, password, role, lastName=None, firstName=None, email=No
 	db.session.add(user)
 	db.session.commit()
 	logEntry(user=user, type='created')
+	return user
+
+def modifyUser(user, username, password, role, lastName, firstName, email):
+	user.username = username
+	user.password = password
+	user.lastName = lastName
+	user.firstName = firstName
+	user.email = email
+	user.role = role
+	logEntry(user=user, type='modified')
 	return user
 
 class LoginForm(Form):
@@ -95,7 +109,7 @@ def login():
 		if user and user.isActive and bcrypt.check_password_hash(user.password, form.password.data):
 			session['remember_me'] = form.remember_me.data
 			user.authenticated = True
-			user.current_login = datetime.datetime.utcnow()
+			user.current_login = datetime.utcnow()
 			user.current_login_ip = request.remote_addr
 			user.login_count += 1
 			db.session.add(user)
@@ -121,54 +135,58 @@ def logout():
 	flash('You have logged out')
 	return redirect(url_for('login'))
 
-
-
-class UserAPI(MethodView):
+# REST API for user handling
+class UserList(Resource):
 	decorators = [login_required]
 
-	def get(self, user_id):
-		if user_id is None:
-			# return a list of users
-			users = db.session.query(User).all()
-			return render_template("users.html", title='Users', user=g.user, users=users)
-		else:
-			# expose a single user
-			user = db.session.query(User).get(user_id)
-			return render_template("user.html", title='User', user=g.user, user_target=user)
+	def get(self):
+		return [ User.as_dict(user) for user in db.session.query(User).all() ]
 
 	def post(self):
 		if g.user.role != 'admin':
-			flash('You must be in the admin role to create a user.')
-			return redirect(url_for('users'))
+			raise UserNotAdmin
 		else:
-			flash('Created a user "test" with password "test".')
-			# create a new user
-			# WARNING: testing stub only
-			new = createUser(username='test', password='test', role='user')
-			# redirect to the user view page
-			return redirect(url_for('user_api', user_id=new.id))
+			args = parser.parse_args()
+			return createUser(username=args['username'],
+				lastName=args['lastName'], firstName=args['firstName'],
+				email=args['email'], password=args['password'], role=args['role']).as_dict()
+
+class UserView(Resource):
+	decorators = [login_required]
+
+	def get(self, user_id):
+		target = db.session.query(User).get(user_id)
+		if target is not None:
+			return target.as_dict()
+		else:
+			raise UserDoesNotExist
 
 	def delete(self, user_id):
-		# delete a single user
 		if g.user.role != 'admin':
-			flash('You must be in the admin role to delete a user.')
-			return redirect(url_for('users'))
+			raise UserPermissionDenied
 		else:
-			if g.user.id == user_id:
-				flash('You cannot delete yourself!')
-			user = db.session.query(User).get(user_id)
-			if user is not None:
-				user.isActive = False
+			target = db.session.query(User).get(user_id)
+			if target is not None:
+				if target.id == g.user.id:
+					raise UserCannotDeleteItself
+				target.isActive = False
 				db.session.commit()
+				return '', 204
 			else:
-				flash('User %d does not exist!' % user_id)
-			return redirect(url_for('users'))
-		pass
-
+				raise UserDoesNotExist
+		
 	def put(self, user_id):
-		# update a single user
-		flash('Not supported!')
-		return redirect(url_for('users'))
+		target = db.session.query(User).get(user_id)
+		if target is not None:
+			if g.user.role != 'admin' and g.user.id != target.id:
+				raise UserPermissionDenied
+			else:
+				args = parser.parse_args()
+				return modifyUser(user=target, username=args['username'],
+					lastName=args['lastName'], firstName=args['firstName'],
+					email=args['email'], password=args['password'], role=args['role']).as_dict()
+		else:
+			raise UserDoesNotExist
 
-from .views import register_api
-register_api(UserAPI, 'user_api', '/users/', pk='user_id')
+api.add_resource(UserList, '/users')
+api.add_resource(UserView, '/users/<string:user_id>')
