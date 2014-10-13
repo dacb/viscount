@@ -11,6 +11,7 @@ from viscount.server import db
 from viscount.user import userCreate
 from viscount.project import projectCreate
 from viscount.log import logEntry
+from viscount.job import jobCreate
 
 db.create_all()
 if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
@@ -25,4 +26,7 @@ userCreate(username='user', password='user', role='user')
 userCreate(username='guest', password='guest', role='guest')
 
 # create an example project
-projectCreate(name='example', description='example project', user=admin)
+project = projectCreate(name='example', description='example project', user=admin)
+
+# create a sample job
+jobCreate(admin, project, "command text")
