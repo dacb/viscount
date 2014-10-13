@@ -2,5 +2,5 @@
 
 virtualenv venv
 source activate
-pip install flask flask-login flask-wtf flask-SQLAlchemy sqlalchemy_migrate
+pip install flask flask-login flask-wtf flask-SQLAlchemy sqlalchemy_migrate flask-bcrypt
 ./db_create.py
