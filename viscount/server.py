@@ -3,11 +3,16 @@ import os
 from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.restful import Api
+from .json import custom_json_output
 
 app = Flask("viscount")
 app.config.from_object('config')
 db = SQLAlchemy(app)
 api = Api(app)
+# now use our custom_json_converter that handles datetime
+api.representations.update({
+	'application/json': custom_json_output
+})
 
 from viscount import user, views, project, log, file, job, worker
 
