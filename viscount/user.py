@@ -11,7 +11,7 @@ from flask.ext.bcrypt import Bcrypt
 from flask.ext.restful import Resource
 
 from datetime import datetime
-from .server import app, db, api
+from .server import app, db, api, BadRequestError
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -69,7 +69,7 @@ class User(db.Model):
 			return str(self.id)  # python 3
 
 	def as_dict(self):
-		return { c.name: getattr(self, c.name) if not isinstance(getattr(self, c.name), datetime) else getattr(self, c.name).strftime('%c') for c in self.__table__.columns }
+		return { c.name: getattr(self, c.name) for c in self.__table__.columns }
 
 	def __repr__(self):
 		return '<User %r>' % (self.username)
@@ -136,6 +136,19 @@ def logout():
 	return redirect(url_for('login'))
 
 # REST API for user handling
+# error handling
+class UserDoesNotExistError(BadRequestError):
+	status_code = 400
+	message = "User ID doesn't exist"
+
+class PermissionDeniedError(BadRequestError):
+	status_code = 400
+	message = "Permission denied"
+
+class UserCannotDeleteItselfError(BadRequestError):
+	status_code = 400
+	message = "User cannot delete itself!"
+
 class UserList(Resource):
 	decorators = [login_required]
 
@@ -144,7 +157,7 @@ class UserList(Resource):
 
 	def post(self):
 		if g.user.role != 'admin':
-			raise UserNotAdmin
+			raise PermissionDeniedError
 		else:
 			args = parser.parse_args()
 			return createUser(username=args['username'],
@@ -159,34 +172,34 @@ class UserView(Resource):
 		if target is not None:
 			return target.as_dict()
 		else:
-			raise UserDoesNotExist
+			raise UserDoesNotExistError
 
 	def delete(self, user_id):
 		if g.user.role != 'admin':
-			raise UserPermissionDenied
+			raise PermissionDeniedError
 		else:
 			target = db.session.query(User).get(user_id)
 			if target is not None:
 				if target.id == g.user.id:
-					raise UserCannotDeleteItself
+					raise UserCannotDeleteItselfError
 				target.isActive = False
 				db.session.commit()
 				return '', 204
 			else:
-				raise UserDoesNotExist
+				raise UserDoesNotExistError
 		
 	def put(self, user_id):
 		target = db.session.query(User).get(user_id)
 		if target is not None:
 			if g.user.role != 'admin' and g.user.id != target.id:
-				raise UserPermissionDenied
+				raise PermissionDeniedError
 			else:
 				args = parser.parse_args()
 				return modifyUser(user=target, username=args['username'],
 					lastName=args['lastName'], firstName=args['firstName'],
 					email=args['email'], password=args['password'], role=args['role']).as_dict()
 		else:
-			raise UserDoesNotExist
+			raise UserDoesNotExistError
 
 api.add_resource(UserList, '/users')
 api.add_resource(UserView, '/users/<string:user_id>')

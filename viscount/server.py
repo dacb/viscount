@@ -8,7 +8,23 @@ from .json import custom_json_output
 app = Flask("viscount")
 app.config.from_object('config')
 db = SQLAlchemy(app)
-api = Api(app)
+
+# flask-restful setup
+class BadRequestError(ValueError):
+	status_code = 400
+	message = 'Request was bad'
+
+class ExceptionAwareApi(Api):
+	def handle_error(self, e):
+		if issubclass(e.__class__, BadRequestError):
+			code = e.status_code
+			data = { 'status_code': code, 'message': e.message }
+		else:
+			# Did not match a custom exception, continue normally
+			return super(ExceptionAwareApi, self).handle_error(e)
+		return self.make_response(data, code)
+
+api = ExceptionAwareApi(app)
 # now use our custom_json_converter that handles datetime
 api.representations.update({
 	'application/json': custom_json_output
