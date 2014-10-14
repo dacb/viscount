@@ -2,6 +2,19 @@
 {% block content %}
 {% include "navbar.html" %}
 {% include "messages.html" %}
-{% include "feed.html" %}
+
+<div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
+	<div class="row">
+<div class="tab-content">
+  <div class="tab-pane active" id="eventsTab">{% include "events.html" %}</div>
+  <div class="tab-pane" id="projectsTab">{% include "projects.html" %}</div>
+  <div class="tab-pane" id="filesTab">{% include "files.html" %}</div>
+  <div class="tab-pane" id="usersTab">{% include "users.html" %}</div>
+  <div class="tab-pane" id="jobsTab">{% include "jobs.html" %}</div>
+  <div class="tab-pane" id="workersTab">{% include "workers.html" %}</div>
+</div>
+	</div>
+</div>
+
 {% include "footer.html" %}
 {% endblock %}

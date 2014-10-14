@@ -1,41 +1,22 @@
-{% extends "base.html" %}
-{% block content %}
-{% include "navbar.html" %}
-{% include "messages.html" %}
+<script type="text/javascript">
+</script>
+
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
-<div class="row">
-  <div class="table-wrapper">
-  <table class="table table-striped table-condensed table-bordered">
-    <caption>Projects</caption>
-    <thead>
-      <tr>
-        <th width="10%">Project ID</th>
-        <th width="20%">Name</th>
-        <th width="50%">Description</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for project in projects %}
+  <div class="row">
+    <div class="table-wrapper">
+      <table id="projects" class="table table-striped table-condensed table-bordered">
+        <caption>Projects</caption>
+        <thead>
           <tr>
-            <td>{{ project.id }}</td>
-            <td>{{ project.name }}</td>
-            <td>{{ project.description }}</td>
-            <td>
-		<a href="{{ url_for('project', id=project.id) }}"><i class="glyphicon glyphicon-play"></i> Use</a>
-            {% if user.role == "admin" %}
-		&nbsp; &nbsp;
-		<a href="{{ url_for('project', id=project.id) }}"><i class="glyphicon glyphicon-edit"></i> Edit</a>
-		&nbsp; &nbsp;
-		<a href="{{ url_for('project', id=project.id) }}"><i class="glyphicon glyphicon-trash"></i> Delete</a>
-	    {% endif %}
-	    </td>
+            <th width="10%">Project ID</th>
+            <th width="20%">Name</th>
+            <th width="50%">Description</th>
+            <th>Actions</th>
           </tr>
-        {% endfor %}
-    </tbody>
-  </table>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-</div>
-{% include "footer.html" %}
-{% endblock %}
