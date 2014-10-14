@@ -1,17 +1,12 @@
-<script type="text/javascript">
-</script>
-
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
   <div class="row">
     <div class="table-wrapper">
-      <table id="projects" class="table table-striped table-condensed table-bordered">
-        <caption>Projects</caption>
+      <table id="projects" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th width="10%">Project ID</th>
-            <th width="20%">Name</th>
-            <th width="50%">Description</th>
-            <th>Actions</th>
+            <th>Project ID</th>
+            <th>Name</th>
+            <th>Description</th>
           </tr>
         </thead>
         <tbody>
@@ -20,3 +15,13 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#projects').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": "projects"
+    } );
+} );
+</script>
