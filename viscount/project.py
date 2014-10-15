@@ -30,8 +30,8 @@ def projectCreate(name, description, user):
 def projects():
 	columns = []
 	columns.append(ColumnDT('id'))
-	columns.append(ColumnDT('name', filter=_upper))
-	columns.append(ColumnDT('description', filter=_upper))
+	columns.append(ColumnDT('name'))
+	columns.append(ColumnDT('description'))
 	query = db.session.query(Project)
 	rowTable = DataTables(request, Project, query, columns)
 	return jsonify(rowTable.output_result())
