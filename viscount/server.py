@@ -30,7 +30,7 @@ api.representations.update({
 	'application/json': custom_json_output
 })
 
-from viscount import user, views, project, log, file, job, worker
+from viscount import user, views, project, event, file, job, worker
 
 class Server():
 	def __init__(self, host=None, port=None, debug=False, allowRoot=False):

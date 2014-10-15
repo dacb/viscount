@@ -10,7 +10,7 @@ from config import SQLALCHEMY_MIGRATE_REPO
 from viscount.server import db
 from viscount.user import userCreate
 from viscount.project import projectCreate
-from viscount.log import logEntry
+from viscount.event import eventEntry
 from viscount.job import jobCreate
 
 db.create_all()

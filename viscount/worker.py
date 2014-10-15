@@ -9,7 +9,7 @@ class Worker(db.Model):
 	state = db.Column(db.Enum('idle', 'expired', 'active', 'failed'), index=True)
 	job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
 	# setup relationships
-	log_entries = db.relationship('Log', backref='worker', lazy='dynamic')
+	log_entries = db.relationship('Event', backref='worker', lazy='dynamic')
 
 	def __repr__(self):
 		return '<Worker %r>' % (self.name)
@@ -18,7 +18,7 @@ def workerCreate():
 	worker = Worker(state='idle')
         db.session.add(worker)
         db.session.commit()
-        logEntry(worker=worker, type='created')
+        eventEntry(worker=worker, type='created')
 	return file
 
 @app.route('/worker/<id>')

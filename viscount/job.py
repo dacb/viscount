@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required
 from .server import app, db
 from .file import File
-from .log import logEntry
+from .event import eventEntry
 
 class JobFiles(db.Model):
 	__tablename__ = 'job_files'
@@ -20,7 +20,7 @@ class Job(db.Model):
 	state = db.Column(db.Enum('queued', 'running', 'finished', 'failed'), index=True, nullable=False)
 	command = db.Column(db.Text)
 	# setup relationships
-	log_entries = db.relationship('Log', backref='job', lazy='dynamic')
+	log_entries = db.relationship('Event', backref='job', lazy='dynamic')
 	files = db.relationship('JobFiles', backref='job', lazy='dynamic')
 
 	def __repr__(self):
@@ -30,7 +30,7 @@ def jobCreate(user, project, command, input_files=[]):
 	job = Job(user_id=user.id, project_id=project.id, command=command, files=input_files, state='queued')
         db.session.add(job)
         db.session.commit()
-        logEntry(user=user, project=project, job=job, type='created')
+        eventEntry(user=user, project=project, job=job, type='created')
 	return file
 
 @app.route('/job/<id>')

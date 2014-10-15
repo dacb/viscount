@@ -1,8 +1,10 @@
 import datetime
-from flask import render_template, flash, redirect, session, url_for, request, g
+from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask.ext.login import login_required
 from .server import app, db
 from .user import User
+
+from .datatables import ColumnDT, _upper, DataTables
 
 class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -53,7 +55,7 @@ def eventEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=No
 
 @app.route('/events',  methods = ['GET', 'POST'])
 #@login_required
-def projects():
+def events():
 	columns = []
 	columns.append(ColumnDT('id'))
 	columns.append(ColumnDT('user_id'))

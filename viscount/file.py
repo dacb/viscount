@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required
 from werkzeug import secure_filename
 from .server import app, db
-from .log import logEntry
+from .event import eventEntry
 
 class File(db.Model):
 	__tablename__ = 'file'
@@ -14,7 +14,7 @@ class File(db.Model):
 	description = db.Column(db.Text, index=False, unique=False)
 	md5sum = db.Column(db.String(32), index=True, unique=False)
 	# setup relationships
-	log_entries = db.relationship('Log', backref='file', lazy='dynamic')
+	log_entries = db.relationship('Event', backref='file', lazy='dynamic')
 
 	def __repr__(self):
 		return '<File %r>' % (self.name)
@@ -23,7 +23,7 @@ def fileCreate(filename, user, description='', md5sum=''):
 	file = File(filename=filename, description=description, md5sum=md5sum, user_id=user.id)
 	db.session.add(file)
 	db.session.commit()
-	logEntry(user=user, file=file, type='created')
+	eventEntry(user=user, file=file, type='created')
 	return file
 
 @app.route('/files')

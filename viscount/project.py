@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask.ext.login import login_required
 from .server import app, db
-from .log import logEntry
+from .event import eventEntry
 
 from .datatables import ColumnDT, _upper, DataTables
 
@@ -12,7 +12,7 @@ class Project(db.Model):
 	name = db.Column(db.String(32), index=True, unique=True)
 	description = db.Column(db.Text, index=False, unique=False)
         # setup relationships
-        log_entries = db.relationship('Log', backref='project', lazy='dynamic')
+        log_entries = db.relationship('Event', backref='project', lazy='dynamic')
         jobs = db.relationship('Job', backref='project', lazy='dynamic')
 
 	def __repr__(self):
@@ -22,11 +22,11 @@ def projectCreate(name, description, user):
 	project = Project(name=name, description=description)
         db.session.add(project)
         db.session.commit()
-        logEntry(user=user, project=project, type='created')
+        eventEntry(user=user, project=project, type='created')
 	return project
 
 @app.route('/projects',  methods = ['GET', 'POST'])
-#@login_required
+@login_required
 def projects():
 	columns = []
 	columns.append(ColumnDT('id'))
@@ -44,5 +44,5 @@ def project(id):
 	if project is None:
 		flash('Project with ID %s not found.' % id)
 		return redirect(url_for('projects'))
-        logEntry(user=user, project=project, type='accessed')
+        eventEntry(user=user, project=project, type='accessed')
 	return render_template('project.html', user=user, project=project)

@@ -50,7 +50,7 @@ class User(db.Model):
 	login_count = db.Column(db.Integer, default=0)
 	role = db.Column(db.Enum('admin', 'user', 'guest'))
 	# setup relationships
-	log_entries = db.relationship('Log', backref='user', lazy='dynamic')
+	log_entries = db.relationship('Event', backref='user', lazy='dynamic')
 	files = db.relationship('File', backref='user', lazy='dynamic')
 	jobs = db.relationship('Job', backref='user', lazy='dynamic')
 	
@@ -75,13 +75,13 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
-from .log import Log, logEntry
+from .event import Event, eventEntry
 
 def userCreate(username, password, role, lastName=None, firstName=None, email=None):
 	user = User(username=username, lastName=lastName, firstName=firstName, password=bcrypt.generate_password_hash(password), email=email, role=role)
 	db.session.add(user)
 	db.session.commit()
-	logEntry(user=user, type='created')
+	eventEntry(user=user, type='created')
 	return user
 
 def modifyUser(user, username, password, role, lastName, firstName, email):
@@ -91,7 +91,7 @@ def modifyUser(user, username, password, role, lastName, firstName, email):
 	user.firstName = firstName
 	user.email = email
 	user.role = role
-	logEntry(user=user, type='modified')
+	eventEntry(user=user, type='modified')
 	return user
 
 class LoginForm(Form):
@@ -115,7 +115,7 @@ def login():
 			user.login_count += 1
 			db.session.add(user)
 			db.session.commit()
-			logEntry(user=user, type='login')
+			eventEntry(user=user, type='login')
 			login_user(user, remember=form.remember_me.data)
 			return redirect(url_for('index'))
 		flash('Username or password invalid')
@@ -131,7 +131,7 @@ def logout():
 	user.last_login_ip = user.current_login_ip
 	db.session.add(user)
 	db.session.commit()
-	logEntry(user=user, type='logout')
+	eventEntry(user=user, type='logout')
 	logout_user()
 	flash('You have logged out')
 	return redirect(url_for('login'))
