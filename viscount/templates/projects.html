@@ -4,10 +4,10 @@
       <table id="projects" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
+            <th></th>
             <th>Project ID</th>
             <th>Name</th>
             <th>Description</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -22,29 +22,30 @@ function format ( d ) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr>'+
     '<div class="table-wrapper">'+
-      '<table id="project'+d['0']+'events" class="display" cellspacing="0" width="100%">'+
+      '<table id="project'+d.id+'events" class="display" cellspacing="0" width="100%">'+
         '<caption><strong>Events</strong></caption>'+
         '<thead>'+
           '<tr>'+
             '<th>Event ID</th>'+
             '<th>User</th>'+
             '<th>Timestamp</th>'+
+            '<th>Project ID</th>'+
             '<th>File ID</th>'+
             '<th>Job ID</th>'+
             '<th>Worker ID</th>'+
             '<th>Type</th>'+
-            '<th></th>'+
           '</tr>'+
         '</thead>'+
         '<tbody>'+
         '</tbody>'+
       '</table>'+
     '</div>'+
+    '<script type="text/javascript"> $("#project'+d.id+'events").DataTable( { "processing": true, "serverSide": true, "ajax": { url: "/events", type : "post" }, "order": [[1, "asc"]], "searchCols": [ null, null, { "search": '+d.id+' }, null, null, null, null ], } ); \<\/script>'+
        '</tr>'+
        '<tr></br></tr>'+
        '<tr>'+
     '<div class="table-wrapper">'+
-      '<table id="project'+d['0']+'files" class="display" cellspacing="0" width="100%">'+
+      '<table id="project'+d.id+'files" class="display" cellspacing="0" width="100%">'+
         '<caption><strong>Files</strong></caption>'+
         '<thead>'+
           '<tr>'+
@@ -53,7 +54,6 @@ function format ( d ) {
             '<th>Description</th>'+
             '<th>md5sum</th>'+
             '<th>Job ID</th>'+
-            '<th></th>'+
           '</tr>'+
         '</thead>'+
         '<tbody>'+
@@ -64,7 +64,7 @@ function format ( d ) {
        '<tr></br></tr>'+
        '<tr>'+
     '<div class="table-wrapper">'+
-      '<table id="project'+d['0']+'jobs" class="display" cellspacing="0" width="100%">'+
+      '<table id="project'+d.id+'jobs" class="display" cellspacing="0" width="100%">'+
         '<caption><strong>Jobs</strong></caption>'+
         '<thead>'+
           '<tr>'+
@@ -72,7 +72,6 @@ function format ( d ) {
             '<th>User</th>'+
             '<th>State</th>'+
             '<th>Command</th>'+
-            '<th></th>'+
           '</tr>'+
         '</thead>'+
         '<tbody>'+
@@ -87,17 +86,17 @@ $(document).ready(function() {
     var table = $('#projects').DataTable( {
         "processing": true,
         "serverSide": true,
-        "ajax": { url: "projects", type : "post" },
+        "ajax": { url: "/projects", type : "post" },
         "columns": [
-            { "data": "id" },
-            { "data": "name" },
-            { "data": "description" },
             {
                 "class":          'details-control',
                 "orderable":      false,
                 "data":           null,
                 "defaultContent": ''
-            }
+            },
+            { "data": "id" },
+            { "data": "name" },
+            { "data": "description" }
         ],
         "order": [[1, 'asc']]
     } );
