@@ -21,7 +21,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for entry in my_log %}
+                  {% for entry in my_events %}
                   <tr>
                     <td>{{ entry.user.username }}</td>
                     <td>{{ entry.timestamp.strftime('%c') }}</td>
@@ -56,7 +56,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for entry in global_log %}
+                  {% for entry in global_events %}
                   <tr>
                     <td>{{ entry.user.username }}</td>
                     <td>{{ entry.timestamp.strftime('%c') }}</td>
