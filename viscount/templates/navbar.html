@@ -13,12 +13,12 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav pull-right">
                 <li class="active"> 
-                     <a href="#eventsTab" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-bell"></i> Events </a> </li>
-		<li> <a href="#projectsTab" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-road"></i> Projects </a> </li>
-                <li> <a href="#filesTab" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-folder-open"></i> Files </a> </li>
-                <li> <a href="#usersTab" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-user"></i> Users </a> </li>
-                <li> <a href="#jobsTab" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-tasks"></i> Jobs </a> </li>
-                <li> <a href="#workersTab" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-cog"></i> Workers </a> </li>
+                     <a href="#eventsTab" id="eventsTabBtn" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-bell"></i> Events </a> </li>
+		<li> <a href="#projectsTab" id="projectsTabBtn" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-road"></i> Projects </a> </li>
+                <li> <a href="#filesTab" id="filesTabBtn" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-folder-open"></i> Files </a> </li>
+                <li> <a href="#usersTab" id="usersTabBtn" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-user"></i> Users </a> </li>
+                <li> <a href="#jobsTab" id="jobsTabBtn" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-tasks"></i> Jobs </a> </li>
+                <li> <a href="#workersTab" id="workersTabBtn" role="tab" data-toggle="tab"> <i class="glyphicon glyphicon-cog"></i> Workers </a> </li>
                 <li> <a href="{{ url_for('logout') }}"> <i class="glyphicon glyphicon-off"></i> Logoff {{ user.username }} </a> </li>
             </ul>
         </div>
