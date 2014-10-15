@@ -12,3 +12,11 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
+
+td.details-control {
+    background: url('/static/img/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('/static/img/details_close.png') no-repeat center center;
+}
