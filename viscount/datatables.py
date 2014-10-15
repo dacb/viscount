@@ -181,7 +181,7 @@ class DataTables:
 			if self.request_values.get('columns[%s][search][value]' % idx) in (True, 'true'):
 				search_value2 = self.request_values.get('columns[%s][search][value]' % idx)
 				sqla_obj, column_name = search(idx, col)
-				
+
 				if col.search_like:
 					conditions.append(cast(get_attr(sqla_obj, column_name), String).like(col.search_like % search_value2))
 				else:
