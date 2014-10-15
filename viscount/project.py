@@ -12,7 +12,7 @@ class Project(db.Model):
 	name = db.Column(db.String(32), index=True, unique=True)
 	description = db.Column(db.Text, index=False, unique=False)
         # setup relationships
-        log_entries = db.relationship('Event', backref='project', lazy='dynamic')
+        events = db.relationship('Event', backref='project', lazy='dynamic')
         jobs = db.relationship('Job', backref='project', lazy='dynamic')
 
 	def __repr__(self):
