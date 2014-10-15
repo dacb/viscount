@@ -1,7 +1,9 @@
-from flask import render_template, flash, redirect, session, url_for, request, g
+from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask.ext.login import login_required
 from .server import app, db
 from .log import logEntry
+
+from .datatables import ColumnDT, _upper, DataTables
 
 class Project(db.Model):
 	__tablename__ = 'project'
@@ -23,12 +25,16 @@ def projectCreate(name, description, user):
         logEntry(user=user, project=project, type='created')
 	return project
 
-@app.route('/projects')
-@login_required
+@app.route('/projects',  methods = ['GET', 'POST'])
+#@login_required
 def projects():
-	user = g.user
-	projects = db.session.query(Project).all()
-	return render_template('projects.html', user=user, projects=projects)
+	columns = []
+	columns.append(ColumnDT('id'))
+	columns.append(ColumnDT('name', filter=_upper))
+	columns.append(ColumnDT('description', filter=_upper))
+	query = db.session.query(Project)
+	rowTable = DataTables(request, Project, query, columns)
+	return jsonify(rowTable.output_result())
 
 @app.route('/project/<id>')
 @login_required

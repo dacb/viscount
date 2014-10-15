@@ -21,7 +21,7 @@ $(document).ready(function() {
     $('#projects').DataTable( {
         "processing": true,
         "serverSide": true,
-        "ajax": "projects"
+        "ajax": { url: "projects", type : "post" }
     } );
 } );
 </script>

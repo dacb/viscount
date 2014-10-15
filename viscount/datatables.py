@@ -73,8 +73,8 @@ class DataTables:
 		"""Initializes the object with the attributes needed, and runs the query
 		"""
 		self.request_values = { }
-		for key in request.args.keys():
-			value = request.args.get(key)
+		for key in request.form.keys():
+			value = request.form.get(key)
 			try:
 				self.request_values[key] = int(value)
 			except ValueError:
@@ -99,11 +99,10 @@ class DataTables:
 		"""Outputs the results in the format needed by DataTables
 		"""
 		output = {}
-		output['sEcho'] = str(int(self.request_values['sEcho']))
-		output['iTotalRecords'] = str(self.cardinality)
-		output['iTotalDisplayRecords'] = str(self.cardinality_filtered)
-		
-		output['aaData'] = self.results
+		output['draw'] = str(int(self.request_values['draw']))
+		output['recordsTotal'] = str(self.cardinality)
+		output['recordsFiltered'] = str(self.cardinality_filtered)
+		output['data'] = self.results
  
 		return output
 
@@ -246,9 +245,9 @@ class DataTables:
 		"""
 		pages = namedtuple('pages', ['start', 'length'])
 
-		if (self.request_values.get('iDisplayStart', "") != "" ) \
-			and (self.request_values.get('iDisplayLength', -1) != -1 ):
-			pages.start = int(self.request_values['iDisplayStart'])
-			pages.length = int(self.request_values['iDisplayLength'])
+		if (self.request_values['start'] != "" ) \
+			and (self.request_values['length'] != -1 ):
+			pages.start = int(self.request_values['start'])
+			pages.length = int(self.request_values['length'])
 			offset = pages.start + pages.length
 			self.query = self.query.slice(pages.start, offset)
