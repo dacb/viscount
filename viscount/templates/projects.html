@@ -4,10 +4,10 @@
       <table id="projects" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th></th>
             <th>Project ID</th>
             <th>Name</th>
             <th>Description</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -18,7 +18,7 @@
 </div>
 
 <script type="text/javascript">
-function format ( d ) {
+function formatProject(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr>'+
     '<div class="table-wrapper">'+
@@ -88,15 +88,15 @@ $(document).ready(function() {
         "serverSide": true,
         "ajax": { url: "/projects", type : "post" },
         "columns": [
+            { "data": "id" },
+            { "data": "name" },
+            { "data": "description" },
             {
                 "class":          'details-control',
                 "orderable":      false,
                 "data":           null,
                 "defaultContent": ''
-            },
-            { "data": "id" },
-            { "data": "name" },
-            { "data": "description" }
+            }
         ],
         "order": [[1, 'asc']]
     } );
@@ -113,7 +113,7 @@ $(document).ready(function() {
         }
         else {
             // Open this row
-            row.child( format(row.data()) ).show();
+            row.child( formatProject(row.data()) ).show();
             tr.addClass('shown');
         }
     } );
