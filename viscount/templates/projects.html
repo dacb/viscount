@@ -25,36 +25,7 @@ function formatProject(d) {
        '</tr>'+
     '</table>'+
     '<script type="text/javascript">$("#project'+d.id+'events").click(function(){'+
-        ''+
-
-$("#events").DataTable( {
-        "processing": true,
-        "serverSide": true,
-        "ajax": { url: "/events", type : "post" },
-        "columns": [
-            { "data": "id" },
-            { "data": "user_id" },
-            { "data": "timestamp" },
-            { "data": "project_id" },
-            { "data": "file_id" },
-            { "data": "job_id" },
-            { "data": "worker_id" },
-            { "data": "type" },
-            {
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ''
-            }
-        ],
-        "searchCols": [
-            null, null, null, { "search" : "'+d.id+'" }, null, null, null, null 
-        ],
-        "order": [[3, "desc"], [2, "asc"], [4, "asc"], [5, "asc"]]
-    } );
-
-
-
+	'var table = $("#events").DataTable(); table.column("#eventsProjectID").search("'+d.id+'").draw();'+
     ' $("#eventsTabBtn").trigger("click");});<\/script>'
     ;
 }
