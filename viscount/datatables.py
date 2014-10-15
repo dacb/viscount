@@ -51,6 +51,8 @@ class ColumnDT(ColumnTuple):
 		On creation, sets default None values for mData and string value for
 		filter (cause: Object representation is not JSON serializable)
 		"""
+		if mData is None:
+			mData = column_name
 		return super(ColumnDT, cls).__new__(cls, column_name, mData, search_like, filter)
 
 
