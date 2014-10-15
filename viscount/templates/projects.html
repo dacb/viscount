@@ -21,9 +21,11 @@
 function formatProject(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr>'+
-          '<td><a href="#eventsTab" role="tab" data-toggle="tab" class="btn btn-default btn-lg active" role="button"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
+          '<td><a href="#" class="btn btn-warning" role="button" id="project'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
        '</tr>'+
-    '</table>';
+    '</table>'+
+    '<script type="text/javascript">$("#project'+d.id+'events").click(function(){ $("#eventsTabBtn").trigger("click");});<\/script>'
+    ;
 }
 
 $(document).ready(function() {
