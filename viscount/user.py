@@ -50,7 +50,7 @@ class User(db.Model):
 	login_count = db.Column(db.Integer, default=0)
 	role = db.Column(db.Enum('admin', 'user', 'guest'))
 	# setup relationships
-	log_entries = db.relationship('Event', backref='user', lazy='dynamic')
+	events = db.relationship('Event', backref='user', lazy='dynamic')
 	files = db.relationship('File', backref='user', lazy='dynamic')
 	jobs = db.relationship('Job', backref='user', lazy='dynamic')
 	

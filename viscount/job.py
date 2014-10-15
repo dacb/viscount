@@ -20,7 +20,7 @@ class Job(db.Model):
 	state = db.Column(db.Enum('queued', 'running', 'finished', 'failed'), index=True, nullable=False)
 	command = db.Column(db.Text)
 	# setup relationships
-	log_entries = db.relationship('Event', backref='job', lazy='dynamic')
+	events = db.relationship('Event', backref='job', lazy='dynamic')
 	files = db.relationship('JobFiles', backref='job', lazy='dynamic')
 
 	def __repr__(self):

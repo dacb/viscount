@@ -9,7 +9,7 @@ class Worker(db.Model):
 	state = db.Column(db.Enum('idle', 'expired', 'active', 'failed'), index=True)
 	job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
 	# setup relationships
-	log_entries = db.relationship('Event', backref='worker', lazy='dynamic')
+	events = db.relationship('Event', backref='worker', lazy='dynamic')
 
 	def __repr__(self):
 		return '<Worker %r>' % (self.name)

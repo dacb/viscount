@@ -14,7 +14,7 @@ class File(db.Model):
 	description = db.Column(db.Text, index=False, unique=False)
 	md5sum = db.Column(db.String(32), index=True, unique=False)
 	# setup relationships
-	log_entries = db.relationship('Event', backref='file', lazy='dynamic')
+	events = db.relationship('Event', backref='file', lazy='dynamic')
 
 	def __repr__(self):
 		return '<File %r>' % (self.name)
