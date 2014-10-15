@@ -40,7 +40,7 @@ function format ( d ) {
         '</tbody>'+
       '</table>'+
     '</div>'+
-    '<script type="text/javascript"> $("#project'+d.id+'events").DataTable( { "processing": true, "serverSide": true, "ajax": { url: "/events", type : "post" }, "order": [[1, "asc"]], "searchCols": [ null, null, { "search": '+d.id+' }, null, null, null, null ], } ); \<\/script>'+
+    '<script type="text/javascript"> $("#project'+d.id+'events").DataTable( { "processing": true, "serverSide": true, "ajax": { url: "/events", type : "post" }, "order": [[1, "asc"]], "searchCols": [ null, null, null, { "search": '+d.id+' }, null, null, null, null ] } ); \<\/script>'+
        '</tr>'+
        '<tr></br></tr>'+
        '<tr>'+
