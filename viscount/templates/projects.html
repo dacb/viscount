@@ -21,64 +21,8 @@
 function formatProject(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr>'+
-    '<div class="table-wrapper">'+
-      '<table id="project'+d.id+'events" class="display" cellspacing="0" width="100%">'+
-        '<caption><strong>Events</strong></caption>'+
-        '<thead>'+
-          '<tr>'+
-            '<th>Event ID</th>'+
-            '<th>User</th>'+
-            '<th>Timestamp</th>'+
-            '<th>Project ID</th>'+
-            '<th>File ID</th>'+
-            '<th>Job ID</th>'+
-            '<th>Worker ID</th>'+
-            '<th>Type</th>'+
-          '</tr>'+
-        '</thead>'+
-        '<tbody>'+
-        '</tbody>'+
-      '</table>'+
-    '</div>'+
-    '<script type="text/javascript"> $("#project'+d.id+'events").DataTable( { "processing": true, "serverSide": true, "ajax": { url: "/events", type : "post" }, "order": [[1, "asc"]], "searchCols": [ null, null, null, { "search": '+d.id+' }, null, null, null, null ] } ); \<\/script>'+
+       '<td>button to jump to log stuff here for project'+d.name+'</td>'
        '</tr>'+
-       '<tr></br></tr>'+
-       '<tr>'+
-    '<div class="table-wrapper">'+
-      '<table id="project'+d.id+'files" class="display" cellspacing="0" width="100%">'+
-        '<caption><strong>Files</strong></caption>'+
-        '<thead>'+
-          '<tr>'+
-            '<th>File ID</th>'+
-            '<th>User</th>'+
-            '<th>Description</th>'+
-            '<th>md5sum</th>'+
-            '<th>Job ID</th>'+
-          '</tr>'+
-        '</thead>'+
-        '<tbody>'+
-        '</tbody>'+
-      '</table>'+
-    '</div>'+
-       '</tr>'+
-       '<tr></br></tr>'+
-       '<tr>'+
-    '<div class="table-wrapper">'+
-      '<table id="project'+d.id+'jobs" class="display" cellspacing="0" width="100%">'+
-        '<caption><strong>Jobs</strong></caption>'+
-        '<thead>'+
-          '<tr>'+
-            '<th>Job ID</th>'+
-            '<th>User</th>'+
-            '<th>State</th>'+
-            '<th>Command</th>'+
-          '</tr>'+
-        '</thead>'+
-        '<tbody>'+
-        '</tbody>'+
-      '</table>'+
-    '</div>'+
-        '</tr>'+
     '</table>';
 }
 
