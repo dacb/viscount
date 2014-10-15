@@ -80,7 +80,6 @@ from .event import Event, eventEntry
 def userCreate(username, password, role, lastName=None, firstName=None, email=None):
 	user = User(username=username, lastName=lastName, firstName=firstName, password=bcrypt.generate_password_hash(password), email=email, role=role)
 	db.session.add(user)
-	db.session.commit()
 	eventEntry(user=user, type='created')
 	return user
 
@@ -114,7 +113,6 @@ def login():
 			user.current_login_ip = request.remote_addr
 			user.login_count += 1
 			db.session.add(user)
-			db.session.commit()
 			eventEntry(user=user, type='login')
 			login_user(user, remember=form.remember_me.data)
 			return redirect(url_for('index'))
@@ -130,77 +128,7 @@ def logout():
 	user.last_login = user.current_login
 	user.last_login_ip = user.current_login_ip
 	db.session.add(user)
-	db.session.commit()
 	eventEntry(user=user, type='logout')
 	logout_user()
 	flash('You have logged out')
 	return redirect(url_for('login'))
-
-# REST API for user handling
-# error handling
-class UserDoesNotExistError(BadRequestError):
-	status_code = 400
-	message = "User ID doesn't exist"
-
-class PermissionDeniedError(BadRequestError):
-	status_code = 400
-	message = "Permission denied"
-
-class UserCannotDeleteItselfError(BadRequestError):
-	status_code = 400
-	message = "User cannot delete itself!"
-
-class UserList(Resource):
-	decorators = [login_required]
-
-	def get(self):
-		return [ User.as_dict(user) for user in db.session.query(User).all() ]
-
-	def post(self):
-		if g.user.role != 'admin':
-			raise PermissionDeniedError
-		else:
-			args = parser.parse_args()
-			return createUser(username=args['username'],
-				lastName=args['lastName'], firstName=args['firstName'],
-				email=args['email'], password=args['password'], role=args['role']).as_dict()
-
-class UserView(Resource):
-	decorators = [login_required]
-
-	def get(self, user_id):
-		target = db.session.query(User).get(user_id)
-		if target is not None:
-			return target.as_dict()
-		else:
-			raise UserDoesNotExistError
-
-	def delete(self, user_id):
-		if g.user.role != 'admin':
-			raise PermissionDeniedError
-		else:
-			target = db.session.query(User).get(user_id)
-			if target is not None:
-				if target.id == g.user.id:
-					raise UserCannotDeleteItselfError
-				target.isActive = False
-				db.session.commit()
-				return '', 204
-			else:
-				raise UserDoesNotExistError
-		
-	def put(self, user_id):
-		target = db.session.query(User).get(user_id)
-		if target is not None:
-			if g.user.role != 'admin' and g.user.id != target.id:
-				raise PermissionDeniedError
-			else:
-				args = parser.parse_args()
-				return modifyUser(user=target, username=args['username'],
-					lastName=args['lastName'], firstName=args['firstName'],
-					email=args['email'], password=args['password'], role=args['role']).as_dict()
-		else:
-			raise UserDoesNotExistError
-
-api.add_resource(UserList, '/users')
-api.add_resource(UserView, '/users/<string:user_id>')

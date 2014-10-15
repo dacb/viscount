@@ -17,7 +17,6 @@ class Worker(db.Model):
 def workerCreate():
 	worker = Worker(state='idle')
         db.session.add(worker)
-        db.session.commit()
         eventEntry(worker=worker, type='created')
 	return file
 

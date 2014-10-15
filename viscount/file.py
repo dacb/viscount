@@ -22,7 +22,6 @@ class File(db.Model):
 def fileCreate(filename, user, description='', md5sum=''):
 	file = File(filename=filename, description=description, md5sum=md5sum, user_id=user.id)
 	db.session.add(file)
-	db.session.commit()
 	eventEntry(user=user, file=file, type='created')
 	return file
 

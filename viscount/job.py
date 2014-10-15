@@ -29,7 +29,6 @@ class Job(db.Model):
 def jobCreate(user, project, command, input_files=[]):
 	job = Job(user_id=user.id, project_id=project.id, command=command, files=input_files, state='queued')
         db.session.add(job)
-        db.session.commit()
         eventEntry(user=user, project=project, job=job, type='created')
 	return file
 

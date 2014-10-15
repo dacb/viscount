@@ -77,6 +77,7 @@ class DataTables:
 		self.request_values = { }
 		for key in request.form.keys():
 			value = request.form.get(key)
+			print key+' = '+value
 			try:
 				self.request_values[key] = int(value)
 			except ValueError:
@@ -246,6 +247,7 @@ class DataTables:
 			sort_name = "%s.%s" % (tablename, sort_name)
 			self.query = self.query.order_by(
 				asc(sort_name) if sort.dir == 'asc' else desc(sort_name))
+			print str(self.query)
 
 	def paging(self):
 		"""Construct the query, by slicing the results in order to limit rows showed on the page, and paginate the rest
