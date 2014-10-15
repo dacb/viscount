@@ -27,7 +27,8 @@ userCreate(username='guest', password='guest', role='guest')
 
 # create an example project
 project = projectCreate(name='example', description='example project', user=admin)
-projectCreate(name='prototype', description='prototype project', user=admin)
+for i in range(42):
+	projectCreate(name='prototype %d' % i, description='prototype project #%s' % i, user=admin)
 
 # create a sample job
 jobCreate(admin, project, "command text")
