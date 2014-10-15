@@ -80,7 +80,8 @@ class DataTables:
 			except ValueError:
 				if value in ("true", "false"):
 					self.request_values[key] = value == "true"
-				
+				else:
+					self.request_values[key] = value
 				
 		self.sqla_object = sqla_object
 		self.query = query
@@ -144,7 +145,7 @@ class DataTables:
 	def filtering(self):
 		"""Construct the query, by adding filtering(LIKE) on all columns when the datatable's search box is used
 		"""
-		search_value = self.request_values.get('sSearch')
+		search_value = self.request_values.get('search[value]')
 		condition = None
 		def search(idx, col):
 			tmp_column_name = col.column_name.split('.')
@@ -168,15 +169,15 @@ class DataTables:
 		if search_value:
 			conditions = []
 			for idx, col in enumerate(self.columns):
-				if self.request_values.get('bSearchable_%s' % idx) in (
+				if self.request_values.get('columns[%s][searchable]' % idx) in (
 						True, 'true'):
 					sqla_obj, column_name = search(idx, col)
 					conditions.append(cast(get_attr(sqla_obj, column_name), String).ilike('%%%s%%' % search_value))
 			condition = or_(*conditions)
 		conditions = []
 		for idx, col in enumerate(self.columns):
-			if self.request_values.get('sSearch_%s' % idx) in (True, 'true'):
-				search_value2 = self.request_values.get('sSearch_%s' % idx)
+			if self.request_values.get('columns[%s][search][value]' % idx) in (True, 'true'):
+				search_value2 = self.request_values.get('columns[%s][search][value]' % idx)
 				sqla_obj, column_name = search(idx, col)
 				
 				if col.search_like:
@@ -188,6 +189,7 @@ class DataTables:
 					condition = and_(condition, and_(*conditions))
 				else:
 					condition= and_(*conditions)
+
 
 		if condition is not None:
 			self.query = self.query.filter(condition)
@@ -203,12 +205,15 @@ class DataTables:
 
 		Order = namedtuple('order', ['name', 'dir'])
 
-		if self.request_values.get('iSortCol_0') \
-			and self.request_values.get('iSortingCols') > 0:
-
-			for i in range(int(self.request_values['iSortingCols'])):
-				sorting.append(Order( self.columns[int(self.request_values['iSortCol_'+str(i)])].column_name,
-						self.request_values['sSortDir_'+str(i)]))
+		sorting_columns = 0
+		while True:
+			if self.request_values.get('order[%d][column]' % sorting_columns, None) is None:
+				break;
+			sorting_columns += 1
+		if sorting_columns > 0:
+			for i in range(sorting_columns):
+				sorting.append(Order( self.columns[int(self.request_values['order[%d][column]' % i])].column_name,
+						self.request_values['order[%d][dir]' % i]))
 
 		for sort in sorting:
 			tmp_sort_name = sort.name.split('.')
