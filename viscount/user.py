@@ -12,6 +12,7 @@ from flask.ext.restful import Resource
 
 from datetime import datetime
 from .server import app, db, api, BadRequestError
+from .datatables import DataTables
 
 login_manager = LoginManager()
 login_manager.init_app(app)
