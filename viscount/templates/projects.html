@@ -24,7 +24,38 @@ function formatProject(d) {
           '<td><a href="#" class="btn btn-warning" role="button" id="project'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
        '</tr>'+
     '</table>'+
-    '<script type="text/javascript">$("#project'+d.id+'events").click(function(){ $("#eventsTabBtn").trigger("click");});<\/script>'
+    '<script type="text/javascript">$("#project'+d.id+'events").click(function(){'+
+        ''+
+
+$("#events").DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": { url: "/events", type : "post" },
+        "columns": [
+            { "data": "id" },
+            { "data": "user_id" },
+            { "data": "timestamp" },
+            { "data": "project_id" },
+            { "data": "file_id" },
+            { "data": "job_id" },
+            { "data": "worker_id" },
+            { "data": "type" },
+            {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ''
+            }
+        ],
+        "searchCols": [
+            null, null, null, { "search" : "'+d.id+'" }, null, null, null, null 
+        ],
+        "order": [[3, "desc"], [2, "asc"], [4, "asc"], [5, "asc"]]
+    } );
+
+
+
+    ' $("#eventsTabBtn").trigger("click");});<\/script>'
     ;
 }
 
