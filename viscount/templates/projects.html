@@ -19,32 +19,79 @@
 
 <script type="text/javascript">
 function format ( d ) {
-    // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-        '<tr>'+
-            '<td>Project name:</td>'+
-            '<td>'+d['1']+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Project description:</td>'+
-            '<td>'+d['2']+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Extra info:</td>'+
-            '<td>And any further details here (images etc)...</td>'+
+       '<tr>'+
+    '<div class="table-wrapper">'+
+      '<table id="project'+d['0']+'events" class="display" cellspacing="0" width="100%">'+
+        '<caption><strong>Events</strong></caption>'+
+        '<thead>'+
+          '<tr>'+
+            '<th>Event ID</th>'+
+            '<th>User</th>'+
+            '<th>Timestamp</th>'+
+            '<th>File ID</th>'+
+            '<th>Job ID</th>'+
+            '<th>Worker ID</th>'+
+            '<th>Type</th>'+
+            '<th></th>'+
+          '</tr>'+
+        '</thead>'+
+        '<tbody>'+
+        '</tbody>'+
+      '</table>'+
+    '</div>'+
+       '</tr>'+
+       '<tr></br></tr>'+
+       '<tr>'+
+    '<div class="table-wrapper">'+
+      '<table id="project'+d['0']+'files" class="display" cellspacing="0" width="100%">'+
+        '<caption><strong>Files</strong></caption>'+
+        '<thead>'+
+          '<tr>'+
+            '<th>File ID</th>'+
+            '<th>User</th>'+
+            '<th>Description</th>'+
+            '<th>md5sum</th>'+
+            '<th>Job ID</th>'+
+            '<th></th>'+
+          '</tr>'+
+        '</thead>'+
+        '<tbody>'+
+        '</tbody>'+
+      '</table>'+
+    '</div>'+
+       '</tr>'+
+       '<tr></br></tr>'+
+       '<tr>'+
+    '<div class="table-wrapper">'+
+      '<table id="project'+d['0']+'jobs" class="display" cellspacing="0" width="100%">'+
+        '<caption><strong>Jobs</strong></caption>'+
+        '<thead>'+
+          '<tr>'+
+            '<th>Job ID</th>'+
+            '<th>User</th>'+
+            '<th>State</th>'+
+            '<th>Command</th>'+
+            '<th></th>'+
+          '</tr>'+
+        '</thead>'+
+        '<tbody>'+
+        '</tbody>'+
+      '</table>'+
+    '</div>'+
         '</tr>'+
     '</table>';
 }
- 
+
 $(document).ready(function() {
     var table = $('#projects').DataTable( {
         "processing": true,
         "serverSide": true,
         "ajax": { url: "projects", type : "post" },
         "columns": [
-            { "data": 0 },
-            { "data": 1 },
-            { "data": 2 },
+            { "data": "id" },
+            { "data": "name" },
+            { "data": "description" },
             {
                 "class":          'details-control',
                 "orderable":      false,
