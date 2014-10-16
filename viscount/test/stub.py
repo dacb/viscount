@@ -4,7 +4,7 @@ import os.path
 from viscount import app
 from viscount.database import db, init_defaults, init_samples
 
-class SuiteTests(unittest.TestCase):
+class StubTests(unittest.TestCase):
 	def setUp(self):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
@@ -20,7 +20,7 @@ class SuiteTests(unittest.TestCase):
 		db.drop_all()
 
 	# test cases
-	def test_stubeExample(self):
+	def test_stubExample(self):
 		assert 1 == 1
 
-suite = unittest.TestLoader().loadTestsFromTestCase(SuiteTests)
+suite = unittest.TestLoader().loadTestsFromTestCase(StubTests)
