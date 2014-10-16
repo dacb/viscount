@@ -1,4 +1,0 @@
-#!/bin/bash
-
-\rm -rf viscount.db uploads
-./db_create.py
