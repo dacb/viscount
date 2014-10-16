@@ -18,13 +18,6 @@ class File(db.Model):
 	# setup relationships
 	events = db.relationship('Event', backref='file', lazy='dynamic')
 
-	def __init__(self, filename, user_id, description):
-		from viscount.event import Event
-		self.filename = filename
-		self.user_id = user.id
-		self.description = description
-		db.session.add(Event('created', file=self))
-
 	def __repr__(self):
 		return '<File %r>' % (self.name)
 

@@ -24,13 +24,6 @@ class Job(db.Model):
 	events = db.relationship('Event', backref='job', lazy='dynamic')
 	files = db.relationship('JobFiles', backref='job', lazy='dynamic')
 
-	def __init__(self, user, project, command):
-		from viscount.event import Event
-		self.user_id = user.id
-		self.project_id = project
-		self.command = command
-		db.session.add(Event(type='created', user=user, project=project, job=self))
-
 	def __repr__(self):
 		return '<Job %r>' % (self.id)
 

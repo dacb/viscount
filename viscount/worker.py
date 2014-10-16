@@ -14,11 +14,6 @@ class Worker(db.Model):
 	# setup relationships
 	events = db.relationship('Event', backref='worker', lazy='dynamic')
 
-	def __init__(self):
-		from viscount.event import Event
-		self.state = 'idle'
-		db.session.add(Event('created', worker=self))
-
 	def __repr__(self):
 		return '<Worker %r>' % (self.name)
 

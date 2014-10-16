@@ -15,12 +15,6 @@ class Project(db.Model):
 	events = db.relationship('Event', backref='project', lazy='dynamic')
 	jobs = db.relationship('Job', backref='project', lazy='dynamic')
 
-	def __init__(self, name, description):
-		from viscount.event import Event
-		self.name = name
-		self.description = description
-		db.session.add(Event(type='created', project=self))
-
 	def __repr__(self):
 		return '<Project %r>' % (self.name)
 

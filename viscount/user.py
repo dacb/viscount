@@ -55,14 +55,12 @@ class User(db.Model):
 	jobs = db.relationship('Job', backref='user', lazy='dynamic')
 
 	def __init__(self, username, password, role, lastName=None, firstName=None, email=None):
-		from viscount.event import Event
 		self.username = username
 		self.password = bcrypt.generate_password_hash(password)
 		self.role = role
 		self.lastName = lastName
 		self.firstName = firstName
 		self.email = email
-		db.session.add(Event(type='created', user=self))
 	
 	def is_authenticated(self):
 		return True
