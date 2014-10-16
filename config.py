@@ -12,5 +12,5 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(DATADIR, 'db_repository')
 SECURITY_CONFIRMABLE = True
 SECURITY_TRACKABLE = True
 
-UPLOAD_DEST = 'uploads'
+UPLOAD_DEST = os.path.join(DATADIR, 'uploads')
 ALLOWED_EXTENSIONS = set(['fq', 'fq.gz', 'fastq', 'fastq.gz', 'fqz', 'fa', 'fa.gz', 'fasta', 'fasta.gz', 'faz'])
