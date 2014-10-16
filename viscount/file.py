@@ -6,7 +6,6 @@ from werkzeug import secure_filename
 from viscount import app
 from viscount.database import db
 from viscount.datatables import DataTables, ColumnDT, DataTables
-from viscount.event import eventEntry
 
 class File(db.Model):
 	__tablename__ = 'file'
@@ -19,14 +18,15 @@ class File(db.Model):
 	# setup relationships
 	events = db.relationship('Event', backref='file', lazy='dynamic')
 
+	def __init__(self, filename, user_id, description):
+		from viscount.event import Event
+		self.filename = filename
+		self.user_id = user.id
+		self.description = description
+		db.session.add(Event('created', file=self))
+
 	def __repr__(self):
 		return '<File %r>' % (self.name)
-
-def fileCreate(filename, user, description='', md5sum=''):
-	file = File(filename=filename, description=description, md5sum=md5sum, user_id=user.id)
-	db.session.add(file)
-	eventEntry(user=user, file=file, type='created')
-	return file
 
 @app.route('/files')
 @login_required

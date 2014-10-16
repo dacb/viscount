@@ -4,7 +4,6 @@ from flask.ext.login import login_required
 from viscount import app
 from viscount.database import db
 from viscount.datatables import DataTables, ColumnDT, DataTables
-from viscount.event import eventEntry
 
 class Worker(db.Model):
 	__tablename__ = 'worker'
@@ -15,14 +14,13 @@ class Worker(db.Model):
 	# setup relationships
 	events = db.relationship('Event', backref='worker', lazy='dynamic')
 
+	def __init__(self):
+		from viscount.event import Event
+		self.state = 'idle'
+		db.session.add(Event('created', worker=self))
+
 	def __repr__(self):
 		return '<Worker %r>' % (self.name)
-
-def workerCreate():
-	worker = Worker(state='idle')
-        db.session.add(worker)
-        eventEntry(worker=worker, type='created')
-	return file
 
 @app.route('/worker/<id>')
 @login_required

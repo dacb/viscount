@@ -16,6 +16,23 @@ class Event(db.Model):
 	worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'))
 	type = db.Column(db.Enum('created', 'modified', 'deleted', 'accessed', 'login', 'logout', 'queued', 'started', 'finished', 'failed'), index=True)
 
+	def __init__(self, type, user=None, project=None, file=None, job=None, worker=None):
+		self.type = type
+		self.timestamp = datetime.datetime.utcnow()
+		self.user_id = None
+		self.project_id = None
+		self.file_id = None
+		self.job_id = None
+		self.worker_id = None
+		if user is not None:
+			self.user_id = user.id
+		if project is not None:
+			self.project_id = project.id
+		if file is not None:
+			self.file_id = file.id
+		if job is not None:
+			self.job_id = job.id
+
 	def __repr__(self):
 		return '<Event %r>' % (self.id)
 
@@ -34,24 +51,6 @@ class Event(db.Model):
 		if self.file is not None:
 			msg.append('file %s' % self.file.filename)
 		return ' : '.join(msg)
-
-def eventEntry(type, user=None, timestamp=datetime.datetime.utcnow(), project=None, file=None, job=None):
-	user_id = None
-	project_id = None
-	file_id = None
-	job_id = None
-	worker_id = None
-	if user is not None:
-		user_id = user.id
-	if project is not None:
-		project_id = project.id
-	if file is not None:
-		file_id = file.id
-	if job is not None:
-		job_id = job.id
-	entry = Event(user_id=user_id, timestamp=timestamp, project_id=project_id, file_id=file_id, type=type, job_id=job_id, worker_id=worker_id)
-	db.session.add(entry)
-	db.session.commit()
 
 @app.route('/events',  methods = ['GET', 'POST'])
 #@login_required

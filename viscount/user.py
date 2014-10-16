@@ -53,6 +53,16 @@ class User(db.Model):
 	events = db.relationship('Event', backref='user', lazy='dynamic')
 	files = db.relationship('File', backref='user', lazy='dynamic')
 	jobs = db.relationship('Job', backref='user', lazy='dynamic')
+
+	def __init__(self, username, password, role, lastName=None, firstName=None, email=None):
+		from viscount.event import Event
+		self.username = username
+		self.password = bcrypt.generate_password_hash(password)
+		self.role = role
+		self.lastName = lastName
+		self.firstName = firstName
+		self.email = email
+		db.session.add(Event(type='created', user=self))
 	
 	def is_authenticated(self):
 		return True
@@ -74,24 +84,6 @@ class User(db.Model):
 
 	def __repr__(self):
 		return '<User %r>' % (self.username)
-
-from .event import Event, eventEntry
-
-def userCreate(username, password, role, lastName=None, firstName=None, email=None):
-	user = User(username=username, lastName=lastName, firstName=firstName, password=bcrypt.generate_password_hash(password), email=email, role=role)
-	db.session.add(user)
-	eventEntry(user=user, type='created')
-	return user
-
-def modifyUser(user, username, password, role, lastName, firstName, email):
-	user.username = username
-	user.password = password
-	user.lastName = lastName
-	user.firstName = firstName
-	user.email = email
-	user.role = role
-	eventEntry(user=user, type='modified')
-	return user
 
 class LoginForm(Form):
 	username = fields.StringField('username', validators=[validators.required()])

@@ -4,7 +4,6 @@ from flask.ext.login import login_required
 from viscount import app
 from viscount.database import db
 from viscount.datatables import DataTables, ColumnDT, DataTables
-from viscount.event import eventEntry
 
 class Project(db.Model):
 	__tablename__ = 'project'
@@ -12,19 +11,18 @@ class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(32), index=True, unique=True)
 	description = db.Column(db.Text, index=False, unique=False)
-        # setup relationships
-        events = db.relationship('Event', backref='project', lazy='dynamic')
-        jobs = db.relationship('Job', backref='project', lazy='dynamic')
+	# setup relationships
+	events = db.relationship('Event', backref='project', lazy='dynamic')
+	jobs = db.relationship('Job', backref='project', lazy='dynamic')
+
+	def __init__(self, name, description):
+		from viscount.event import Event
+		self.name = name
+		self.description = description
+		db.session.add(Event(type='created', project=self))
 
 	def __repr__(self):
 		return '<Project %r>' % (self.name)
-
-def projectCreate(name, description, user):
-	project = Project(name=name, description=description)
-        db.session.add(project)
-        db.session.commit()
-        eventEntry(user=user, project=project, type='created')
-	return project
 
 @app.route('/projects',  methods = ['GET', 'POST'])
 @login_required
@@ -45,5 +43,5 @@ def project(id):
 	if project is None:
 		flash('Project with ID %s not found.' % id)
 		return redirect(url_for('projects'))
-        eventEntry(user=user, project=project, type='accessed')
+	eventEntry(user=user, project=project, type='accessed')
 	return render_template('project.html', user=user, project=project)

@@ -4,8 +4,6 @@ from flask.ext.login import login_required
 from viscount import app
 from viscount.database import db
 from viscount.datatables import DataTables, ColumnDT, DataTables
-from viscount.file import File
-from viscount.event import eventEntry
 
 class JobFiles(db.Model):
 	__tablename__ = 'job_files'
@@ -26,14 +24,15 @@ class Job(db.Model):
 	events = db.relationship('Event', backref='job', lazy='dynamic')
 	files = db.relationship('JobFiles', backref='job', lazy='dynamic')
 
+	def __init__(self, user, project, command):
+		from viscount.event import Event
+		self.user_id = user.id
+		self.project_id = project
+		self.command = command
+		db.session.add(Event(type='created', user=user, project=project, job=self))
+
 	def __repr__(self):
 		return '<Job %r>' % (self.id)
-
-def jobCreate(user, project, command, input_files=[]):
-	job = Job(user_id=user.id, project_id=project.id, command=command, files=input_files, state='queued')
-        db.session.add(job)
-        eventEntry(user=user, project=project, job=job, type='created')
-	return file
 
 @app.route('/job/<id>')
 @login_required
