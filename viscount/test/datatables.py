@@ -103,6 +103,6 @@ class DataTablesTests(unittest.TestCase):
 			"columns[2][name]" : "",
 			"length" : "10",
 		}, follow_redirects=True)
-		assert 'data' in rv.data
+		assert 'recordsFiltered' in rv.data
 
 suite = unittest.TestLoader().loadTestsFromTestCase(DataTablesTests)
