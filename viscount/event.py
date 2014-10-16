@@ -4,7 +4,7 @@ from flask.ext.login import login_required
 
 from viscount import app
 from viscount.database import db
-from viscount.datatables import DataTables, ColumnDT, DataTables
+from viscount.datatables import DataTables
 
 class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -40,16 +40,6 @@ class Event(db.Model):
 def events():
 	from viscount.event import Event
 	from viscount.user import User
-	columns = []
-	columns.append(ColumnDT('id'))
-	columns.append(ColumnDT('user_id'))
-	columns.append(ColumnDT('user.username'))
-	columns.append(ColumnDT('timestamp'))
-	columns.append(ColumnDT('project_id'))
-	columns.append(ColumnDT('file_id'))
-	columns.append(ColumnDT('job_id'))
-	columns.append(ColumnDT('worker_id'))
-	columns.append(ColumnDT('type'))
 	query = db.session.query(Event).outerjoin(User, (User.id == Event.user_id))
-	rowTable = DataTables(request, Event, query, columns)
+	rowTable = DataTables(request, Event, query)
 	return jsonify(rowTable.output_result())

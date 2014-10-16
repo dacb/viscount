@@ -3,7 +3,7 @@ from flask.ext.login import login_required
 
 from viscount import app
 from viscount.database import db
-from viscount.datatables import DataTables, ColumnDT, DataTables
+from viscount.datatables import DataTables
 
 class Worker(db.Model):
 	__tablename__ = 'worker'

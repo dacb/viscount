@@ -5,7 +5,7 @@ from werkzeug import secure_filename
 
 from viscount import app
 from viscount.database import db
-from viscount.datatables import DataTables, ColumnDT, DataTables
+from viscount.datatables import DataTables
 
 class File(db.Model):
 	__tablename__ = 'file'

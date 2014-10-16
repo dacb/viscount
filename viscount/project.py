@@ -3,7 +3,7 @@ from flask.ext.login import login_required
 
 from viscount import app
 from viscount.database import db
-from viscount.datatables import DataTables, ColumnDT, DataTables
+from viscount.datatables import DataTables
 
 class Project(db.Model):
 	__tablename__ = 'project'
@@ -21,12 +21,8 @@ class Project(db.Model):
 @app.route('/projects',  methods = ['GET', 'POST'])
 @login_required
 def projects():
-	columns = []
-	columns.append(ColumnDT('id'))
-	columns.append(ColumnDT('name'))
-	columns.append(ColumnDT('description'))
 	query = db.session.query(Project)
-	rowTable = DataTables(request, Project, query, columns)
+	rowTable = DataTables(request, Project, query)
 	return jsonify(rowTable.output_result())
 
 @app.route('/project/<id>')
