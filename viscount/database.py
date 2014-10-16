@@ -13,7 +13,7 @@ def init_user(username, password, role):
 	return user
 
 def init_project(name, description, user):
-	from viscount.user import Project
+	from viscount.project import Project
 	from viscount.event import Event
 	project = Project(name=name, description=description)
 	db.session.add(project)
