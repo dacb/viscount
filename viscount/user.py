@@ -91,6 +91,8 @@ class LoginForm(Form):
 # login form
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
+	from viscount.event import Event
+
 	if g.user is not None and g.user.is_authenticated():
 		return redirect(url_for('index'))
 	form = LoginForm()
@@ -103,7 +105,8 @@ def login():
 			user.current_login_ip = request.remote_addr
 			user.login_count += 1
 			db.session.add(user)
-			eventEntry(user=user, type='login')
+			db.session.add(Event(type='login', user=user))
+			db.session.commit()
 			login_user(user, remember=form.remember_me.data)
 			return redirect(url_for('index'))
 		flash('Username or password invalid')
@@ -118,7 +121,8 @@ def logout():
 	user.last_login = user.current_login
 	user.last_login_ip = user.current_login_ip
 	db.session.add(user)
-	eventEntry(user=user, type='logout')
+	db.session.add(Event(type='logout', user=user))
+	db.session.commit()
 	logout_user()
 	flash('You have logged out')
 	return redirect(url_for('login'))

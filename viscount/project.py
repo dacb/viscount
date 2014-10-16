@@ -37,5 +37,6 @@ def project(id):
 	if project is None:
 		flash('Project with ID %s not found.' % id)
 		return redirect(url_for('projects'))
-	eventEntry(user=user, project=project, type='accessed')
+	db.session.add(Event('accessed', user=user, project=project))
+	db.session.commit()
 	return render_template('project.html', user=user, project=project)
