@@ -36,7 +36,7 @@ class Event(db.Model):
 		return ' : '.join(msg)
 
 @app.route('/events',  methods = ['GET', 'POST'])
-#@login_required
+@login_required
 def events():
 	from viscount.event import Event
 	from viscount.user import User
