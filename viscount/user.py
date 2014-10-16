@@ -8,11 +8,11 @@ from wtforms import form, fields, validators
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask.ext.bcrypt import Bcrypt
-from flask.ext.restful import Resource
-
 from datetime import datetime
-from .server import app, db, api, BadRequestError
-from .datatables import DataTables
+
+from viscount import app
+from viscount.database import db
+from viscount.datatables import DataTables
 
 login_manager = LoginManager()
 login_manager.init_app(app)

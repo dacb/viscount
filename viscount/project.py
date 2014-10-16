@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask.ext.login import login_required
-from .server import app, db
-from .event import eventEntry
 
-from .datatables import ColumnDT, _upper, DataTables
+from viscount import app
+from viscount.database import db
+from viscount.datatables import DataTables, ColumnDT, DataTables
+from viscount.event import eventEntry
 
 class Project(db.Model):
 	__tablename__ = 'project'

@@ -2,8 +2,11 @@ import os
 from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
 from flask.ext.login import login_required
 from werkzeug import secure_filename
-from .server import app, db
-from .event import eventEntry
+
+from viscount import app
+from viscount.database import db
+from viscount.datatables import DataTables, ColumnDT, DataTables
+from viscount.event import eventEntry
 
 class File(db.Model):
 	__tablename__ = 'file'

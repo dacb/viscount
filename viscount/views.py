@@ -1,7 +1,9 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required
-from .server import app, db
-from .event import Event
+
+from viscount import app
+from viscount.database import db
+from viscount.event import Event
 
 @app.route('/')
 @app.route('/index')

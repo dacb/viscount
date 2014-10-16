@@ -1,10 +1,10 @@
 import datetime
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask.ext.login import login_required
-from .server import app, db
-from .user import User
 
-from .datatables import ColumnDT, _upper, DataTables
+from viscount import app
+from viscount.database import db
+from viscount.datatables import DataTables, ColumnDT, DataTables
 
 class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
