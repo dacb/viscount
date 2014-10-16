@@ -6,7 +6,8 @@ DATADIR = os.path.join(BASEDIR, 'data')
 WTF_CSRF_ENABLED = True
 SECRET_KEY = os.urandom(24)
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATADIR, 'viscount.db')
+SQLALCHEMY_DATABASE_URI = 'mysql://viscount:viscountRocks@localhost/viscount'
+#SQLALCHEMY_ECHO = True
 SQLALCHEMY_MIGRATE_REPO = os.path.join(DATADIR, 'db_repository')
 
 SECURITY_CONFIRMABLE = True

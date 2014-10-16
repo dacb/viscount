@@ -1,6 +1,25 @@
 #!/bin/bash
 
+# outside of your virtual env, make sure you have mysql setup, e.g. ubuntu 14.04
+#
+## install
+# sudo apt-get install mysql-server mysql-client libmysqlclient-dev
+## verify running
+# sudo netstat -tap | grep mysql
+## edit config
+# vi /etc/mysql/my.cnf
+## after changes, restart
+# sudo service mysql restart
+# see https://help.ubuntu.com/14.04/serverguide/mysql.html
+## basic setup
+# mysql -u root -p
+# password
+# GRANT ALL PRIVILEGES ON *.* TO 'viscount'@'localhost' IDENTIFIED BY 'viscountRocks' WITH GRANT OPTION;
+# CREATE DATABASE viscount_test;
+# CREATE DATABASE viscount;
+# 
+
 virtualenv venv
 source activate
-pip install flask flask-login flask-wtf flask-SQLAlchemy sqlalchemy_migrate flask-bcrypt flask-scripts
+pip install flask flask-login flask-wtf flask-SQLAlchemy sqlalchemy_migrate flask-bcrypt flask-scripts MySQL-python
 ./manage database create

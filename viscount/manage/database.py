@@ -1,4 +1,3 @@
-#!venv/bin/python
 import os.path
 from migrate.versioning import api
 from flask.ext.script import Manager, prompt_bool
@@ -24,8 +23,6 @@ def create(default_data=True, sample_data=False):
 	if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
 		api.create(SQLALCHEMY_MIGRATE_REPO, 'database repository')
 		api.version_control(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-	else:
-		api.version_control(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO, api.version(SQLALCHEMY_MIGRATE_REPO))
 	populate(default_data, sample_data)
 
 
