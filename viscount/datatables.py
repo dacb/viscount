@@ -10,51 +10,8 @@ from sqlalchemy import String
 
 from collections import namedtuple
 
-ColumnTuple = namedtuple('ColumnDT', ['column_name', 'mData', 'search_like', 'filter'])
-
-def get_attr(sqla_object, attribute):
-	"""Returns the value of an attribute of an SQLAlchemy entity 
-	"""
-	output = sqla_object
-	for x in attribute.split('.'):
-		if type(output) is InstrumentedList:
-			output = ', '.join([getattr(elem, x) for elem in output])
-		else:
-			output = getattr(output, x)
-	return output
-
-def _upper(chain):
-	ret = chain.upper()
-	if ret:
-		return ret
-	else:
-		return chain
-
-
-class ColumnDT(ColumnTuple):
-	"""Class defining a DataTables Column with a ColumnTuple:
-
-	:param column_name: name of the column as defined by the SQLAlchemy model
-	:type column_name: str
-	:param mData: name of the mData property as defined in the DataTables javascript options (default None)
-	:type mData: str
-	:param search_like: search criteria to like on without forgetting to escape the '%' character
-	:type search_like: str
-	:param filter: the method needed to be executed on the cell values of the column 
-	as an equivalent of a jinja2 filter (default None)
-	:type filter: a callable object
-
-	:returns: a ColumnDT object 
-	"""
-	def __new__(cls, column_name, mData=None, search_like=None, filter=str):
-		"""
-		On creation, sets default None values for mData and string value for
-		filter (cause: Object representation is not JSON serializable)
-		"""
-		if mData is None:
-			mData = column_name
-		return super(ColumnDT, cls).__new__(cls, column_name, mData, search_like, filter)
-
+OrderColumn = namedtuple('OrderColumn', ['index', 'dir'])
+ColumnData = namedtuple('ColumnData', ['data', 'name', 'searchable', 'orderable', 'search_value', 'search_regex' ])
 
 class DataTables:
 	"""Class defining a DataTables object with:
@@ -71,13 +28,14 @@ class DataTables:
 
 	:returns: a DataTables object
 	"""
-	def __init__(self, request, sqla_object, query, columns):
+	def __init__(self, request, sqla_object, query):
 		"""Initializes the object with the attributes needed, and runs the query
 		"""
 		self.request_values = { }
 		for key in request.form.keys():
 			value = request.form.get(key)
 			#print key+' = '+value
+			# cast to int to limit security issues
 			try:
 				self.request_values[key] = int(value)
 			except ValueError:
@@ -85,10 +43,44 @@ class DataTables:
 					self.request_values[key] = value == "true"
 				else:
 					self.request_values[key] = value
+
+		# process column data from request values
+		self.order_columns = []
+		i = 0
+		while True:
+			order_prefix = 'order[%d]' % i
+			column_index = self.request_values.get(order_prefix + '[column]', None)
+			if column_index is None:
+				break;
+			self.order_columns.append(OrderColumn(column_index, self.request_values.get(order_prefix + '[dir]', 'asc')))
+			i += 1
+
+		self.columns = []
+		i = 0
+		while True:
+			column_prefix = 'columns[%d]' % i
+			print column_prefix
+			column_data= self.request_values.get(column_prefix + '[data]', None);
+			if column_data is None:
+				print 'no data'
+				break;
+			column_name = self.request_values.get(column_prefix + '[name]', None);
+			column_searchable = self.request_values.get(column_prefix + '[searchable]', None);
+			column_orderable = self.request_values.get(column_prefix + '[orderable]', None);
+			self.columns.append(ColumnData(column_data, 
+				self.request_values.get(column_prefix + '[name]', None),
+				self.request_values.get(column_prefix + '[searchable]', None),
+				self.request_values.get(column_prefix + '[orderable]', None),
+				self.request_values.get(column_prefix + '[search][value]', None),
+				self.request_values.get(column_prefix + '[search][regex]', None)
+			))
+			i += 1
+	
+		assert len(self.order_columns) <= len(self.columns)
+		assert len(self.columns) > 0
 				
 		self.sqla_object = sqla_object
 		self.query = query
-		self.columns = columns
 		self.results = None
 
 		# total in the table after filtering
@@ -117,10 +109,10 @@ class DataTables:
 		self.cardinality = self.query.count()
 		
 		# the term entered in the datatable's search box
-		self.filtering()
+		#self.filtering()
 
 		# field chosen to sort on
-		self.sorting()
+		self.ordering()
 
 		# pages have a 'start' and 'length' attributes
 		self.paging()
@@ -201,28 +193,23 @@ class DataTables:
 		else:
 			self.cardinality_filtered = self.cardinality
 
-	def sorting(self):
+	def ordering(self):
 		"""Construct the query, by adding sorting(ORDER BY) on the columns needed to be applied on
 		"""
-		sorting = []
 
-		Order = namedtuple('order', ['name', 'dir'])
+		ordering = []
+		Order = namedtuple('Order', ['name', 'dir'])
+		for order_column in self.order_columns:
+			print order_column.index
+			print order_column.dir
+			print len(self.columns)
+			ordering.append(Order(self.columns[order_column.index].data, order_column.dir))
 
-		sorting_columns = 0
-		while True:
-			if self.request_values.get('order[%d][column]' % sorting_columns, None) is None:
-				break;
-			sorting_columns += 1
-		if sorting_columns > 0:
-			for i in range(sorting_columns):
-				sorting.append(Order( self.columns[int(self.request_values['order[%d][column]' % i])].column_name,
-						self.request_values['order[%d][dir]' % i]))
-
-		for sort in sorting:
-			tmp_sort_name = sort.name.split('.')
-			obj = getattr(self.sqla_object, tmp_sort_name[0])
-			if not hasattr(obj, "property"): #hybrid_property or property
-				sort_name = sort.name
+		for order in ordering:
+			tmp_name = order.name.split('.')
+			obj = getattr(self.sqla_object, tmp_name[0])
+			if not hasattr(obj, "property"):
+				order_name = order.name
 
 				if hasattr(self.sqla_object, "__tablename__"):
 					tablename = self.sqla_object.__tablename__
@@ -230,33 +217,33 @@ class DataTables:
 					tablename = self.sqla_object.__table__.name
 			elif isinstance(obj.property, RelationshipProperty): # Ex: ForeignKey
 				 # Ex: address.description => description => addresses.description
-				sort_name = "".join(tmp_sort_name[1:])
-				if not sort_name:
+				order_name = "".join(tmp_order_name[1:])
+				if not order_name:
 					# Find first primary key
-					sort_name = obj.property.table.primary_key.columns \
+					order_name = obj.property.table.primary_key.columns \
 							.values()[0].name
 				tablename = obj.property.table.name
 			else: #-> ColumnProperty
-				sort_name = sort.name
+				order_name = order.name
 
 				if hasattr(self.sqla_object, "__tablename__"):
 					tablename = self.sqla_object.__tablename__
 				else:
 					tablename = self.sqla_object.__table__.name
 
-			sort_name = "%s.%s" % (tablename, sort_name)
+			order_name = "%s.%s" % (tablename, order_name)
 			self.query = self.query.order_by(
-				asc(sort_name) if sort.dir == 'asc' else desc(sort_name))
-			#print str(self.query)
+				asc(order_name) if order.dir == 'asc' else desc(order_name))
+			print 'ordering SQL: '+str(self.query)
 
 	def paging(self):
 		"""Construct the query, by slicing the results in order to limit rows showed on the page, and paginate the rest
 		"""
-		pages = namedtuple('pages', ['start', 'length'])
+		Pages = namedtuple('Pages', ['start', 'length'])
 
 		if (self.request_values['start'] != "" ) \
 			and (self.request_values['length'] != -1 ):
-			pages.start = int(self.request_values['start'])
-			pages.length = int(self.request_values['length'])
-			offset = pages.start + pages.length
-			self.query = self.query.slice(pages.start, offset)
+			Pages.start = int(self.request_values['start'])
+			Pages.length = int(self.request_values['length'])
+			offset = Pages.start + Pages.length
+			self.query = self.query.slice(Pages.start, offset)
