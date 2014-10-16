@@ -41,12 +41,12 @@ def populate(default_data=False, sample_data=False):
 	"Populate database with default data"
 
 	if default_data:
-		from viscount.database import init_default
-		init_default()
+		from viscount.database import init_defaults
+		init_defaults()
 
 	if sample_data:
-		from viscount.database import init_sample
-		init_sample()
+		from viscount.database import init_samples
+		init_sample(s)
 
 @manager.command
 def migrate():
