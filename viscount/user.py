@@ -36,11 +36,11 @@ class User(db.Model):
 	__tablename__ = 'user'
 
 	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(32), index=True, unique=True)
+	username = db.Column(db.String(32), index=True, unique=True, nullable=False)
 	firstName = db.Column(db.String(64))
 	lastName = db.Column(db.String(64))
 	email = db.Column(db.String(255), index=True, unique=True)
-	password = db.Column(db.String(255))
+	password = db.Column(db.String(255), nullable=False)
 	isActive = db.Column(db.Boolean(), default=True)
 	created = db.Column(db.DateTime(), default=datetime.utcnow())
 	last_login = db.Column(db.DateTime())
@@ -48,7 +48,7 @@ class User(db.Model):
 	last_login_ip = db.Column(db.String(15))
 	current_login_ip = db.Column(db.String(15))
 	login_count = db.Column(db.Integer, default=0)
-	role = db.Column(db.Enum('admin', 'user', 'guest'))
+	role = db.Column(db.Enum('admin', 'user', 'guest'), nullable=False)
 	# setup relationships
 	events = db.relationship('Event', backref='user', lazy='dynamic')
 	files = db.relationship('File', backref='user', lazy='dynamic')
