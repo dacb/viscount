@@ -10,6 +10,7 @@ class SuiteTests(unittest.TestCase):
 		app.config['WTF_CSRF_ENABLED'] = False
 		app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.config['DATADIR'], 'test.db')
 		self.app = app.test_client()
+		db.drop_all()
 		db.create_all()
 		init_defaults()
 		init_samples()
