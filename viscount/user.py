@@ -116,6 +116,8 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+	from viscount.event import Event
+
 	user = g.user
 	user.authenticated = False
 	user.last_login = user.current_login
