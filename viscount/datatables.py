@@ -125,8 +125,6 @@ class DataTables:
 		# pages have a 'start' and 'length' attributes
 		self.paging()
 
-		print 'FINAL QUERY IS: '+str(self.query)
-
 		# fetch the result of the queries
 		self.results = self.query.all()
 
