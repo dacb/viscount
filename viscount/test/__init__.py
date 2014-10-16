@@ -10,6 +10,8 @@ suite = unittest.TestSuite()
 
 @manager.command
 def run(db=False, stub=False, all=True):
+	if db or stub:
+		all = False
 	if db or all:
 		from viscount.test.database import suite as database_suite
 		suite.addTest(database_suite)
