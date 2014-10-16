@@ -38,6 +38,8 @@ class Event(db.Model):
 @app.route('/events',  methods = ['GET', 'POST'])
 #@login_required
 def events():
+	from viscount.event import Event
+	from viscount.user import User
 	columns = []
 	columns.append(ColumnDT('id'))
 	columns.append(ColumnDT('user_id'))
