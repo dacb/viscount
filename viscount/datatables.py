@@ -8,12 +8,38 @@ from sqlalchemy.orm.collections import InstrumentedList
 from sqlalchemy.sql.expression import cast
 from sqlalchemy import String
 
+from flask import jsonify
+
 from collections import namedtuple
 
+from viscount import app
 from viscount.database import printquery
 
 OrderColumn = namedtuple('OrderColumn', ['index', 'dir'])
 ColumnData = namedtuple('ColumnData', ['data', 'name', 'searchable', 'orderable', 'search_value', 'search_regex' ])
+
+# exceptions for datatable processing
+class DataTablesException(Exception):
+	status_code = 200
+
+	def __init__(self, message, status_code=None, payload=None):
+		Exception.__init__(self)
+		self.message = message
+		if status_code is not None:
+			self.status_code = status_code
+		self.payload = payload
+
+	def to_dict(self):
+		rv = dict(self.payload or ())
+		rv['error'] = self.message
+		return rv
+
+@app.errorhandler(DataTablesException)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+###
 
 def get_attr(sqla_object, attribute):
 	"""Returns the value of an attribute of an SQLAlchemy entity 
@@ -39,8 +65,6 @@ class DataTables:
 	:type sqla_object: sqlalchemy.ext.declarative.DeclarativeMeta
 	:param query: the query wanted to be seen in the the table
 	:type query: sqlalchemy.orm.query.Query
-	:param columns: columns specification for the datatables
-	:type columns: list
 
 	:returns: a DataTables object
 	"""
@@ -158,7 +182,9 @@ class DataTables:
 
 		def resolve_column(column):
 			tmp_name = column.data.split('.')
-			obj = getattr(self.sqla_object, tmp_name[0])
+			obj = getattr(self.sqla_object, tmp_name[0], None)
+			if obj is None:
+				raise DataTablesException('Invalid column data: ' + tmp_name[0])
 			if not hasattr(obj, "property"): # Ex: hybrid_property or property
 				sqla_obj = self.sqla_object
 				column_name = "".join(tmp_name[1:])
