@@ -1,4 +1,75 @@
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
   <div class="row">
+    <div class="table-wrapper">
+      <table id="files" class="display" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th id="filesID">File ID</th>
+            <th id="filesFilename">Fileame</th>
+            <th id="filesUserID">User ID</th>
+            <th id="filesUsername">Username</th>
+            <th id="filesDescription">Description</th>
+            <th id="filesmd5sum">md5sum</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
+
+<script type="text/javascript">
+function formatProject(d) {
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+       '<tr>'+
+          '<td><a href="#" class="btn btn-warning" role="button" id="file'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
+       '</tr>'+
+    '</table>'+
+    '<script type="text/javascript">$("#file'+d.id+'events").click(function(){'+
+	'var table = $("#events").DataTable(); table.column("#eventsProjectID").search("'+d.id+'").draw();'+
+    ' $("#eventsTabBtn").trigger("click");});<\/script>'
+    ;
+}
+
+$(document).ready(function() {
+    var table = $('#files').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": { url: "/files", type : "post" },
+        "columns": [
+            { "data": "id" },
+            { "data": "filename" },
+            { "data": "user_id", "visible" : false },
+            { "data": "user\\.username" },
+            { "data": "md5sum" },
+            { "data": "description" },
+            {
+                "class":          'details-control',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ''
+            }
+        ],
+        "order": [[1, 'asc']]
+    } );
+     
+    // Add event listener for opening and closing details
+    $('#files tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+ 
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( formatProject(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    } );
+} );
+</script>

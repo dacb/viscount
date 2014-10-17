@@ -1,5 +1,5 @@
 import os
-from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory
+from flask import render_template, flash, redirect, session, url_for, request, g, send_from_directory, jsonify
 from flask.ext.login import login_required
 from werkzeug import secure_filename
 
@@ -21,11 +21,15 @@ class File(db.Model):
 	def __repr__(self):
 		return '<File %r>' % (self.name)
 
-@app.route('/files')
+@app.route('/files', methods=['GET', 'POST'])
 @login_required
 def files():
-	files = db.session.query(File).all()
-	return render_template('files.html', user=g.user, files=files);
+	from viscount.user import User
+	query = db.session.query(File). \
+		outerjoin(User, (User.id == File.user_id))
+	rowTable = DataTables(request, File, query)
+	return jsonify(rowTable.output_result())
+
 
 @app.route('/file/<id>/<action>')
 @login_required
