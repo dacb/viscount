@@ -103,6 +103,7 @@ class DataTablesTests(unittest.TestCase):
 			"columns[8][search][value]" : "",
 			"columns[8][search][regex]" : "false",
 		}, follow_redirects=True)
+		print rv.data
 		assert 'recordsFiltered' in rv.data
 
 suite = unittest.TestLoader().loadTestsFromTestCase(DataTablesTests)
