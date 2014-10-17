@@ -40,6 +40,11 @@ class Event(db.Model):
 def events():
 	from viscount.event import Event
 	from viscount.user import User
-	query = db.session.query(Event).outerjoin(User, (User.id == Event.user_id))
+	from viscount.project import Project
+	from viscount.file import File
+	query = db.session.query(Event). \
+		outerjoin(User, (User.id == Event.user_id)). \
+		outerjoin(Project, (Project.id == Event.project_id)). \
+		outerjoin(File, (File.id == Event.file_id))
 	rowTable = DataTables(request, Event, query)
 	return jsonify(rowTable.output_result())
