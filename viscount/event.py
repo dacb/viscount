@@ -42,9 +42,22 @@ def events():
 	from viscount.user import User
 	from viscount.project import Project
 	from viscount.file import File
+	column_whitelist = {
+		'id' : True,
+		'user_id' : True,
+		'user.username' : True,
+		'timestamp' : True,
+		'project_id' : True,
+		'project' : True,
+		'file_id' : True,
+		'file' : True,
+		'job_id' : True,
+		'worker_id' : True,
+		'type' : True,
+	}
 	query = db.session.query(Event). \
 		outerjoin(User, (User.id == Event.user_id)). \
 		outerjoin(Project, (Project.id == Event.project_id)). \
 		outerjoin(File, (File.id == Event.file_id))
-	rowTable = DataTables(request, Event, query)
+	rowTable = DataTables(request, Event, query, column_whitelist)
 	return jsonify(rowTable.output_result())
