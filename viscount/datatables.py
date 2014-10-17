@@ -18,29 +18,6 @@ from viscount.database import printquery
 OrderColumn = namedtuple('OrderColumn', ['index', 'dir'])
 ColumnData = namedtuple('ColumnData', ['data', 'name', 'searchable', 'orderable', 'search_value', 'search_regex' ])
 
-# exceptions for datatable processing
-class DataTablesException(Exception):
-	status_code = 200
-
-	def __init__(self, message, status_code=None, payload=None):
-		Exception.__init__(self)
-		self.message = message
-		if status_code is not None:
-			self.status_code = status_code
-		self.payload = payload
-
-	def to_dict(self):
-		rv = dict(self.payload or ())
-		rv['error'] = self.message
-		return rv
-
-@app.errorhandler(DataTablesException)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
-###
-
 def get_attr(sqla_object, attribute):
 	"""Returns the value of an attribute of an SQLAlchemy entity 
 	"""
@@ -121,8 +98,13 @@ class DataTables:
 			))
 			i += 1
 	
-		assert len(self.order_columns) <= len(self.columns)
-		assert len(self.columns) > 0
+		if len(self.columns) == 0:
+			raise DataTablesException('Zero columns requested')
+		if len(self.order_columns) > len(self.columns):
+			raise DataTablesException('Order column count (%d) is greater than total number of requested columns (%d)' % (len(self.order_columns), len(self.columns)))
+		for order_column in self.order_columns:
+			if order_column.index >= len(self.columns):
+				raise DataTablesException('Order column index %d is out of range [0...%d]' % (order_column.index, len(self.columns)))
 				
 		self.sqla_object = sqla_object
 		self.query = query
@@ -296,3 +278,25 @@ class DataTables:
 			Pages.length = int(self.request_values['length'])
 			offset = Pages.start + Pages.length
 			self.query = self.query.slice(Pages.start, offset)
+
+# exceptions for datatable processing
+class DataTablesException(Exception):
+	status_code = 200
+
+	def __init__(self, message, status_code=None, payload=None):
+		Exception.__init__(self)
+		self.message = message
+		if status_code is not None:
+			self.status_code = status_code
+		self.payload = payload
+
+	def to_dict(self):
+		rv = dict(self.payload or ())
+		rv['error'] = self.message
+		return rv
+
+@app.errorhandler(DataTablesException)
+def handle_datatable_exception(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response

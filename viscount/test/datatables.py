@@ -160,6 +160,54 @@ class DataTablesTests(unittest.TestCase):
 			"columns[2][search][value]" : "",
 			"columns[2][search][regex]" : "false",
 		}, follow_redirects=False)
+		assert '"error": "Column is not in whitelist: invalid_column"' in rv.data
+
+	def test_NoColumnsRequested_3_4(self):
+		rv = self.app.post('/events', data={
+			"draw" : "1",
+			"start" : "0",
+			"length" : "10",
+			"search[value]" : "",
+			"search[regex]" : "false",
+		}, follow_redirects=False)
+		assert '"error": "Zero columns requested"' in rv.data
+
+	def test_OrderCol_GT_TotColRequested_3_5(self):
+		rv = self.app.post('/events', data={
+			"draw" : "1",
+			"start" : "0",
+			"length" : "10",
+			"search[value]" : "",
+			"search[regex]" : "false",
+			"order[0][column]" : "0",
+			"order[0][dir]" : "asc",
+			"order[1][column]" : "0",
+			"order[1][dir]" : "asc",
+			"columns[0][data]" : "id",
+			"columns[0][name]" : "",
+			"columns[0][searchable]" : "true",
+			"columns[0][orderable]" : "true",
+			"columns[0][search][value]" : "",
+			"columns[0][search][regex]" : "false",
+		}, follow_redirects=False)
+		assert '"error": "Order column count (2) is greater than total number of requested columns (1)"' in rv.data
+
+	def test_OrderColIndexInvalid_3_6(self):
+		rv = self.app.post('/events', data={
+			"draw" : "1",
+			"start" : "0",
+			"length" : "10",
+			"search[value]" : "",
+			"search[regex]" : "false",
+			"order[0][column]" : "1",
+			"order[0][dir]" : "asc",
+			"columns[0][data]" : "id",
+			"columns[0][name]" : "",
+			"columns[0][searchable]" : "true",
+			"columns[0][orderable]" : "true",
+			"columns[0][search][value]" : "",
+			"columns[0][search][regex]" : "false",
+		}, follow_redirects=False)
 		assert '"error": "' in rv.data
 
 suite = unittest.TestLoader().loadTestsFromTestCase(DataTablesTests)
