@@ -140,38 +140,40 @@ class DataTables:
 	def filtering(self):
 		"""Construct the query, by adding filtering(LIKE) on all columns when the datatable's search box is used
 		"""
-		search_value = self.request_values.get('search[value]')
-		condition = None
-		def search(idx, col):
-			tmp_column_name = col.column_name.split('.')
-			obj = getattr(self.sqla_object, tmp_column_name[0])
+
+		def resolve_column(column):
+			tmp_name = column.data.split('.')
+			obj = getattr(self.sqla_object, tmp_name[0])
 			if not hasattr(obj, "property"): # Ex: hybrid_property or property
 				sqla_obj = self.sqla_object
-				column_name = col.column_name
-			elif isinstance(obj.property, RelationshipProperty): #Ex: ForeignKey
-				# Ex: address.description
+				column_name = "".join(tmp_name[1:])
+			elif isinstance(obj.property, RelationshipProperty): # Ex: ForeignKey
+		 		# Ex: address.description
 				sqla_obj = obj.mapper.class_
-				column_name = "".join(tmp_column_name[1:])
+				column_name = "".join(tmp_order_name[1:])
 				if not column_name:
-					# find first primary key
-					column_name = obj.property.table.primary_key.columns \
-						.values()[0].name
-			else:
+					# Find first primary key
+					column_name = obj.property.table.primary_key.columns.values()[0].name
+			else: #-> ColumnProperty
 				sqla_obj = self.sqla_object
-				column_name = col.column_name
+				column_name = column.name
 			return sqla_obj, column_name
 
-		if search_value:
+		condition = None
+
+		search_value = self.request_values.get('search[value]')
+		if search_value is not None:
 			conditions = []
-			for idx, col in enumerate(self.columns):
-				if self.request_values.get('columns[%s][searchable]' % idx) in (
-						True, 'true'):
-					sqla_obj, column_name = search(idx, col)
-					conditions.append(cast(get_attr(sqla_obj, column_name), String).ilike('%%%s%%' % search_value))
+			for column in self.columns:
+				if column.searchable:
+					sqla_obj, column_name = resolve_column(column)
+					conditions.append(cast(get_attr(sqla_obj, column_name), String).ilike('%%%s%%' % column.search_value))
 			condition = or_(*conditions)
+
 		conditions = []
-		for idx, col in enumerate(self.columns):
-			if self.request_values.get('columns[%s][search][value]' % idx) in (True, 'true'):
+		for column in self.columns:
+			if column.search_value is not None and column.searchable:
+				sql_obj, column_name = resolve_column(column)
 				search_value2 = self.request_values.get('columns[%s][search][value]' % idx)
 				sqla_obj, column_name = search(idx, col)
 
@@ -185,7 +187,6 @@ class DataTables:
 				else:
 					condition= and_(*conditions)
 
-
 		if condition is not None:
 			self.query = self.query.filter(condition)
 			# count after filtering
@@ -197,19 +198,11 @@ class DataTables:
 		"""Construct the query, by adding sorting(ORDER BY) on the columns needed to be applied on
 		"""
 
-		ordering = []
-		Order = namedtuple('Order', ['name', 'dir'])
 		for order_column in self.order_columns:
-			print order_column.index
-			print order_column.dir
-			print len(self.columns)
-			ordering.append(Order(self.columns[order_column.index].data, order_column.dir))
-
-		for order in ordering:
-			tmp_name = order.name.split('.')
+			tmp_name = self.columns[order_column.index].data.split('.')
 			obj = getattr(self.sqla_object, tmp_name[0])
 			if not hasattr(obj, "property"):
-				order_name = order.name
+				column_name = self.columns[order_column.index].data
 
 				if hasattr(self.sqla_object, "__tablename__"):
 					tablename = self.sqla_object.__tablename__
@@ -217,23 +210,23 @@ class DataTables:
 					tablename = self.sqla_object.__table__.name
 			elif isinstance(obj.property, RelationshipProperty): # Ex: ForeignKey
 				 # Ex: address.description => description => addresses.description
-				order_name = "".join(tmp_order_name[1:])
-				if not order_name:
+				column_name = "".join(tmp_order_name[1:])
+				if not column_name:
 					# Find first primary key
-					order_name = obj.property.table.primary_key.columns \
+					column_name = obj.property.table.primary_key.columns \
 							.values()[0].name
 				tablename = obj.property.table.name
 			else: #-> ColumnProperty
-				order_name = order.name
+				column_name = self.columns[order_column.index].data
 
 				if hasattr(self.sqla_object, "__tablename__"):
 					tablename = self.sqla_object.__tablename__
 				else:
 					tablename = self.sqla_object.__table__.name
 
-			order_name = "%s.%s" % (tablename, order_name)
+			column_name = "%s.%s" % (tablename, column_name)
 			self.query = self.query.order_by(
-				asc(order_name) if order.dir == 'asc' else desc(order_name))
+				asc(column_name) if order_column.dir == 'asc' else desc(column_name))
 			print 'ordering SQL: '+str(self.query)
 
 	def paging(self):
