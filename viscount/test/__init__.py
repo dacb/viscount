@@ -27,6 +27,7 @@ manager = Manager(app, usage="Test harness for viscount", with_default_commands=
 
 @manager.command
 def run(db=False, stub=False, loginout=False, tables=False, all=True, continueOnFail=False):
+	"Runs the test, required command"
 	suite = unittest.TestSuite()
 
 	if continueOnFail:
