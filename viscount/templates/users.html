@@ -23,11 +23,19 @@ function formatUser(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr>'+
           '<td><a href="#" class="btn btn-warning" role="button" id="user'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
+          '<td><a href="#" class="btn btn-primary" role="button" id="user'+d.id+'files"> <i class="glyphicon glyphicon-folder-open"></i> Files </a></td>'+
+          '<td><a href="#" class="btn btn-success" role="button" id="user'+d.id+'jobs"> <i class="glyphicon glyphicon-tasks"></i> Jobs </a></td>'+
        '</tr>'+
     '</table>'+
     '<script type="text/javascript">$("#user'+d.id+'events").click(function(){'+
 	'var table = $("#events").DataTable(); table.column("#eventsUserID").search("'+d.id+'").draw();'+
-    ' $("#eventsTabBtn").trigger("click");});<\/script>'
+    ' $("#eventsTabBtn").trigger("click");});<\/script>'+
+    '<script type="text/javascript">$("#user'+d.id+'files").click(function(){'+
+	'var table = $("#files").DataTable(); table.column("#filesUserID").search("'+d.id+'").draw();'+
+    ' $("#filesTabBtn").trigger("click");});<\/script>'+
+    '<script type="text/javascript">$("#user'+d.id+'jobs").click(function(){'+
+	'var table = $("#jobs").DataTable(); table.column("#jobsUserID").search("'+d.id+'").draw();'+
+    ' $("#jobsTabBtn").trigger("click");});<\/script>'
     ;
 }
 
