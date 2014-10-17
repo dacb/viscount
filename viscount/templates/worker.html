@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-{% include "navbar.html" %}
-{% include "messages.html" %}
-{% with worker = worker %}
-  {{ worker.ip }}
-{% endwith %}
-{% include "footer.html" %}
-{% endblock %}
