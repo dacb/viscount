@@ -13,6 +13,18 @@ from collections import namedtuple
 OrderColumn = namedtuple('OrderColumn', ['index', 'dir'])
 ColumnData = namedtuple('ColumnData', ['data', 'name', 'searchable', 'orderable', 'search_value', 'search_regex' ])
 
+def get_attr(sqla_object, attribute):
+	"""Returns the value of an attribute of an SQLAlchemy entity 
+	"""
+	output = sqla_object
+	print attribute
+	for x in attribute.split('.'):
+		if type(output) is InstrumentedList:
+			output = ', '.join([getattr(elem, x) for elem in output])
+		else:
+			output = getattr(output, x)
+	return output
+
 class DataTables:
 	"""Class defining a DataTables object with:
 
@@ -42,7 +54,9 @@ class DataTables:
 				if value in ("true", "false"):
 					self.request_values[key] = value == "true"
 				else:
-					self.request_values[key] = value
+					# santize string
+					import re
+					self.request_values[key] = re.sub('[^a-zA-Z0-9\._]', '', value)
 
 		# process column data from request values
 		self.order_columns = []
@@ -59,10 +73,8 @@ class DataTables:
 		i = 0
 		while True:
 			column_prefix = 'columns[%d]' % i
-			print column_prefix
 			column_data= self.request_values.get(column_prefix + '[data]', None);
 			if column_data is None:
-				print 'no data'
 				break;
 			column_name = self.request_values.get(column_prefix + '[name]', None);
 			column_searchable = self.request_values.get(column_prefix + '[searchable]', None);
@@ -109,7 +121,7 @@ class DataTables:
 		self.cardinality = self.query.count()
 		
 		# the term entered in the datatable's search box
-		#self.filtering()
+		self.filtering()
 
 		# field chosen to sort on
 		self.ordering()
@@ -124,15 +136,9 @@ class DataTables:
 		formatted_results = []
 		for i in range(len(self.results)):
 			row = dict()
-			for j in range(len(self.columns)):
-				col = self.columns[j]
-				tmp_row = get_attr(self.results[i], col.column_name)
-				if col.filter:
-					if isinstance(tmp_row, unicode):
-						tmp_row = col.filter(tmp_row.encode('utf-8'))
-					else:
-						tmp_row = col.filter(tmp_row)
-				row[col.mData if col.mData else str(j)] = tmp_row
+			for column in self.columns:
+				value = get_attr(self.results[i], column.data)
+				row[column.data] = value
 			formatted_results.append(row)
 
 		self.results = formatted_results
@@ -150,13 +156,13 @@ class DataTables:
 			elif isinstance(obj.property, RelationshipProperty): # Ex: ForeignKey
 		 		# Ex: address.description
 				sqla_obj = obj.mapper.class_
-				column_name = "".join(tmp_order_name[1:])
+				column_name = "".join(tmp_name[1:])
 				if not column_name:
 					# Find first primary key
 					column_name = obj.property.table.primary_key.columns.values()[0].name
 			else: #-> ColumnProperty
 				sqla_obj = self.sqla_object
-				column_name = column.name
+				column_name = column.data
 			return sqla_obj, column_name
 
 		condition = None
@@ -165,22 +171,23 @@ class DataTables:
 		if search_value is not None:
 			conditions = []
 			for column in self.columns:
-				if column.searchable:
+				# ignore null columns (javascript placeholder) or unsearchable
+				if column.data != "" and column.searchable:
 					sqla_obj, column_name = resolve_column(column)
 					conditions.append(cast(get_attr(sqla_obj, column_name), String).ilike('%%%s%%' % column.search_value))
 			condition = or_(*conditions)
 
 		conditions = []
 		for column in self.columns:
-			if column.search_value is not None and column.searchable:
-				sql_obj, column_name = resolve_column(column)
-				search_value2 = self.request_values.get('columns[%s][search][value]' % idx)
-				sqla_obj, column_name = search(idx, col)
+			# ignore null columns (javascript placeholder) or unsearchable
+			if column.data != "" and column.searchable:
+				sqla_obj, column_name = resolve_column(column)
 
-				if col.search_like:
-					conditions.append(cast(get_attr(sqla_obj, column_name), String).like(col.search_like % search_value2))
-				else:
-					conditions.append(cast(get_attr(sqla_obj, column_name), String).__eq__(search_value2))
+				#if col.search_like:
+				#	conditions.append(cast(get_attr(sqla_obj, column_name), String).like(col.search_like % search_value2))
+				#else:
+				#	conditions.append(cast(get_attr(sqla_obj, column_name), String).__eq__(search_value2))
+				conditions.append(cast(get_attr(sqla_obj, column_name), String).__eq__(column.search_value))
 
 				if condition is not None:
 					condition = and_(condition, and_(*conditions))
@@ -194,15 +201,24 @@ class DataTables:
 		else:
 			self.cardinality_filtered = self.cardinality
 
+		print 'filering SQL: '+str(self.query)
+
 	def ordering(self):
 		"""Construct the query, by adding sorting(ORDER BY) on the columns needed to be applied on
 		"""
 
 		for order_column in self.order_columns:
-			tmp_name = self.columns[order_column.index].data.split('.')
+			column = self.columns[order_column.index]
+
+			# ignore null columns (javascript placeholder) or unorderable
+			if column.data == "" or not column.orderable:
+				continue
+
+			# split up dot references and process the tree
+			tmp_name = column.data.split('.')
 			obj = getattr(self.sqla_object, tmp_name[0])
 			if not hasattr(obj, "property"):
-				column_name = self.columns[order_column.index].data
+				column_name = column.data
 
 				if hasattr(self.sqla_object, "__tablename__"):
 					tablename = self.sqla_object.__tablename__
@@ -210,14 +226,14 @@ class DataTables:
 					tablename = self.sqla_object.__table__.name
 			elif isinstance(obj.property, RelationshipProperty): # Ex: ForeignKey
 				 # Ex: address.description => description => addresses.description
-				column_name = "".join(tmp_order_name[1:])
+				column_name = "".join(tmp_name[1:])
 				if not column_name:
 					# Find first primary key
 					column_name = obj.property.table.primary_key.columns \
 							.values()[0].name
 				tablename = obj.property.table.name
 			else: #-> ColumnProperty
-				column_name = self.columns[order_column.index].data
+				column_name = column.data
 
 				if hasattr(self.sqla_object, "__tablename__"):
 					tablename = self.sqla_object.__tablename__
@@ -227,15 +243,15 @@ class DataTables:
 			column_name = "%s.%s" % (tablename, column_name)
 			self.query = self.query.order_by(
 				asc(column_name) if order_column.dir == 'asc' else desc(column_name))
-			print 'ordering SQL: '+str(self.query)
+
+		print 'ordering SQL: '+str(self.query)
 
 	def paging(self):
 		"""Construct the query, by slicing the results in order to limit rows showed on the page, and paginate the rest
 		"""
 		Pages = namedtuple('Pages', ['start', 'length'])
 
-		if (self.request_values['start'] != "" ) \
-			and (self.request_values['length'] != -1 ):
+		if (self.request_values['start'] != "" ) and (self.request_values['length'] != -1 ):
 			Pages.start = int(self.request_values['start'])
 			Pages.length = int(self.request_values['length'])
 			offset = Pages.start + Pages.length
