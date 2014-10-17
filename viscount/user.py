@@ -5,7 +5,7 @@
 
 from flask.ext.wtf import Form
 from wtforms import form, fields, validators
-from flask import render_template, flash, redirect, session, url_for, request, g
+from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask.ext.bcrypt import Bcrypt
 from datetime import datetime
@@ -42,7 +42,6 @@ class User(db.Model):
 	email = db.Column(db.String(255), index=True, unique=True)
 	password = db.Column(db.String(255), nullable=False)
 	isActive = db.Column(db.Boolean(), default=True)
-	created = db.Column(db.DateTime(), default=datetime.utcnow())
 	last_login = db.Column(db.DateTime())
 	current_login = db.Column(db.DateTime())
 	last_login_ip = db.Column(db.String(15))
@@ -128,3 +127,11 @@ def logout():
 	logout_user()
 	flash('You have logged out')
 	return redirect(url_for('login'))
+
+# user list
+@app.route('/users',  methods = ['GET', 'POST'])
+@login_required
+def users():
+	query = db.session.query(User)
+	rowTable = DataTables(request, User, query)
+	return jsonify(rowTable.output_result())
