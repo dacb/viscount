@@ -133,5 +133,19 @@ def logout():
 @login_required
 def users():
 	query = db.session.query(User)
-	rowTable = DataTables(request, User, query)
+	column_whitelist = {
+		'id' : True,
+		'username' : True,
+		'lastName' : True,
+		'firstName' : True,
+		'email' : True,
+		'isActive' : True,
+		'last_login' : True,
+		'current_login' : True,
+		'last_login_ip' : True,
+		'current_login_ip' : True,
+		'login_count' : True,
+		'role' : True,
+	}
+	rowTable = DataTables(request, User, query, column_whitelist)
 	return jsonify(rowTable.output_result())

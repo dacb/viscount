@@ -21,6 +21,11 @@ class Project(db.Model):
 @app.route('/projects',  methods = ['GET', 'POST'])
 @login_required
 def projects():
+	column_whitelist = {
+		"id" : True,
+		"name" : True,
+		"description" : True,
+	}
 	query = db.session.query(Project)
 	rowTable = DataTables(request, Project, query)
 	return jsonify(rowTable.output_result())
