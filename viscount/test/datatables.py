@@ -134,4 +134,32 @@ class DataTablesTests(unittest.TestCase):
 		}, follow_redirects=True)
 		assert '"recordsTotal": "21"' in rv.data
 
+	def test_BadRequest_0_2(self):
+		rv = self.app.post('/events', data={
+			"draw" : "1",
+			"start" : "0",
+			"length" : "10",
+			"search[value]" : "guest",
+			"search[regex]" : "false",
+			"columns[0][data]" : "id",
+			"columns[0][name]" : "",
+			"columns[0][searchable]" : "true",
+			"columns[0][orderable]" : "true",
+			"columns[0][search][value]" : "",
+			"columns[0][search][regex]" : "false",
+			"columns[1][data]" : "invalid_column",
+			"columns[1][name]" : "",
+			"columns[1][searchable]" : "true",
+			"columns[1][orderable]" : "true",
+			"columns[1][search][value]" : "",
+			"columns[1][search][regex]" : "false",
+			"columns[2][data]" : "type",
+			"columns[2][name]" : "",
+			"columns[2][searchable]" : "true",
+			"columns[2][orderable]" : "true",
+			"columns[2][search][value]" : "",
+			"columns[2][search][regex]" : "false",
+		}, follow_redirects=False)
+		assert '"error": "' in rv.data
+
 suite = unittest.TestLoader().loadTestsFromTestCase(DataTablesTests)
