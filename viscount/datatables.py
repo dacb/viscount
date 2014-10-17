@@ -17,7 +17,6 @@ def get_attr(sqla_object, attribute):
 	"""Returns the value of an attribute of an SQLAlchemy entity 
 	"""
 	output = sqla_object
-	print attribute
 	for x in attribute.split('.'):
 		if type(output) is InstrumentedList:
 			output = ', '.join([getattr(elem, x) for elem in output])
@@ -137,6 +136,9 @@ class DataTables:
 		for i in range(len(self.results)):
 			row = dict()
 			for column in self.columns:
+				# ignore null columns
+				if column.data == "":
+					continue
 				value = get_attr(self.results[i], column.data)
 				row[column.data] = value
 			formatted_results.append(row)
@@ -168,7 +170,7 @@ class DataTables:
 		condition = None
 
 		search_value = self.request_values.get('search[value]')
-		if search_value is not None:
+		if search_value != "":
 			conditions = []
 			for column in self.columns:
 				# ignore null columns (javascript placeholder) or unsearchable
@@ -180,7 +182,7 @@ class DataTables:
 		conditions = []
 		for column in self.columns:
 			# ignore null columns (javascript placeholder) or unsearchable
-			if column.data != "" and column.searchable:
+			if column.data != "" and column.search_value != "" and column.searchable:
 				sqla_obj, column_name = resolve_column(column)
 
 				#if col.search_like:
@@ -201,7 +203,7 @@ class DataTables:
 		else:
 			self.cardinality_filtered = self.cardinality
 
-		print 'filering SQL: '+str(self.query)
+		#print 'filering SQL: '+str(self.query)
 
 	def ordering(self):
 		"""Construct the query, by adding sorting(ORDER BY) on the columns needed to be applied on
@@ -244,7 +246,7 @@ class DataTables:
 			self.query = self.query.order_by(
 				asc(column_name) if order_column.dir == 'asc' else desc(column_name))
 
-		print 'ordering SQL: '+str(self.query)
+		#print 'ordering SQL: '+str(self.query)
 
 	def paging(self):
 		"""Construct the query, by slicing the results in order to limit rows showed on the page, and paginate the rest
