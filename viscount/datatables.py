@@ -65,10 +65,12 @@ class DataTables:
 	:type sqla_object: sqlalchemy.ext.declarative.DeclarativeMeta
 	:param query: the query wanted to be seen in the the table
 	:type query: sqlalchemy.orm.query.Query
+	:param column_whitelist: a list of whitelisted columns for DataTables requests
+	:type column_whitelist: dict
 
 	:returns: a DataTables object
 	"""
-	def __init__(self, request, sqla_object, query):
+	def __init__(self, request, sqla_object, query, column_whitelist=None):
 		"""Initializes the object with the attributes needed, and runs the query
 		"""
 		self.request_values = { }
@@ -101,9 +103,12 @@ class DataTables:
 		i = 0
 		while True:
 			column_prefix = 'columns[%d]' % i
-			column_data= self.request_values.get(column_prefix + '[data]', None);
+			column_data = self.request_values.get(column_prefix + '[data]', None);
 			if column_data is None:
 				break;
+			# verify the column is in the column whitelist
+			if column_whitelist is not None and column_data != "" and column_whitelist.get(column_data, False) is False:
+				raise DataTablesException('Column is not in whitelist: ' + column_data)
 			column_name = self.request_values.get(column_prefix + '[name]', None);
 			column_searchable = self.request_values.get(column_prefix + '[searchable]', None);
 			column_orderable = self.request_values.get(column_prefix + '[orderable]', None);

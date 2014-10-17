@@ -62,7 +62,7 @@ class DataTablesTests(unittest.TestCase):
 		}, follow_redirects=False)
 		assert '"id": 4,' in rv.data
 
-	def test_BigRequest_3_1(self):
+	def test_BigRequest_3_2(self):
 		rv = self.app.post('/events', data={
 			"draw" : "1",
 			"start" : "0",
@@ -134,7 +134,7 @@ class DataTablesTests(unittest.TestCase):
 		}, follow_redirects=True)
 		assert '"recordsTotal": "21"' in rv.data
 
-	def test_BadRequest_0_2(self):
+	def test_InvalidColumnRequested_3_1(self):
 		rv = self.app.post('/events', data={
 			"draw" : "1",
 			"start" : "0",
