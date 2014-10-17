@@ -4,14 +4,17 @@
       <table id="events" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th>Event ID</th>
-            <th>User</th>
-            <th>Timestamp</th>
+            <th id="eventsID">Event ID</th>
+            <th id="eventsUserID">User ID</th>
+            <th id="eventsUser">User</th>
+            <th id="eventsTimestamp">Timestamp</th>
             <th id="eventsProjectID">Project ID</th>
-            <th>File ID</th>
-            <th>Job ID</th>
-            <th>Worker ID</th>
-            <th>Type</th>
+            <th id="eventsProject">Project</th>
+            <th id="eventsFileID">File ID</th>
+            <th id="eventsFile">File</th>
+            <th id="eventsJobID">Job ID</th>
+            <th id="eventsWorkerID">Worker ID</th>
+            <th id="eventsType">Type</th>
             <th></th>
           </tr>
         </thead>
@@ -38,10 +41,13 @@ $(document).ready(function() {
         "ajax": { url: "/events", type : "post" },
         "columns": [
             { "data": "id" },
+            { "data": "user_id", "visible" : false },
             { "data": "user\\.username" },
             { "data": "timestamp" },
-            { "data": "project_id" },
-            { "data": "file_id" },
+            { "data": "project_id", "visible" : false },
+            { "data": "project\\.name" },
+            { "data": "file_id", "visible" : false },
+            { "data": "file\\.filename" },
             { "data": "job_id" },
             { "data": "worker_id" },
             { "data": "type" },
