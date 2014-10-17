@@ -17,7 +17,7 @@ def drop():
 		db.drop_all()
 
 @manager.command
-def create(default_data=True, sample_data=False):
+def create(default_data=True, sample_data=True):
 	"Creates database tables from sqlalchemy models"
 	db.create_all()
 	if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
@@ -27,7 +27,7 @@ def create(default_data=True, sample_data=False):
 
 
 @manager.command
-def recreate(default_data=True, sample_data=False):
+def recreate(default_data=True, sample_data=True):
 	"Recreates database tables (same as issuing 'drop' and then 'create')"
 	drop()
 	create(default_data, sample_data)
@@ -43,7 +43,7 @@ def populate(default_data=False, sample_data=False):
 
 	if sample_data:
 		from viscount.database import init_samples
-		init_sample(s)
+		init_samples()
 
 @manager.command
 def migrate():
