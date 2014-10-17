@@ -21,7 +21,10 @@ def get_attr(sqla_object, attribute):
 		if type(output) is InstrumentedList:
 			output = ', '.join([getattr(elem, x) for elem in output])
 		else:
-			output = getattr(output, x)
+			output = getattr(output, x, None)
+			# if a relation is not populated, just return None at the top level
+			if output is None:
+				break
 	return output
 
 class DataTables:
@@ -127,6 +130,8 @@ class DataTables:
 
 		# pages have a 'start' and 'length' attributes
 		self.paging()
+
+		print str(self.query)
 
 		# fetch the result of the queries
 		self.results = self.query.all()
