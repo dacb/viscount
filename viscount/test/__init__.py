@@ -4,7 +4,7 @@ import unittest
 # in accordance with the following, tests should be named:
 # test_HelpfulTestName_X_Y
 # where X and Y are numbers, tests will be sorted by X first and if equal then Y
-unittest.TestLoader.sortTestMethodsUsing = lambda _, x, y: cmp(x.rsplit('_', 2)[1], y.rsplit('_', 2)[1]) if cmp(x.rsplit('_', 2)[1], y.rsplit('_', 2)[1]) != 0 else cmp(x.rsplit('_', 1)[1], y.rsplit('_', 1)[1]);
+unittest.TestLoader.sortTestMethodsUsing = lambda _, x, y: cmp(int(x.rsplit('_', 2)[1]), int(y.rsplit('_', 2)[1])) if cmp(int(x.rsplit('_', 2)[1]), int(y.rsplit('_', 2)[1])) != 0 else cmp(int(x.rsplit('_', 1)[1]), int(y.rsplit('_', 1)[1]));
 
 from viscount import app
 from viscount.database import db
