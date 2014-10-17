@@ -1,4 +1,4 @@
-# based on stuff from sqlalchemy-datatables
+# heavily modified from stuff at sqlalchemy-datatables
 # https://github.com/Pegase745/sqlalchemy-datatables
 
 from sqlalchemy.sql.expression import asc, desc
@@ -9,6 +9,8 @@ from sqlalchemy.sql.expression import cast
 from sqlalchemy import String
 
 from collections import namedtuple
+
+from viscount.database import printquery
 
 OrderColumn = namedtuple('OrderColumn', ['index', 'dir'])
 ColumnData = namedtuple('ColumnData', ['data', 'name', 'searchable', 'orderable', 'search_value', 'search_regex' ])
@@ -131,7 +133,7 @@ class DataTables:
 		# pages have a 'start' and 'length' attributes
 		self.paging()
 
-		print str(self.query)
+		#printquery(self.query.statement, self.query.session.get_bind(self.query._mapper_zero_or_none()))
 
 		# fetch the result of the queries
 		self.results = self.query.all()
@@ -181,7 +183,7 @@ class DataTables:
 				# ignore null columns (javascript placeholder) or unsearchable
 				if column.data != "" and column.searchable:
 					sqla_obj, column_name = resolve_column(column)
-					conditions.append(cast(get_attr(sqla_obj, column_name), String).ilike('%%%s%%' % column.search_value))
+					conditions.append(cast(get_attr(sqla_obj, column_name), String).ilike('%%%s%%' % search_value))
 			condition = or_(*conditions)
 
 		conditions = []
