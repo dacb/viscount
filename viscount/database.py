@@ -21,6 +21,8 @@ def init_project(name, description, user):
 	return project
 
 def init_defaults():
+	from viscount.event import Event
+	db.session.add(Event(type='created'))
 	init_user(username='admin', password='admin', role='admin')
 	init_user(username='user', password='user', role='user')
 	init_user(username='guest', password='guest', role='guest')
