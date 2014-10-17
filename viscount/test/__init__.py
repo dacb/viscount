@@ -30,5 +30,4 @@ def run(db=False, stub=False, loginout=False, tables=False, all=True):
 		from viscount.test.datatables import suite as datatables_suite
 		suite.addTest(datatables_suite)
 
-	suite = unittest.TestLoader().loadTestsFromTestCase(suite)
 	unittest.TextTestRunner(verbosity=2).run(suite)
