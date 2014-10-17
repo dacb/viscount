@@ -1,8 +1,9 @@
-import unittest
 import os.path
 
 from viscount import app
 from viscount.database import db, init_defaults, init_samples
+
+from viscount.test import unittest
 
 class StubTests(unittest.TestCase):
 	def setUp(self):
@@ -20,7 +21,7 @@ class StubTests(unittest.TestCase):
 		db.drop_all()
 
 	# test cases
-	def test_stubExample(self):
+	def test_stubExample_0_0(self):
 		assert 1 == 1
 
 suite = unittest.TestLoader().loadTestsFromTestCase(StubTests)

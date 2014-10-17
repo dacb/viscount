@@ -1,8 +1,9 @@
-import unittest
 import os.path
 
 from viscount import app
 from viscount.database import db, init_defaults, init_samples
+
+from viscount.test import unittest
 
 from viscount.user import User
 
@@ -33,7 +34,35 @@ class DataTablesTests(unittest.TestCase):
 		return self.app.get('/logout', follow_redirects=True)
 
 	# test cases
-	def test_datatablesRequest(self):
+	def test_SmallRequest_3_0(self):
+		rv = self.app.post('/events', data={
+			"draw" : "1",
+			"start" : "0",
+			"length" : "10",
+			"search[value]" : "guest",
+			"search[regex]" : "false",
+			"columns[0][data]" : "id",
+			"columns[0][name]" : "",
+			"columns[0][searchable]" : "true",
+			"columns[0][orderable]" : "true",
+			"columns[0][search][value]" : "",
+			"columns[0][search][regex]" : "false",
+			"columns[1][data]" : "user\.username",
+			"columns[1][name]" : "",
+			"columns[1][searchable]" : "true",
+			"columns[1][orderable]" : "true",
+			"columns[1][search][value]" : "",
+			"columns[1][search][regex]" : "false",
+			"columns[2][data]" : "type",
+			"columns[2][name]" : "",
+			"columns[2][searchable]" : "true",
+			"columns[2][orderable]" : "true",
+			"columns[2][search][value]" : "",
+			"columns[2][search][regex]" : "false",
+		}, follow_redirects=False)
+		assert '"id": 4,' in rv.data
+
+	def test_BigRequest_3_1(self):
 		rv = self.app.post('/events', data={
 			"draw" : "1",
 			"start" : "0",
@@ -103,7 +132,6 @@ class DataTablesTests(unittest.TestCase):
 			"columns[8][search][value]" : "",
 			"columns[8][search][regex]" : "false",
 		}, follow_redirects=True)
-		print rv.data
-		assert 'recordsFiltered' in rv.data
+		assert '"recordsTotal": "21"' in rv.data
 
 suite = unittest.TestLoader().loadTestsFromTestCase(DataTablesTests)

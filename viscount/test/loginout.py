@@ -1,8 +1,9 @@
-import unittest
 import os.path
 
 from viscount import app
 from viscount.database import db, init_defaults, init_samples
+
+from viscount.test import unittest
 
 from viscount.user import User
 
@@ -30,12 +31,12 @@ class LoginLogoutTests(unittest.TestCase):
 		return self.app.get('/logout', follow_redirects=True)
 
 	# test cases
-	def test_login(self):
+	def test_login_2_0(self):
 		rv = self.login('admin', 'admin')
 		assert 'Logoff admin' in rv.data
 		rv = self.logout()
 
-	def test_logout(self):
+	def test_logout_2_1(self):
 		rv = self.login('admin', 'admin')
 		rv = self.logout()
 		assert 'You have logged out' in rv.data
