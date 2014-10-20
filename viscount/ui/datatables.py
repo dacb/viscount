@@ -184,7 +184,7 @@ class DataTables:
 			formatted_results.append(row)
 
 		self.results = formatted_results
-		print self.results
+		#print self.results
 
 	def filtering(self):
 		"""Construct the query, by adding filtering(LIKE) on all columns when the datatable's search box is used
