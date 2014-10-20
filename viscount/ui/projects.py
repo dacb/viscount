@@ -13,10 +13,12 @@ def projects():
 	column_whitelist = {
 		"id" : True,
 		"name" : True,
+		"user_id" : True,
 		"user.username" : True,
 		"description" : True,
 	}
 	query = db.session.query(Project). \
 		outerjoin(User, (User.id == Project.user_id))
 	rowTable = DataTables(request, Project, query, column_whitelist)
+	print jsonify(rowTable.output_result()).data
 	return jsonify(rowTable.output_result())

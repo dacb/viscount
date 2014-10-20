@@ -4,10 +4,11 @@
       <table id="projects" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th>Project ID</th>
-            <th>Name</th>
-            <th>User</th>
-            <th>Description</th>
+            <th id="projectsID">Project ID</th>
+            <th id="projectsName">Name</th>
+            <th id="projectsUserID">User ID</th>
+            <th id="projectsUser">User</th>
+            <th id="projectsDescription">Description</th>
             <th></th>
           </tr>
         </thead>
@@ -39,11 +40,13 @@ $(document).ready(function() {
         "columns": [
             { "data": "id" },
             { "data": "name" },
+			{ "data": "user_id", "visible" : false },
             { "data": "user.username" },
             { "data": "description" },
             {
                 "class":          'details-control',
                 "orderable":      false,
+				"searchable":     false,
                 "data":           null,
                 "defaultContent": ''
             }
