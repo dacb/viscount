@@ -6,8 +6,8 @@
           <tr>
             <th id="projectsID">Project ID</th>
             <th id="projectsName">Name</th>
-            <th id="projectsUserID">User ID</th>
-            <th id="projectsUser">User</th>
+            <th id="projectsOwnerID">Owner ID</th>
+            <th id="projectsOwner">Owner</th>
             <th id="projectsDescription">Description</th>
             <th></th>
           </tr>
@@ -40,8 +40,8 @@ $(document).ready(function() {
         "columns": [
             { "data": "id" },
             { "data": "name" },
-            { "data": "user_id", "visible" : false },
-            { "data": "user.username", "defaultContent": "" },
+            { "data": "owner_id", "visible" : false },
+            { "data": "owner\\.username" },
             { "data": "description" },
             {
                 "class":          'details-control',

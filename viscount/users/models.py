@@ -59,6 +59,6 @@ class User(UserJSONSerializer, UserMixin, db.Model):
 	roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
 
 	events = db.relationship('Event', backref='user', lazy='dynamic')
-	projects = db.relationship('Project', backref='user', lazy='dynamic')
-	files = db.relationship('File', backref='user', lazy='dynamic')
-	jobs = db.relationship('Job', backref='user', lazy='dynamic')
+	projects = db.relationship('Project', backref='owner', lazy='dynamic')
+	files = db.relationship('File', backref='owner', lazy='dynamic')
+	jobs = db.relationship('Job', backref='owner', lazy='dynamic')
