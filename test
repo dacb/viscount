@@ -1,4 +1,0 @@
-#!venv/bin/python
-from viscount.test import manager
-
-manager.run()
