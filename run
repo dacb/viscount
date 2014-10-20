@@ -1,0 +1,47 @@
+#!venv/bin/python
+"""
+viscount main driver
+
+commands include run, debug, and shell
+"""
+
+import argparse
+from werkzeug.serving import run_simple
+from werkzeug.wsgi import DispatcherMiddleware
+import code
+
+from viscount import api, ui
+from viscount.core import db
+
+
+def main():
+	"viscount main driver for development server w/ REST API & UI"
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-d", "--debug", action="store_true", dest="debug", help="Enable debug mode")
+	parser.add_argument("-i", "--host", action="store", type=str, dest="host", help="Specify the host interface for the server (default all)", default="0.0.0.0")
+	parser.add_argument("-p", "--port", action="store", type=int, dest="port", help="Specify the port for the server (default 5000)", default=5000)
+	parser.add_argument("-s", "--shell", action="store_true", dest="shell", help="Enter an interactive shell (no server) w/ app and db contexts")
+
+	args = parser.parse_args()
+
+	# the shell argument is present, ignore all else and start an interactive shell 
+	if args.shell:
+		app = api.create_app()
+		code.interact('Welcome to the viscount shell', local=dict(app=app, db=db))
+
+	else:
+		config_override = None
+		if args.debug:
+			config_override = 'config.DebugConfig'
+
+		application = DispatcherMiddleware(
+			ui.create_app(config_override=config_override),
+			{ '/api': api.create_app(config_override=config_override) }
+		)
+
+		run_simple(args.host, args.port, application,  use_reloader=args.debug, use_debugger=args.debug, use_evalex=args.debug)
+
+
+if __name__ == "__main__":
+	main()

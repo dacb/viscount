@@ -1,0 +1,50 @@
+"""
+viscount.api.projects
+
+Project related endpoints
+"""
+
+from flask import Blueprint, request
+
+from ..forms import NewProjectForm, UpdateProjectForm
+from ..services import projects as _projects
+from . import ViscountFormException, route
+
+bp = Blueprint('projects', __name__, url_prefix='/projects')
+
+
+@route(bp, '/')
+def list():
+	"""Returns a list of _project instances."""
+	return _projects.all()
+
+
+@route(bp, '/', methods=['POST'])
+def create():
+	"""Creates a new _project. Returns the new _project instance."""
+	form = NewProjectForm()
+	if form.validate_on_submit():
+		return _projects.create(**request.json)
+	raise ViscountFormException(form.errors)
+
+
+@route(bp, '/<project_id>')
+def show(project_id):
+	"""Returns a _project instance."""
+	return _projects.get_or_404(project_id)
+
+
+@route(bp, '/<project_id>', methods=['PUT'])
+def update(project_id):
+	"""Updates a _project. Returns the updated _project instance."""
+	form = UpdateProjectForm()
+	if form.validate_on_submit():
+		return _projects.update(projects.get_or_404(project_id), **request.json)
+	raise(ViscountFormException(form.errors))
+
+
+@route(bp, '/<project_id>', methods=['DELETE'])
+def delete(project_id):
+	"""Deletes a _project. Returns a 204 response."""
+	_projects.delete(projects.get_or_404(project_id))
+	return None, 204
