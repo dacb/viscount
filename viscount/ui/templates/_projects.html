@@ -6,6 +6,7 @@
           <tr>
             <th>Project ID</th>
             <th>Name</th>
+            <th>User</th>
             <th>Description</th>
             <th></th>
           </tr>
@@ -38,6 +39,7 @@ $(document).ready(function() {
         "columns": [
             { "data": "id" },
             { "data": "name" },
+            { "data": "user.username" },
             { "data": "description" },
             {
                 "class":          'details-control',
