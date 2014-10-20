@@ -51,7 +51,7 @@ def populate(default_data=True, sample_data=True):
 	if sample_data:
 		from viscount.services import projects
 		for i in range(1, 12):
-			projects.create(name='Project #' + str(i), description='Example project #' + str(i))
+			projects.create(name='Project #' + str(i), description='Example project #' + str(i), user_id = admin.id)
 
 @manager.command
 def migrate():

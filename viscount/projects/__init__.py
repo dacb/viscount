@@ -17,5 +17,5 @@ class ProjectsService(Service):
 		"""
 		from ..services import events
 		project = self.save(self.new(**kwargs))
-		event = events.create(project_id=project.id, type='created')
+		event = events.create(project_id=project.id, type='created', user_id=project.user_id)
 		return project
