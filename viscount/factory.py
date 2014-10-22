@@ -9,7 +9,7 @@ import os
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 
-from .core import db, security
+from .core import db, security #, csrf
 from .utils import register_blueprints
 from .users.models import User, Role
 
@@ -32,6 +32,7 @@ def create_app(package_name, package_path, config_override=None, register_securi
 
 	db.init_app(app)
 	security.init_app(app, SQLAlchemyUserDatastore(db, User, Role), register_blueprint=register_security_blueprint)
+#	csrf.init_app(app)
 
 	register_blueprints(app, package_name, package_path)
 

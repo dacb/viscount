@@ -19,23 +19,35 @@ def list():
 	return _users.all()
 
 
+@route(bp, '/', methods=['POST'])
+def create():
+	"""Creates a new _user. Returns the new _user instance."""
+	print request.headers
+	print request.data
+	print request.method
+	form = NewUserForm()
+	if form.validate_on_submit():
+		return _users.create(**request.json)
+	raise ViscountFormException(form.errors)
+
+
 @route(bp, '/<user_id>')
 def show(user_id):
 	"""Returns a _user instance."""
 	return _users.get_or_404(user_id)
 
 
-@route(bp, '/<workflow_id>', methods=['PUT'])
-def update(workflow_id):
-	"""Updates a workflow. Returns the updated workflow instance."""
-	form = UpdateWorkflowForm()
+@route(bp, '/<user_id>', methods=['PUT'])
+def update(user_id):
+	"""Updates a user. Returns the updated user instance."""
+	form = UpdateUserForm()
 	if form.validate_on_submit():
-		return workflows.update(workflows.get_or_404(workflow_id), **request.json)
+		return users.update(users.get_or_404(user_id), **request.json)
 	raise(ViscountFormException(form.errors))
 
 
-@route(bp, '/<job_id>', methods=['DELETE'])
-def delete(job_id):
-	"""Deletes a job. Returns a 204 response."""
-	_jobs.delete(jobs.get_or_404(job_id))
+@route(bp, '/<user_id>', methods=['DELETE'])
+def delete(user_id):
+	"""Deletes a user. Returns a 204 response."""
+	_users.delete(users.get_or_404(user_id))
 	return None, 204

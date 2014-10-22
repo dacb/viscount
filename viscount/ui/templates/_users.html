@@ -16,6 +16,49 @@
       </table>
     </div>
   </div>
+  {% if 'admin' in user.roles %}
+  <div class="row">
+    <hr/>
+  </div>
+  <div class="row">
+    <form class="form-horizontal" action="/api/users" method="post" id="createUser" name="createUser">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="form-group">
+            <label for="email" class="control-label col-xs-2">Email</label>
+            <div class="col-xs-4">
+                <input type="email" class="form-control" name="email" placeholder="Email">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="username" class="control-label col-xs-2">Username</label>
+            <div class="col-xs-2">
+                <input type="text" class="form-control" name="username" placeholder="Username">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="control-label col-xs-2">Password</label>
+            <div class="col-xs-2">
+                <input type="password" class="form-control" name="password" placeholder="Password">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="role" class="control-label col-xs-2">Role</label>
+            <div class="col-xs-2">
+              <select class="form-control" name="role">
+                {% for role in roles %}
+                  <option>{{ role.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-offset-2 col-xs-10">
+                <button type="submit" id="createUserSubmit" class="btn btn-primary">Create User</button>
+            </div>
+        </div>
+    </form>
+  </div>
+  {% endif %}
 </div>
 
 <script type="text/javascript">
@@ -39,7 +82,7 @@ function formatUser(d) {
     ;
 }
 
-$(document).ready(function() {
+function loadUserTable() {
     var table = $('#users').DataTable( {
         "processing": true,
         "serverSide": true,
@@ -58,7 +101,11 @@ $(document).ready(function() {
         ],
         "order": [[1, 'asc']]
     } );
-     
+}
+
+$(document).ready(function() {
+	loadUserTable();
+
     // Add event listener for opening and closing details
     $('#users tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
@@ -76,4 +123,33 @@ $(document).ready(function() {
         }
     } );
 } );
+
+//callback handler for form submit
+$("#createUser").submit(function(e)
+{
+    var postData = $(this).serializeArray();
+    var formURL = $(this).attr("action");
+    var formMethod = $(this).attr("method");
+    $.ajax(
+    {
+        url : formURL,
+        type: formMethod,
+        data : postData,
+        success:function(data, textStatus, jqXHR) 
+        {
+            //data: return data from server
+			loadTable();
+        },
+        error: function(jqXHR, textStatus, errorThrown) 
+        {
+            //if fails      
+        }
+    });
+    e.preventDefault(); //STOP default action
+    e.unbind(); //unbind. to stop multiple form submit.
+});
+ 
+$("#createUserSubmit").click(function () {
+    $("#createUser").submit(); //Submit the FORM
+});
 </script>

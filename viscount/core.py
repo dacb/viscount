@@ -8,12 +8,13 @@ contains the Service model extension
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security
+from flask_wtf.csrf import CsrfProtect
 
 
 # extension instances
 db = SQLAlchemy()
 security = Security()
-
+#csrf = CsrfProtect(app)
 
 # error classes
 class ViscountException(Exception):
