@@ -22,7 +22,7 @@
   </div>
   <div class="row">
     <form class="form-horizontal" action="/api/users" method="post" id="createUser" name="createUser">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label for="email" class="control-label col-xs-2">Email</label>
             <div class="col-xs-4">
@@ -49,6 +49,18 @@
                   <option>{{ role.name }}</option>
                 {% endfor %}
               </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="firstName" class="control-label col-xs-2">First name</label>
+            <div class="col-xs-2">
+                <input type="text" class="form-control" name="firstName" placeholder="First name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lastName" class="control-label col-xs-2">Last name</label>
+            <div class="col-xs-2">
+                <input type="text" class="form-control" name="lastName" placeholder="Last name">
             </div>
         </div>
         <div class="form-group">
