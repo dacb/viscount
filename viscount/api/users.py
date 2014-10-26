@@ -22,10 +22,8 @@ def list():
 @route(bp, '/', methods=['POST'])
 def create():
 	"""Creates a new _user. Returns the new _user instance."""
-	print request.headers
-	print request.data
-	print request.method
 	form = NewUserForm()
+	print form.data
 	if form.validate_on_submit():
 		return _users.create(**request.json)
 	raise ViscountFormException(form.errors)
