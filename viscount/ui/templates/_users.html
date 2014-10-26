@@ -158,7 +158,7 @@ $("#createUser").submit(function(e)
         }
     });
     e.preventDefault(); //STOP default action
-    e.unbind(); //unbind. to stop multiple form submit.
+    $(this).unbind(e); //unbind. to stop multiple form submit.
 });
  
 $("#createUserSubmit").click(function () {
