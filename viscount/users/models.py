@@ -47,6 +47,8 @@ class User(UserJSONSerializer, UserMixin, db.Model):
 	email = db.Column(db.String(255), unique=True)
 	username = db.Column(db.String(32), unique=True)
 	password = db.Column(db.String(120))
+	firstName = db.Column(db.String(32))
+	lastName = db.Column(db.String(32))
 	active = db.Column(db.Boolean())
 	confirmed_at = db.Column(db.DateTime())
 	last_login_at = db.Column(db.DateTime())
