@@ -25,7 +25,7 @@ def create():
 	form = NewUserForm()
 	print form.data
 	if form.validate_on_submit():
-		return _users.create(**request.json)
+		return _users.create(**form.data)
 	raise ViscountFormException(form.errors)
 
 
