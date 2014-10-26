@@ -11,4 +11,4 @@ bp = Blueprint('ui', __name__)
 @route(bp, '/')
 def index():
 	"""Returns the main index page for the ui"""
-	return render_template("index.html", title='Home', user=current_user, roles=_roles.all(), csrf_token=session['csrf_token'])
+	return render_template("index.html", title='Home', user=current_user, roles=_roles.all())
