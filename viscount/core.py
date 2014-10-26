@@ -14,7 +14,8 @@ from flask_wtf.csrf import CsrfProtect
 # extension instances
 db = SQLAlchemy()
 security = Security()
-#csrf = CsrfProtect(app)
+csrf = CsrfProtect()
+
 
 # error classes
 class ViscountException(Exception):

@@ -9,14 +9,14 @@ import os
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 
-from .core import db, security #, csrf
+from .core import db, security, csrf
 from .utils import register_blueprints
 from .users.models import User, Role
 
 
 def create_app(package_name, package_path, config_override=None, register_security_blueprint=True):
 	"""Returns a :class:`Flask` application instance configured with common
-	functionality for the Overholt platform.
+	functionality for the Viscount platform.
 
 	:param package_name: application package name
 	:param package_path: application package path
@@ -32,7 +32,7 @@ def create_app(package_name, package_path, config_override=None, register_securi
 
 	db.init_app(app)
 	security.init_app(app, SQLAlchemyUserDatastore(db, User, Role), register_blueprint=register_security_blueprint)
-#	csrf.init_app(app)
+	csrf.init_app(app)
 
 	register_blueprints(app, package_name, package_path)
 
