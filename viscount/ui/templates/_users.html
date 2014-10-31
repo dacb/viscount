@@ -95,24 +95,29 @@ function formatUser(d) {
 }
 
 function loadUserTable() {
-    var table = $('#users').DataTable( {
-        "processing": true,
-        "serverSide": true,
-        "ajax": { url: "/users", type : "post" },
-        "columns": [
-            { "data": "id" },
-            { "data": "username" },
-            { "data": "email" },
-            { "data": "last_login" },
-            {
-                "class":          'details-control',
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ''
-            }
-        ],
-        "order": [[1, 'asc']]
-    } );
+	if ( $.fn.dataTable.isDataTable('#users') ) {
+		table = $('#users').DataTable();
+		table.ajax.reload();
+	} else {
+    	var table = $('#users').DataTable( {
+			"processing": true,
+        	"serverSide": true,
+        	"ajax": { url: "/users", type : "post" },
+        	"columns": [
+            	{ "data": "id" },
+            	{ "data": "username" },
+            	{ "data": "email" },
+            	{ "data": "last_login" },
+            	{
+                	"class":          'details-control',
+                	"orderable":      false,
+                	"data":           null,
+                	"defaultContent": ''
+            	}
+        	],
+        	"order": [[1, 'asc']]
+    	} );
+	}
 }
 
 $(document).ready(function() {
@@ -137,7 +142,7 @@ $(document).ready(function() {
 } );
 
 //callback handler for form submit
-$("#createUser").submit(function(e)
+$("#createUser").submit(function(event)
 {
     var postData = $(this).serializeArray();
     var formURL = $(this).attr("action");
@@ -147,21 +152,15 @@ $("#createUser").submit(function(e)
         url : formURL,
         type: formMethod,
         data : postData,
-        success:function(data, textStatus, jqXHR) 
-        {
-            //data: return data from server
+		dataType : 'json',
+	})
+		.done(function(data) {
 			loadUserTable();
-        },
-        error: function(jqXHR, textStatus, errorThrown) 
-        {
-            //if fails      
-        }
-    });
-    e.preventDefault(); //STOP default action
-    $(this).unbind(e); //unbind. to stop multiple form submit.
-});
- 
-$("#createUserSubmit").click(function () {
-    $("#createUser").submit(); //Submit the FORM
+		})
+		.fail(function(data) {
+			$("#message_block").html("<div class \"alert alert-danger\"><a href=\"#\" ckass=\"close\" data-dismiss=\"alert\">&times;</a>shit broke</div>");
+			console.log(data);
+		})
+    event.preventDefault(); //STOP default action
 });
 </script>
