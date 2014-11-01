@@ -5,10 +5,11 @@ Note: these are handled by flask-security and exist just for the API
 """
 
 from flask_wtf import Form
-from wtforms import StringField, TextAreaField, SelectMultipleField
+from wtforms import StringField, TextAreaField
 from wtforms.validators import Required, Email
+from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 
-from ..services import users
+from ..services import roles as _roles
 
 __all__ = ['NewUserForm', 'UpdateUserForm']
 
@@ -19,7 +20,7 @@ class NewUserForm(Form):
 	password = StringField('password', validators=[Required()])
 	firstName = StringField('firstName', validators=[Required()])
 	lastName = StringField('lastName', validators=[Required()])
-	roles = SelectMultipleField('roles', choices=[('admin', '1'), ('user', '2'), ('guest', '3')])
+	roles = QuerySelectMultipleField('roles', query_factory=_roles.all)
 
 
 class UpdateUserForm(Form):
@@ -28,4 +29,4 @@ class UpdateUserForm(Form):
 	password = StringField('password', validators=[Required()])
 	firstName = StringField('firstName', validators=[Required()])
 	lastName = StringField('lastName', validators=[Required()])
-
+	roles = QuerySelectMultipleField('roles', query_factory=_roles.all)
