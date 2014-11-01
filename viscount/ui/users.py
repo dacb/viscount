@@ -27,5 +27,5 @@ def users():
 		'roles' : True,
 	}
 	query = db.session.query(User)
-	rowTable = DataTables(request, User, query)
+	rowTable = DataTables(request, User, query, column_whitelist)
 	return jsonify(rowTable.output_result())
