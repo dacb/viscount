@@ -83,6 +83,8 @@
 <script type="text/javascript">
 function formatUser(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+       '<tr><td>First name</td><td>'+d.firstName+'</td></tr>'+
+       '<tr><td>Last name</td><td>'+d.lastName+'</td></tr>'+
        '<tr>'+
           '<td><a href="#" class="btn btn-warning" role="button" id="user'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
           '<td><a href="#" class="btn btn-primary" role="button" id="user'+d.id+'files"> <i class="glyphicon glyphicon-folder-open"></i> Files </a></td>'+
@@ -121,7 +123,9 @@ function loadUserTable() {
                 	"orderable":      false,
                 	"data":           null,
                 	"defaultContent": ''
-            	}
+            	},
+				{ "data": "firstName", "visible" : false },
+				{ "data": "lastName", "visible" : false }
         	],
         	"order": [[1, 'asc']]
     	} );
