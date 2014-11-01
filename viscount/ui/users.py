@@ -12,17 +12,19 @@ from .index import bp
 def users():
 	column_whitelist = {
 		'id' : True,
+		'email' : True,
 		'username' : True,
 		'lastName' : True,
 		'firstName' : True,
-		'email' : True,
-		'isActive' : True,
-		'last_login' : True,
-		'current_login' : True,
+		'active' : True,
+		'confirmed_at' : True,
+		'last_login_at' : True,
+		'current_login_at' : True,
 		'last_login_ip' : True,
 		'current_login_ip' : True,
 		'login_count' : True,
-		'role' : True,
+		'registered_at' : True,
+		'roles' : True,
 	}
 	query = db.session.query(User)
 	rowTable = DataTables(request, User, query)
