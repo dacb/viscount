@@ -46,7 +46,6 @@ def populate(default_data=True, sample_data=True):
 		roles.create(name='guest', description='guest (read only)')
 		admin = users.create(email='admin@host', username='admin', password=encrypt_password('password'), 
 			firstName="", lastName="",
-			active=True, confirmed_at=datetime.utcnow(), registered_at=datetime.utcnow(), login_count=0,
 			roles = [ role_admin, role_user ])
 
 	if sample_data:

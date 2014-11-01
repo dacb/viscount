@@ -6,6 +6,7 @@ provides workflow related services
 
 from ..core import Service, db
 from .models import User, Role
+from datetime import datetime
 
 
 class UsersService(Service):
@@ -17,6 +18,7 @@ class UsersService(Service):
 		:param **kwargs: instance parameters
 		"""
 		from ..services import events
+		kwargs.update({'confirmed_at' : datetime.utcnow(), 'registered_at' : datetime.utcnow(), 'active' : True, 'login_count' : 0})
 		user = self.save(self.new(**kwargs))
 		event = events.create(user_id=user.id, type='created')
 		return user
