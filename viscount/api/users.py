@@ -8,7 +8,7 @@ from flask import Blueprint, request
 
 from ..forms import NewUserForm, UpdateUserForm
 from ..services import users as _users
-from . import ViscountFormException, route
+from . import ViscountFormException, ViscountException, route
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -25,6 +25,10 @@ def create():
 	form = NewUserForm()
 	print form.data
 	if form.validate_on_submit():
+		if _users.find(email=form.data['email']).count() > 0:
+			raise ViscountException(message="A user with that email already exists!")
+		if _users.find(username=form.data['username']).count() > 0:
+			raise ViscountException(message="A user with that username already exists!")
 		return _users.create(**form.data)
 	raise ViscountFormException(form.errors)
 
