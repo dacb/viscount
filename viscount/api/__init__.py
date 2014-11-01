@@ -26,6 +26,7 @@ def create_app(config_override=None, register_security_blueprint=False):
 	app.errorhandler(ViscountException)(handle_ViscountException)
 	app.errorhandler(ViscountFormException)(handle_ViscountFormException)
 	app.errorhandler(404)(handle_404)
+	app.errorhandler(500)(handle_500)
 
 	return app
 
@@ -57,3 +58,6 @@ def handle_ViscountFormException(e):
 
 def handle_404(e):
 	return jsonify(dict(error='Not found')), 404
+
+def handle_500(e):
+	return jsonify(dict(error='Internal server error')), 500
