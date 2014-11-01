@@ -85,6 +85,15 @@ function formatUser(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr><td>First name</td><td>'+d.firstName+'</td></tr>'+
        '<tr><td>Last name</td><td>'+d.lastName+'</td></tr>'+
+       '<tr><td>Role</td><td>'+d.role+'</td></tr>'+
+       '<tr><td>Is active?</td><td>'+d.active+'</td></tr>'+
+       '<tr><td>Confirmed</td><td>'+d.confirmed_at+'</td></tr>'+
+       '<tr><td>Registered</td><td>'+d.registered_at+'</td></tr>'+
+       '<tr><td>Last login</td><td>'+d.last_login_at+'</td></tr>'+
+       '<tr><td>Last login IP</td><td>'+d.last_login_ip+'</td></tr>'+
+       '<tr><td>Login count</td><td>'+d.login_count+'</td></tr>'+
+       '<tr><td>Current login</td><td>'+d.current_login_at+'</td></tr>'+
+       '<tr><td>Current login IP</td><td>'+d.current_login_ip+'</td></tr>'+
        '<tr>'+
           '<td><a href="#" class="btn btn-warning" role="button" id="user'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
           '<td><a href="#" class="btn btn-primary" role="button" id="user'+d.id+'files"> <i class="glyphicon glyphicon-folder-open"></i> Files </a></td>'+
@@ -117,15 +126,24 @@ function loadUserTable() {
             	{ "data": "id" },
             	{ "data": "username" },
             	{ "data": "email" },
-            	{ "data": "last_login" },
+            	{ "data": "last_login_at" },
             	{
                 	"class":          'details-control',
                 	"orderable":      false,
                 	"data":           null,
                 	"defaultContent": ''
             	},
+				// hidden fields to display on expand
 				{ "data": "firstName", "visible" : false },
-				{ "data": "lastName", "visible" : false }
+				{ "data": "lastName", "visible" : false },
+				{ "data": "active", "visible" : false },
+				{ "data": "confirmed_at", "visible" : false },
+				{ "data": "current_login_at", "visible" : false },
+				{ "data": "last_login_ip", "visible" : false },
+				{ "data": "current_login_ip", "visible" : false },
+				{ "data": "login_count", "visible" : false },
+				{ "data": "registered_at", "visible" : false },
+				{ "data": "role", "visible" : false }
         	],
         	"order": [[1, 'asc']]
     	} );
