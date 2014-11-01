@@ -82,10 +82,16 @@
 
 <script type="text/javascript">
 function formatUser(d) {
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+	var out = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr><td>First name</td><td>'+d.firstName+'</td></tr>'+
        '<tr><td>Last name</td><td>'+d.lastName+'</td></tr>'+
-       '<tr><td>Roles</td><td>'+d.roles+'</td></tr>'+
+       '<tr><td>Roles</td><td>';
+	var comma = "";
+	for (var i = 0; i < d.roles.length; ++i) {
+		out = out + comma + d.roles[i].name;
+		comma = ", ";
+	}
+	out = out + '</td></tr>'+
        '<tr><td>Is active?</td><td>'+d.active+'</td></tr>'+
        '<tr><td>Confirmed</td><td>'+d.confirmed_at+'</td></tr>'+
        '<tr><td>Registered</td><td>'+d.registered_at+'</td></tr>'+
@@ -110,6 +116,8 @@ function formatUser(d) {
 	'var table = $("#jobs").DataTable(); table.column("#jobsUserID").search("'+d.id+'").draw();'+
     ' $("#jobsTabBtn").trigger("click");});<\/script>'
     ;
+
+	return out;
 }
 
 function loadUserTable() {
