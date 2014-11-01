@@ -16,7 +16,13 @@ roles_users = db.Table(
 	db.Column('role_id', db.Integer(), db.ForeignKey('roles.id')))
 
 
-class Role(JSONSerializer, RoleMixin, db.Model):
+class RoleJSONSerializer(JSONSerializer):
+	__json_modifiers__ = {
+		'users': lambda users, _: [dict(id=user.id) for user in users]
+	}
+
+
+class Role(RoleJSONSerializer, RoleMixin, db.Model):
 	__tablename__ = 'roles'
 
 	id = db.Column(db.Integer(), primary_key=True)
@@ -31,12 +37,13 @@ class Role(JSONSerializer, RoleMixin, db.Model):
 
 
 class UserJSONSerializer(JSONSerializer):
-	__json_hidden__ = ['password', 'roles']
+	__json_hidden__ = ['password']
 	__json_modifiers__ = {
 		'events': lambda events, _: [dict(id=event.id) for event in events],
 		'files': lambda files, _: [dict(id=file.id) for file in files],
 		'projects': lambda projects, _: [dict(id=project.id) for project in projects],
-		'jobs': lambda jobs, _: [dict(id=job.id) for job in jobs]
+		'jobs': lambda jobs, _: [dict(id=job.id) for job in jobs],
+		'roles': lambda roles, _: [dict(id=role.id) for role in roles]
 	}
 
 
