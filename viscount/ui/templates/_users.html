@@ -153,8 +153,17 @@ function goToByScroll(id){
 }
 
 function processAPIErrorMessages(data) {
-	for (var key in data.responseJSON.error) {
-		$("#message_block").html("<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert'>&times;</a>" + key + ": " + data.responseJSON.error[key] + "</div>");
+	if (data.responseJSON.hasOwnProperty('errors')) {
+		console.log(data.responseJSON.errors)
+		for (var key in data.responseJSON.errors) {
+			$("#message_block").html("<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert'>&times;</a>" + key + ": " + data.responseJSON.errors[key] + "</div>");
+		}
+	}
+	if (data.responseJSON.hasOwnProperty('error')) {
+			$("#message_block").html("<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert'>&times;</a>" + data.responseJSON.error + "</div>");
+	}
+	if (data.responseJSON.hasOwnProperty('message')) {
+			$("#message_block").html("<div class='alert alert-warning'><a href='#' class='close' data-dismiss='alert'>&times;</a>" + data.responseJSON.message + "</div>");
 	}
 	goToByScroll('message_block');
 	console.log(data);
