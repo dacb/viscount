@@ -47,13 +47,13 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="role" class="control-label col-xs-2">Role</label>
-            <div class="col-xs-2">
-              <select class="form-control" name="role">
+            <label for="roles" class="control-label col-xs-2">Roles</label>
+            <div class="col-xs-6">
                 {% for role in roles %}
-                  <option>{{ role.name }}</option>
+					<label class="checkbox-inline">
+						<input type="checkbox" name="roles" value="{{ role.name }}"> {{ role.name }}
+					</label>
                 {% endfor %}
-              </select>
             </div>
         </div>
         <div class="form-group">
