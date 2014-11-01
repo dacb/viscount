@@ -152,6 +152,14 @@ function goToByScroll(id){
   $('html,body').animate({scrollTop: $("#"+id).offset().top - $('#navbar').height() },'slow');
 }
 
+function processAPIErrorMessages(data) {
+	for (var key in data.responseJSON.error) {
+		$("#message_block").html("<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert'>&times;</a>" + key + ": " + data.responseJSON.error[key] + "</div>");
+	}
+	goToByScroll('message_block');
+	console.log(data);
+}
+
 //callback handler for form submit
 $("#createUser").submit(function(event)
 {
@@ -169,9 +177,7 @@ $("#createUser").submit(function(event)
 			loadUserTable();
 		})
 		.fail(function(data) {
-			$("#message_block").html("<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert'>&times;</a>shit broke</div>");
-			goToByScroll('message_block');
-			console.log(data);
+			processAPIErrorMessages(data);
 		})
     event.preventDefault(); //STOP default action
 });
