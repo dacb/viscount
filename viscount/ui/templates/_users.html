@@ -85,7 +85,7 @@ function formatUser(d) {
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
        '<tr><td>First name</td><td>'+d.firstName+'</td></tr>'+
        '<tr><td>Last name</td><td>'+d.lastName+'</td></tr>'+
-       '<tr><td>Role</td><td>'+d.role+'</td></tr>'+
+       '<tr><td>Roles</td><td>'+d.roles+'</td></tr>'+
        '<tr><td>Is active?</td><td>'+d.active+'</td></tr>'+
        '<tr><td>Confirmed</td><td>'+d.confirmed_at+'</td></tr>'+
        '<tr><td>Registered</td><td>'+d.registered_at+'</td></tr>'+
@@ -143,7 +143,7 @@ function loadUserTable() {
 				{ "data": "current_login_ip", "visible" : false },
 				{ "data": "login_count", "visible" : false },
 				{ "data": "registered_at", "visible" : false },
-				{ "data": "role", "visible" : false }
+				{ "data": "roles", "visible" : false }
         	],
         	"order": [[1, 'asc']]
     	} );
