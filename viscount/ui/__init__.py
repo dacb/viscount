@@ -10,6 +10,7 @@ from flask import render_template
 from flask_security import login_required
 
 from .datatables import DataTablesException, handle_DataTablesException
+from ..utils import JSONEncoder
 from .. import factory
 
 
@@ -17,6 +18,10 @@ def create_app(config_override=None):
 	"""Returns the viscount UI application instance"""
 	app = factory.create_app(__name__, __path__, config_override)
 
+	# Set the default JSON encoder
+	app.json_encoder = JSONEncoder
+
+	# Set the error handler for DataTables exceptions
 	app.errorhandler(DataTablesException)(handle_DataTablesException)
 
 	return app
