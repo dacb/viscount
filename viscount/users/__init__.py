@@ -18,10 +18,17 @@ class UsersService(Service):
 		:param **kwargs: instance parameters
 		"""
 		from ..services import events
-		kwargs.update({'confirmed_at' : datetime.utcnow(), 'registered_at' : datetime.utcnow(), 'active' : True, 'login_count' : 0})
 		user = self.save(self.new(**kwargs))
 		event = events.create(user_id=user.id, type='created')
 		return user
+
+	def new(self, **kwargs):
+		"""Returns a new, unsaved instance of the service's model class.
+
+		:param **kwargs: instance parameters
+		"""
+		kwargs.update({'confirmed_at' : datetime.utcnow(), 'registered_at' : datetime.utcnow(), 'active' : True, 'login_count' : 0})
+		return self.__model__(**self._preprocess_params(kwargs))
 
 
 class RolesService(Service):
