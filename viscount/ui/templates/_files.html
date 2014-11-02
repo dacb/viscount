@@ -18,6 +18,42 @@
       </table>
     </div>
   </div>
+  {% if 'user' in user.roles or 'admin' in user.roles %}
+  <div class="row">
+    <hr/>
+  </div>
+  <div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading"><h3 class="panel-title">Upload a new file</h3></div>
+        <div class="panel-body">
+    <form class="form-horizontal" action="/api/files" method="post" id="uploadFile" name="uploadFile" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+			<div class="col-xs-2">
+                    <span class="btn btn-primary btn-file pull-right">
+                        Select file&hellip; <input type="file" name="file">
+                    </span>
+			</div>
+            <div class="col-xs-4">
+                <input type="text" class="form-control" readonly name="filename" id="fileUploadFilename">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="control-label col-xs-2">Description</label>
+            <div class="col-xs-4">
+                <input type="description" class="form-control" name="description" placeholder="Description">
+            </div>
+        </div>
+       <div class="form-group">
+            <div class="col-xs-offset-2 col-xs-10">
+                <button type="submit" id="uploadFileSubmit" class="btn btn-primary">Upload File</button>
+            </div>
+        </div>
+    </form>
+    </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 <script type="text/javascript">
@@ -72,4 +108,39 @@ $(document).ready(function() {
         }
     } );
 } );
+
+$(document).on('change', '.btn-file :file', function() {
+  var input = $(this),
+      numFiles = input.get(0).files ? input.get(0).files.length : 1,
+      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+  input.trigger('fileselect', [numFiles, label]);
+});
+
+$(document).ready( function() {
+    $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+		document.getElementById("fileUploadFilename").value = label;
+    });
+});
+
+//callback handler for form submit
+$("#fileUpload").submit(function(event)
+{
+    var postData = $(this).serializeArray();
+    var formURL = $(this).attr("action");
+    var formMethod = $(this).attr("method");
+    $.ajax(
+    {
+        url : formURL,
+        type: formMethod,
+        data : postData,
+        dataType : 'json',
+    })
+        .done(function(data) {
+            loadFileTable();
+        })
+        .fail(function(data) {
+            processAPIErrorMessages(data);
+        })
+    event.preventDefault(); //STOP default action
+});
 </script>
