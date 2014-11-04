@@ -10,7 +10,10 @@ from ..utils import JSONSerializer
 
 
 class FileJSONSerializer(JSONSerializer):
-	pass
+	__json_hidden__ = ['file']
+	__json_modifiers__ = {
+		'events': lambda events, _: [dict(id=event.id) for event in events],
+	}
 
 
 class File(FileJSONSerializer, db.Model):
@@ -21,6 +24,7 @@ class File(FileJSONSerializer, db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	description = db.Column(db.Text, index=False, unique=False)
 	md5sum = db.Column(db.String(32), index=True, unique=False)
+	file = db.Column(db.Text, index=False, unique=False)
 
 	events = db.relationship('Event', backref='file', lazy='dynamic')
 
