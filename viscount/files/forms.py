@@ -6,7 +6,7 @@ File related forms
 """
 
 from flask_wtf import Form
-from wtforms import StringField, TextAreaField
+from wtforms import StringField, TextAreaField, FileField
 from wtforms.validators import Required, Optional
 
 from ..services import files
@@ -15,11 +15,12 @@ __all__ = ['NewFileForm', 'UpdateFileForm']
 
 
 class NewFileForm(Form):
-	 name = StringField('Name', validators=[Required()])
-	 description = TextAreaField('Description', validators=[Required()])
+	name = StringField('Name', validators=[Required()])
+	description = TextAreaField('Description', validators=[Required()])
+	file = FileField('File', validators=[Required()])
 
 
 class UpdateFileForm(Form):
-	 name = StringField('Name', validators=[Optional()])
-	 description = TextAreaField('Description', validators=[Optional()])
+	name = StringField('Name', validators=[Optional()])
+	description = TextAreaField('Description', validators=[Optional()])
 
