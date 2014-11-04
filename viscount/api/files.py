@@ -24,7 +24,7 @@ def create():
 	"""Creates a new file. Returns the new file instance."""
 	form = NewFileForm()
 	if form.validate_on_submit():
-		return _files.create(**request.json)
+		return _files.create(**form.data)
 	raise ViscountFormException(form.errors)
 
 
