@@ -35,7 +35,7 @@ class Workflow(WorkflowJSONSerializer, db.Model):
 	events = db.relationship('Event', backref='workflow', lazy='dynamic')
 	tasks = db.relationship('Task', secondary=workflows_tasks, backref=db.backref('workflows', lazy='joined'))
 	revisions = db.relationship('Workflow', backref=db.backref('revised_from', remote_side=id), lazy='dynamic')
-				
+
 
 	def __repr__(self):
 		return '<Workflow %r>' % (self.name)
