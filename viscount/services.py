@@ -8,7 +8,7 @@ from .events import EventsService
 from .projects import ProjectsService
 from .files import FilesService, FileTypesService
 from .workflows import WorkflowsService
-from .tasks import TasksService
+from .tasks import TasksService, TaskInputFilesService, TaskOutputFilesService
 from .jobs import JobsService
 from .workers import WorkersService
 
@@ -20,5 +20,7 @@ files = FilesService()
 file_types = FileTypesService()
 workflows = WorkflowsService()
 tasks = TasksService()
+task_input_files = TaskInputFilesService()
+task_output_files = TaskOutputFilesService()
 jobs = JobsService()
 workers = WorkersService()

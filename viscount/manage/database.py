@@ -40,7 +40,7 @@ def populate(default_data=True, sample_data=True):
 	"Populate database with default data"
 
 	if default_data:
-		from viscount.services import roles, users, file_types, tasks
+		from viscount.services import roles, users, file_types, tasks, task_input_files, task_output_files
 		role_admin = roles.create(name='admin', description='administrator')
 		role_user = roles.create(name='user', description='user')
 		roles.create(name='guest', description='guest (read only)')
@@ -51,8 +51,12 @@ def populate(default_data=True, sample_data=True):
 		fastq_file_type = file_types.create(name='FASTQ', description='FASTQ formatted sequence file')
 		genbank_file_type = file_types.create(name='Genbank', description='Genbank formatted locus annotation file')
 		gff_file_type = file_types.create(name='GFF', description='GFF formatted annotation file')
-		fastq2fasta = tasks.create(name='FASTQ to FASTA', description='Convert a FASTQ to a FASTA', creator_id=admin.id, input_file_types=[fastq_file_type], output_file_types=[fasta_file_type])
-		genbank2gff = tasks.create(name='Genbank to GFF', description='Convert a Genbank to a GFF', creator_id=admin.id, input_file_types=[genbank_file_type], output_file_types=[gff_file_type])
+		fastq2fasta = tasks.create(name='FASTQ to FASTA', description='Convert a FASTQ to a FASTA', creator_id=admin.id)
+		fa2fq_fq_input_file = task_input_files.create(task=fastq2fasta, file_type=fastq_file_type, name='FASTQ', description='FASTQ to convert to FASTA')
+		fa2fq_fa_output_file = task_output_files.create(task=fastq2fasta, file_type=fasta_file_type, name='FASTA', description='FASTA output from FASTQ conversion')
+		genbank2gff = tasks.create(name='Genbank to GFF', description='Convert a Genbank to a GFF', creator_id=admin.id)
+		gb2gff_input_file = task_input_files.create(task=genbank2gff, file_type=genbank_file_type, name='Genbank', description='Genbank to convert to GFF')
+		gb2gff_output_file = task_output_files.create(task=genbank2gff, file_type=gff_file_type, name='GFF', description='GFF output from Genbank conversion')
 
 
 	if sample_data:

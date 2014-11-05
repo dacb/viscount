@@ -16,6 +16,9 @@ class FileType(JSONSerializer, db.Model):
 	name = db.Column(db.String(255), index=True, unique=True)
 	description = db.Column(db.Text, index=False, unique=False)
 
+	task_input_files = db.relationship('TaskInputFile', backref='file_type', lazy='dynamic')
+	task_output_files = db.relationship('TaskOutputFile', backref='file_type', lazy='dynamic')
+
 	def __repr__(self):
 		return '<FileType %r>' % (self.name)
 

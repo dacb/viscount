@@ -8,23 +8,29 @@ from ..core import db
 from ..utils import JSONSerializer
 
 
-tasks_input_files = db.Table(
-	'tasks_input_files',
-	db.Column('task_id', db.Integer(), db.ForeignKey('tasks.id'), nullable=False),
-	db.Column('input_file_type_id', db.Integer(), db.ForeignKey('file_types.id'), nullable=False))
+class TaskInputFile(JSONSerializer, db.Model):
+	__tablename__ = 'tasks_input_files'
+
+	id = db.Column(db.Integer, primary_key=True)
+	task_id = db.Column(db.Integer(), db.ForeignKey('tasks.id'), nullable=False)
+	file_type_id = db.Column(db.Integer(), db.ForeignKey('file_types.id'), nullable=False)
+	name = db.Column(db.String(255), nullable=False, primary_key=True)
+	description = db.Column(db.Text, nullable=False)
 
 
-tasks_output_files = db.Table(
-	'tasks_output_files',
-	db.Column('task_id', db.Integer(), db.ForeignKey('tasks.id')),
-	db.Column('output_file_type_id', db.Integer(), db.ForeignKey('file_types.id')))
+class TaskOutputFile(JSONSerializer, db.Model):
+	__tablename__ = 'tasks_output_files'
+
+	id = db.Column(db.Integer, primary_key=True)
+	task_id = db.Column(db.Integer(), db.ForeignKey('tasks.id'), nullable=False)
+	file_type_id = db.Column(db.Integer(), db.ForeignKey('file_types.id'), nullable=False)
+	name = db.Column(db.String(255), nullable=False, primary_key=True)
+	description = db.Column(db.Text, nullable=False)
 
 
 class TaskJSONSerializer(JSONSerializer):
 	__json_modifiers__ = {
 		'events': lambda events, _: [dict(id=event.id) for event in events],
-		'input_file_types': lambda input_file_types, _: [dict(id=file_types.id) for file_type in input_file_types],
-		'output_file_types': lambda output_file_types, _: [dict(id=file_types.id) for file_type in input_file_types],
 	}
 
 
@@ -38,8 +44,8 @@ class Task(TaskJSONSerializer, db.Model):
 	source_file = db.Column(db.Integer, db.ForeignKey('files.id'))
 
 	events = db.relationship('Event', backref='task', lazy='dynamic')
-	input_file_types = db.relationship('FileType', secondary=tasks_input_files, backref=db.backref('input_file_types', lazy='dynamic'))
-	output_file_types = db.relationship('FileType', secondary=tasks_output_files, backref=db.backref('output_file_types', lazy='dynamic'))
+	input_files = db.relationship('TaskInputFile', backref='task', lazy='dynamic')
+	output_files = db.relationship('TaskOutputFile', backref='task', lazy='dynamic')
 
 	def __repr__(self):
 		return '<Task %r>' % (self.name)
