@@ -16,7 +16,9 @@ projects_workflows = db.Table(
 
 
 class ProjectJSONSerializer(JSONSerializer):
-	pass
+	__json_modifiers__ = {
+		'events': lambda events, _: [dict(id=event.id) for event in events],
+	}
 
 
 class Project(ProjectJSONSerializer, db.Model):
