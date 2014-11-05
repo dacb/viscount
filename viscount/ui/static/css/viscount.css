@@ -52,3 +52,13 @@ tr.shown td.details-control {
     cursor: inherit;
     display: block;
 }
+
+#workflowCanvasDiv {
+	position: relative;
+	height: 85%;
+	width: 100%;
+}
+
+canvas {
+	border: 2px solid #222;
+}

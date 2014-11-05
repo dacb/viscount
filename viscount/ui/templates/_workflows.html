@@ -1,4 +1,67 @@
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
-  <div class="row">
+  <div class="row-fluid">
+    <div id="workflowCanvasDiv" class="span6">
+      <canvas id="workflowCanvas" width="100" height="100">
+        <B>Your browser doesn't support the &lt;canvas&gt; element.</B>
+      </canvas>
+    </div>
   </div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	// Obtain a canvas drawing surface from fabric.js
+	var canvas = new fabric.Canvas('workflowCanvas');
+	document.getElementById('workflowCanvas').fabric = canvas;
+
+	// draw	
+	var hi = new fabric.Text('workflow viz', {
+		left: canvas.getWidth() / 2,
+		top: canvas.getHeight() / 2		
+	});
+
+	// render
+	canvas.add(hi);
+
+
+	// Create a text object.
+    function respondCanvas(){ 
+		// get the canvas
+    	var c = $('#workflowCanvas');
+	    console.log("got here");
+
+		var cont = document.getElementById('workflowCanvasDiv');
+		var cs = getComputedStyle(cont);
+		var pwidth = parseInt(cs.getPropertyValue('width'), 10);
+		var pheight = parseInt(cs.getPropertyValue('height'), 10);
+
+		var canvas = document.getElementById("workflowCanvas").fabric;
+
+        canvas.setDimensions({
+            width: pwidth,
+            height: pheight
+        });
+
+        console.log(pwidth);
+        console.log(pheight);
+
+        // redraw fabric
+		canvas.calcOffset();
+		canvas.forEachObject(function(o) {
+  			o.setCoords();
+		});
+    }
+
+    // run function when browser resizes
+    $(window).resize(respondCanvas);
+
+    // bootstrap the call
+    respondCanvas();
+
+	// register for the tab switch
+    //$('a[href$="#workflowsTab"]').click(function(){
+    //respondCanvas();
+    //});
+
+});
+</script>
