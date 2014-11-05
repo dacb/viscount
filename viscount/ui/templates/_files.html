@@ -1,145 +1,144 @@
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
   <div class="row">
-    <div class="table-wrapper">
-      <table id="files" class="display" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th id="filesID">File ID</th>
-            <th id="filesFilename">Filename</th>
-            <th id="filesUsername">Username</th>
-            <th id="filesmd5sum">md5sum</th>
-            <th id="filesDescription">Description</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
+	<div class="table-wrapper">
+	  <table id="files" class="display" cellspacing="0" width="100%">
+		<thead>
+		  <tr>
+			<th id="filesID">File ID</th>
+			<th id="filesFilename">Filename</th>
+			<th id="filesUsername">Username</th>
+			<th id="filesmd5sum">md5sum</th>
+			<th id="filesDescription">Description</th>
+			<th></th>
+		  </tr>
+		</thead>
+		<tbody>
+		</tbody>
+	  </table>
+	</div>
   </div>
   {% if 'user' in user.roles or 'admin' in user.roles %}
   <div class="row">
-    <hr/>
+	<hr/>
   </div>
   <div class="row">
-    <div class="panel panel-primary">
-        <div class="panel-heading"><h3 class="panel-title">Upload a new file</h3></div>
-        <div class="panel-body">
-    <form class="form-horizontal" action="/api/files" method="post" id="uploadFile" name="uploadFile" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="form-group">
-			<div class="col-xs-2">
-                    <span class="btn btn-primary btn-file pull-right">
-                        Select file&hellip; <input type="file" name="file">
-                    </span>
+	<div class="panel panel-primary">
+		<div class="panel-heading"><h3 class="panel-title">Ingest a new file</h3></div>
+		<div class="panel-body">
+	<form class="form-horizontal" action="/api/files" method="post" id="ingestFile" name="ingestFile">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+		<div class="form-group">
+			<label for="name" class="control-label col-xs-2">File</label>
+			<div class="col-xs-6">
+				<select class="form-control" name="name">
+				{% for file in available_files %}
+					<option value="{{ file }}">{{ file }}</option>
+				{% endfor %}
+				</select>
 			</div>
-            <div class="col-xs-4">
-                <input type="text" class="form-control" readonly name="name" id="fileUploadFilename">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="description" class="control-label col-xs-2">Description</label>
-            <div class="col-xs-4">
-                <input type="description" class="form-control" name="description" placeholder="Description">
-            </div>
-        </div>
-       <div class="form-group">
-            <div class="col-xs-offset-2 col-xs-10">
-                <button type="submit" id="uploadFileSubmit" class="btn btn-primary">Upload File</button>
-            </div>
-        </div>
-    </form>
-    </div>
-    </div>
+		</div>
+		<div class="form-group">
+			<label for="description" class="control-label col-xs-2">Description</label>
+			<div class="col-xs-4">
+				<input type="text" class="form-control" name="description" placeholder="Description">
+			</div>
+		</div>
+	   <div class="form-group">
+			<div class="col-xs-offset-2 col-xs-10">
+				<button type="submit" id="ingestFileSubmit" class="btn btn-primary">Ingest File</button>
+			</div>
+		</div>
+	</form>
+	</div>
+	</div>
   </div>
   {% endif %}
 </div>
 
 <script type="text/javascript">
 function formatProject(d) {
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-       '<tr>'+
-          '<td><a href="#" class="btn btn-warning" role="button" id="file'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
-       '</tr>'+
-    '</table>'+
-    '<script type="text/javascript">$("#file'+d.id+'events").click(function(){'+
+	return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+	   '<tr>'+
+		  '<td><a href="#" class="btn btn-warning" role="button" id="file'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
+	   '</tr>'+
+	'</table>'+
+	'<script type="text/javascript">$("#file'+d.id+'events").click(function(){'+
 	'var table = $("#events").DataTable(); table.column("#eventsProjectID").search("'+d.id+'").draw();'+
-    ' $("#eventsTabBtn").trigger("click");});<\/script>'
-    ;
+	' $("#eventsTabBtn").trigger("click");});<\/script>'
+	;
+}
+
+function loadFileTable() {
+	var table;
+	if ($.fn.dataTable.isDataTable('#files') ) {
+		table = $('#files').DataTable();
+		table.ajax.reload();
+	} else {
+		table = $('#files').DataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": { url: "/files", type : "post" },
+			"columns": [
+				{ "data": "id" },
+				{ "data": "name" },
+				{ "data": "user\\.username" },
+				{ "data": "md5sum" },
+				{ "data": "description" },
+				{
+					"class":		  'details-control',
+					"orderable":	  false,
+					"data":		   null,
+					"defaultContent": ''
+				},
+				{ "data": "user_id", "visible" : false }
+			],
+			"order": [[1, 'asc']]
+		} );
+	}
+
+	return table;
 }
 
 $(document).ready(function() {
-    var table = $('#files').DataTable( {
-        "processing": true,
-        "serverSide": true,
-        "ajax": { url: "/files", type : "post" },
-        "columns": [
-            { "data": "id" },
-            { "data": "name" },
-            { "data": "user\\.username" },
-            { "data": "md5sum" },
-            { "data": "description" },
-            {
-                "class":          'details-control',
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ''
-            },
-            { "data": "user_id", "visible" : false }
-        ],
-        "order": [[1, 'asc']]
-    } );
-     
-    // Add event listener for opening and closing details
-    $('#files tbody').on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
+	var table = loadFileTable();
+	 
+	// Add event listener for opening and closing details
+	$('#files tbody').on('click', 'td.details-control', function () {
+		var tr = $(this).closest('tr');
+		var row = table.row( tr );
  
-        if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child( formatProject(row.data()) ).show();
-            tr.addClass('shown');
-        }
-    } );
+		if ( row.child.isShown() ) {
+			// This row is already open - close it
+			row.child.hide();
+			tr.removeClass('shown');
+		}
+		else {
+			// Open this row
+			row.child( formatProject(row.data()) ).show();
+			tr.addClass('shown');
+		}
+	} );
 } );
 
-$(document).on('change', '.btn-file :file', function() {
-  var input = $(this),
-      numFiles = input.get(0).files ? input.get(0).files.length : 1,
-      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-  input.trigger('fileselect', [numFiles, label]);
-});
-
-$(document).ready( function() {
-    $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-		document.getElementById("fileUploadFilename").value = label;
-    });
-});
-
 //callback handler for form submit
-$("#fileUpload").submit(function(event)
+$("#ingestFile").submit(function(event)
 {
-    var postData = $(this).serializeArray();
-    var formURL = $(this).attr("action");
-    var formMethod = $(this).attr("method");
-    $.ajax(
-    {
-        url : formURL,
-        type: formMethod,
-        data : postData,
-        dataType : 'json',
-    })
-        .done(function(data) {
-            loadFileTable();
-        })
-        .fail(function(data) {
-            processAPIErrorMessages(data);
-        })
-    event.preventDefault(); //STOP default action
+	var postData = $(this).serializeArray();
+	var formURL = $(this).attr("action");
+	var formMethod = $(this).attr("method");
+	$.ajax(
+	{
+		url : formURL,
+		type: formMethod,
+		data : postData,
+		dataType : 'json',
+	})
+		.done(function(data) {
+			loadFileTable();
+		})
+		.fail(function(data) {
+			processAPIErrorMessages(data);
+		})
+	event.preventDefault(); //STOP default action
 });
 </script>

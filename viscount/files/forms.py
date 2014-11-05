@@ -17,10 +17,8 @@ __all__ = ['NewFileForm', 'UpdateFileForm']
 class NewFileForm(Form):
 	name = StringField('Name', validators=[Required()])
 	description = TextAreaField('Description', validators=[Required()])
-	file = FileField('File', validators=[Required()])
 
 
 class UpdateFileForm(Form):
-	name = StringField('Name', validators=[Optional()])
 	description = TextAreaField('Description', validators=[Optional()])
 

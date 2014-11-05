@@ -7,7 +7,7 @@ provides the framework for the REST api
 from functools import wraps
 
 from flask import jsonify
-from flask.ext.login import login_required
+from flask.ext.security.decorators import login_required, roles_required
 
 from ..core import ViscountException, ViscountFormException
 from ..utils import JSONEncoder

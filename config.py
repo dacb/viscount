@@ -25,7 +25,7 @@ class Config(object):
 	SECURITY_RECOVERABLE = False
 	SECURITY_TRACKABLE = True
 
-	UPLOADDIR = os.path.join(DATADIR, 'uploads')
+	INCOMING_DIR = "/home/viscount/data/incoming"
 	ALLOWED_EXTENSIONS = set(['fq', 'fq.gz', 'fastq', 'fastq.gz', 'fqz', 'fa', 'fa.gz', 'fasta', 'fasta.gz', 'faz'])
 
 
