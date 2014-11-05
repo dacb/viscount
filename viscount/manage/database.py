@@ -52,6 +52,7 @@ def populate(default_data=True, sample_data=True):
 		genbank_file_type = file_types.create(name='Genbank', description='Genbank formatted locus annotation file')
 		gff_file_type = file_types.create(name='GFF', description='GFF formatted annotation file')
 		fastq2fasta = tasks.create(name='FASTQ to FASTA', description='Convert a FASTQ to a FASTA', creator_id=admin.id, input_file_types=[fastq_file_type], output_file_types=[fasta_file_type])
+		genbank2gff = tasks.create(name='Genbank to GFF', description='Convert a Genbank to a GFF', creator_id=admin.id, input_file_types=[genbank_file_type], output_file_types=[gff_file_type])
 
 
 	if sample_data:
