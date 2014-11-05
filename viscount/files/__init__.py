@@ -8,7 +8,7 @@ from flask_security.core import current_user
 
 
 from ..core import Service
-from .models import File
+from .models import FileType, File
 
 class FilesService(Service):
 	__model__ = File
@@ -31,3 +31,6 @@ class FilesService(Service):
 		kwargs.update({'user_id' : current_user.id })
 		return self.__model__(**self._preprocess_params(kwargs))
 
+
+class FileTypesService(Service):
+	__model__ = FileType

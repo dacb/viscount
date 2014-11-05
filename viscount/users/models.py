@@ -42,6 +42,8 @@ class UserJSONSerializer(JSONSerializer):
 		'events': lambda events, _: [dict(id=event.id) for event in events],
 		'files': lambda files, _: [dict(id=file.id) for file in files],
 		'projects': lambda projects, _: [dict(id=project.id) for project in projects],
+		'workflows': lambda workflows, _: [dict(id=workflows.id) for workflow in workflows],
+		'tasks': lambda tasks, _: [dict(id=tasks.id) for task in tasks],
 		'jobs': lambda jobs, _: [dict(id=job.id) for job in jobs],
 		'roles': lambda roles, _: [dict(id=role.id) for role in roles]
 	}

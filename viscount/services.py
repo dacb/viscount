@@ -6,7 +6,7 @@ from .users import UsersService
 from .users import RolesService
 from .events import EventsService
 from .projects import ProjectsService
-from .files import FilesService
+from .files import FilesService, FileTypesService
 from .workflows import WorkflowsService
 from .tasks import TasksService
 from .jobs import JobsService
@@ -17,6 +17,7 @@ roles = RolesService()
 events = EventsService()
 projects = ProjectsService()
 files = FilesService()
+file_types = FileTypesService()
 workflows = WorkflowsService()
 tasks = TasksService()
 jobs = JobsService()

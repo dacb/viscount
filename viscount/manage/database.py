@@ -40,13 +40,19 @@ def populate(default_data=True, sample_data=True):
 	"Populate database with default data"
 
 	if default_data:
-		from viscount.services import roles, users
+		from viscount.services import roles, users, file_types, tasks
 		role_admin = roles.create(name='admin', description='administrator')
 		role_user = roles.create(name='user', description='user')
 		roles.create(name='guest', description='guest (read only)')
 		admin = users.create(email='admin@host', username='admin', password=encrypt_password('password'), 
 			firstName="", lastName="",
 			roles = [ role_admin, role_user ])
+		fasta_file_type = file_types.create(name='FASTA', description='FASTA formatted sequence file')
+		fastq_file_type = file_types.create(name='FASTQ', description='FASTQ formatted sequence file')
+		genbank_file_type = file_types.create(name='Genbank', description='Genbank formatted locus annotation file')
+		gff_file_type = file_types.create(name='GFF', description='GFF formatted annotation file')
+		fastq2fasta = tasks.create(name='FASTQ to FASTA', description='Convert a FASTQ to a FASTA', creator_id=admin.id, input_file_types=[fastq_file_type], output_file_types=[fasta_file_type])
+
 
 	if sample_data:
 		from viscount.services import projects
