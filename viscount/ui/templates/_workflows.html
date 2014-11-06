@@ -1,11 +1,84 @@
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
-	<div class="row-fluid">
-		<div id="cy" style="height:90%;width=90%;position:relative;border:2px solid #222;left:0;top:0;"></div>
+
+	<div class="row">
+		<div class="table-wrapper">
+			<table id="workflows" class="display" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th>Workflow ID</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Revision</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+
+	<div class="row-fluid" href="#workflowVis">
+		<div id="cy" style="height:60%;width=90%;position:relative;border:2px solid #222;left:0;top:0;"></div>
 	</div>
 </div>
 
 <script type="text/javascript">
+
+function loadWorkflowTable() {
+	var table;
+	if ( $.fn.dataTable.isDataTable('#workflows') ) {
+		table = $('#workflows').DataTable();
+		table.ajax.reload();
+	} else {
+		table = $('#workflows').DataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": { url: "/workflows", type : "post" },
+			"columns": [
+				{ "data": "id" },
+				{ "data": "name" },
+				{ "data": "description" },
+				{ "data": "revision" },
+				{
+					"class":		  'details-control',
+					"orderable":	  false,
+					"data":		   null,
+					"defaultContent": ''
+				},
+				// hidden fields to display on expand
+				{ "data": "revised_from\.name", "visible" : false },
+				{ "data": "revised_from\.description", "visible" : false },
+				{ "data": "revised_from\.revision", "visible" : false },
+			],
+			"order": [[1, 'asc']]
+		} );
+	}
+
+	return table
+}
+
 $(document).ready(function() {
+
+	var table = loadWorkflowTable();
+
+	// Add event listener for opening and closing details
+	$('#workflows tbody').on('click', 'td.details-control', function () {
+		var tr = $(this).closest('tr');
+		var row = table.row( tr );
+ 
+		if ( row.child.isShown() ) {
+			// This row is already open - close it
+			row.child.hide();
+			tr.removeClass('shown');
+		}
+		else {
+			// Open this row
+			row.child( formatUser(row.data()) ).show();
+			tr.addClass('shown');
+		}
+	} );
 
 	var cy = cytoscape({
 		container: document.getElementById('cy'),
