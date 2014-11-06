@@ -12,6 +12,8 @@
             <th id="eventsProject">Project</th>
             <th id="eventsFileID">File ID</th>
             <th id="eventsFile">File</th>
+			<th id="eventsWorkflowID">Workflow ID</th>
+			<th id="eventsWorkflow">Workflow</th>
             <th id="eventsJobID">Job ID</th>
             <th id="eventsWorkerID">Worker ID</th>
             <th id="eventsType">Type</th>
@@ -48,8 +50,10 @@ $(document).ready(function() {
             { "data": "project\\.name" },
             { "data": "file_id", "visible" : false },
             { "data": "file\\.name" },
-            { "data": "job_id" },
-            { "data": "worker_id" },
+            { "data": "workflow_id", "visible" : false },
+            { "data": "workflow\\.name" },
+            { "data": "job_id", "visible" : false },
+            { "data": "worker_id", "visible" : false },
             { "data": "type" },
             {
                 "class":          'details-control',
