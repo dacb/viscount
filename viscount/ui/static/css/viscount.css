@@ -53,12 +53,9 @@ tr.shown td.details-control {
     display: block;
 }
 
-#workflowCanvasDiv {
+#workflowCanvas {
 	position: relative;
 	height: 85%;
 	width: 100%;
-}
-
-canvas {
 	border: 2px solid #222;
 }
