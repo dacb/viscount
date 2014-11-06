@@ -1,22 +1,74 @@
 <div class="container-fluid" style="padding-bottom: 40px; padding-left: 40px; padding-right: 40px;">
 	<div class="row-fluid">
-		<div id="workflowCanvas" class="span6">
-		</div>
+		<div id="cy" style="height:90%;width=90%;position:relative;border:2px solid #222;left:0;top:0;"></div>
 	</div>
 </div>
 
 <script type="text/javascript">
 $(document).ready(function() {
+
 	var cy = cytoscape({
-		container: document.getElementById('workflowCanvas'),
-		ready: function(){ console.log('ready') }
+		container: document.getElementById('cy'),
+		ready: function(){ console.log('ready') },
+		elements: {
+			nodes: [
+				{ data: { id: 'a', parent: 'b', foo : '12'} },
+				{ data: { id: 'b' } },
+				{ data: { id: 'c', parent: 'b' } },
+				{ data: { id: 'd' } },
+				{ data: { id: 'e' } },
+				{ data: { id: 'f', parent: 'e' } }
+		],
+		edges: [
+				{ data: { id: 'ad', source: 'a', target: 'd' } },
+				{ data: { id: 'eb', source: 'e', target: 'b' } }
+				
+		]},
+		style: [
+			{
+				selector: 'node',
+				css: {
+					'content': 'data(id)',
+					'text-valign': 'center',
+					'text-halign': 'center'
+				}
+			},
+			{
+				selector: '$node > node',
+				css: {
+					'padding-top': '10px',
+					'padding-left': '10px',
+					'padding-bottom': '10px',
+					'padding-right': '10px',
+					'text-valign': 'top',
+					'text-halign': 'center'
+				}
+			},
+			{
+				selector: 'edge',
+				css: {
+					'target-arrow-shape': 'triangle'
+			}
+			},
+			{
+				selector: ':selected',
+				css: {
+					'background-color': 'black',
+					'line-color': 'black',
+					'target-arrow-color': 'black',
+					'source-arrow-color': 'black'
+				}
+			}
+		],
+		layout: {
+			name: 'breadthfirst',
+			padding: 5
+		}
 	});
 
-	var eles = cy.add([
-		{ group: "nodes", data: { id: "n0" }, position: { x: 100, y: 100 } },
-		{ group: "nodes", data: { id: "n1" }, position: { x: 200, y: 200 } },
-		{ group: "edges", data: { id: "e0", source: "n0", target: "n1" } }
-	]);
+	$('a[href="#workflowsTab"]').on('shown.bs.tab', function (e) {
+		cy.resize();
+	});
 
 });
 </script>
