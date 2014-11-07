@@ -23,7 +23,7 @@ class WorkflowTaskInstance(JSONSerializer, db.Model):
 
 # edges in a workflow graph
 class WorkflowTaskInstanceIO(JSONSerializer, db.Model):
-	__tablename__ = 'workflows_taks_instances_io'
+	__tablename__ = 'workflows_task_instances_io'
 
 	id = db.Column(db.Integer, primary_key=True)
 	output_task_instance_id = db.Column(db.Integer, db.ForeignKey('workflows_tasks_instances.id'), nullable=False)
