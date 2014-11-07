@@ -12,6 +12,7 @@ from . import ViscountFormException, route
 from ..models import Workflow
 from ..core import db
 from .datatables import DataTables
+from .cytoscape import render_to_cytoscape
 
 
 bp = Blueprint('workflows', __name__, url_prefix='/workflows')
@@ -88,3 +89,9 @@ def datatables():
 	query = db.session.query(Workflow)
 	rowTable = DataTables(request, Workflow, query, column_whitelist)
 	return rowTable.output_result(), 200
+
+
+@route(bp, '/<workflow_id>/cytoscape', methods=['GET'])
+def cytoscape():
+	wf = _workflows.get_or_404(workflow_id)
+	return render_to_cytoscape(wf), 200
