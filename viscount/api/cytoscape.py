@@ -82,10 +82,6 @@ def render_workflow_to_cytoscape(obj, parent=None):
 						}
 					}
 				],
-			'layout' : {
-				'name' : 'breadthfirst',
-				'padding' : 5
-			}
 		}
 	return graph
 

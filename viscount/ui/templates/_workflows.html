@@ -21,7 +21,6 @@
 
 <script type="text/javascript">
 function formatWorkflow(d) {
-	console.log(d);
 	var ret = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
 	if (d.revised_from) {
 		ret += '<tr><td colspan="2">Revised from</td></tr>'+
@@ -41,70 +40,31 @@ function formatWorkflow(d) {
 	// place cytoscape canvas
 	ret += '<div id="cy'+d.id+'" style="height:400px;width=90%;position:relative;border:1px solid #CCC;left:0;top:0;"></div>';
 	ret += '<script type="text/javascript">'+
+	'$.ajax( {'+
+		'url : "api/workflows/'+d.id+'/cytoscape",'+
+		'dataType : "json",'+
+		'type : "GET",'+
+	'} ).fail(function(data) {'+
+			'processAPIErrorMessages(data);'+
+		'})'+
+		'.success(function(data, textStatus, xhr) {'+
+	'console.log(xhr.status);'+
 	'var cy'+d.id+' = cytoscape({'+
+		'style : xhr.responseJSON.style,'+
+		'elements : xhr.responseJSON.elements,'+
 		'container: document.getElementById("cy'+d.id+'"),'+
-		'ready: function(){ console.log("ready") },'+
-		'elements: {'+
-		'	nodes: ['+
-		'		{ data: { id: "a", parent: "b", foo : "12"} },'+
-		'		{ data: { id: "b" } },'+
-		'		{ data: { id: "c", parent: "b" } },'+
-		'		{ data: { id: "d" } },'+
-		'		{ data: { id: "e" } },'+
-		'		{ data: { id: "f", parent: "e" } }'+
-		'],'+
-		'edges: ['+
-		'		{ data: { id: "ad", source: "a", target: "d" } },'+
-		'		{ data: { id: "eb", source: "e", target: "b" } }'+
-		'		'+
-		']},'+
-		'style: ['+
-		'	{'+
-		'		selector: "node",'+
-		'		css: {'+
-		'			"content": "data(id)",'+
-		'			"text-valign": "center",'+
-		'			"text-halign": "center"'+
-		'		}'+
-		'	},'+
-		'	{'+
-		'		selector: "$node > node",'+
-		'		css: {'+
-		'			"padding-top": "10px",'+
-		'			"padding-left": "10px",'+
-		'			"padding-bottom": "10px",'+
-		'			"padding-right": "10px",'+
-		'			"text-valign": "top",'+
-		'			"text-halign": "center"'+
-		'		}'+
-		'	},'+
-		'	{'+
-		'		selector: "edge",'+
-		'		css: {'+
-		'			"target-arrow-shape": "triangle"'+
-		'	}'+
-		'	},'+
-		'	{'+
-		'		selector: ":selected",'+
-		'		css: {'+
-		'			"background-color": "black",'+
-		'			"line-color": "black",'+
-		'			"target-arrow-color": "black",'+
-		'			"source-arrow-color": "black"'+
-		'		}'+
-		'	}'+
-		'],'+
-		'layout: {'+
-		'	name: "breadthfirst",'+
-		'	padding: 5'+
-		'}'+
+		'ready: function(){ console.log("cy'+d.id+' ready") },'+
+		'layout : {'+
+				'name : "breadthfirst",'+
+				'padding : 5'+
+			'}'+
 	'});'+
 	'$("a[href=\'#workflowsTab\']").on("shown.bs.tab", function (e) {'+
 	'	cy'+d.id+'.resize();'+
 	'	cy'+d.id+'.fit();'+
 	'});'+
+		'});'+
 '<\/script>';
-	
 
 	return ret;
 }
