@@ -72,4 +72,6 @@ class User(UserJSONSerializer, UserMixin, db.Model):
 	events = db.relationship('Event', backref='user', lazy='dynamic')
 	projects = db.relationship('Project', backref='owner', lazy='dynamic')
 	files = db.relationship('File', backref='owner', lazy='dynamic')
+	workflows = db.relationship('Workflow', backref='owner', lazy='dynamic')
+	tasks = db.relationship('Task', backref='owner', lazy='dynamic')
 	jobs = db.relationship('Job', backref='owner', lazy='dynamic')

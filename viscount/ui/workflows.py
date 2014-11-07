@@ -15,9 +15,10 @@ def workflows():
 		"name" : True,
 		"description" : True,
 		"revision" : True,
+		"revised_from.id" : True,
 		"revised_from.name" : True,
 		"revised_from.description" : True,
-		"revised_from.revision" : True,
+		"revised_from.revision" : True
 	}
 	query = db.session.query(Workflow)
 	rowTable = DataTables(request, Workflow, query, column_whitelist)

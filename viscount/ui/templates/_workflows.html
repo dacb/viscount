@@ -25,6 +25,28 @@
 </div>
 
 <script type="text/javascript">
+function formatWorkflow(d) {
+	console.log(d);
+	var ret = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+	if (d.revised_from) {
+		ret += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		'<tr><td colspan="2">Revised from</td></tr>'+
+		'<tr><td>ID</td><td>'+d.revised_from.id+'</td></tr>'+
+		'<tr><td>Name</td><td>'+d.revised_from.name+'</td></tr>'+
+		'<tr><td>Description</td><td>'+d.revised_from.description+'</td></tr>'+
+		'<tr><td>Revision</td><td>'+d.revised_from.revision+'</td></tr>';
+	}
+	ret += '<tr>'+
+		  '<td><a href="#" class="btn btn-warning" role="button" id="workflow'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
+		'</tr>'+
+	'</table>'+
+	'<script type="text/javascript">$("#workflow'+d.id+'events").click(function(){'+
+	'var table = $("#events").DataTable(); table.column("#eventsWorkflowID").search("'+d.id+'").draw();'+
+	' $("#eventsTabBtn").trigger("click");});<\/script>'
+	;
+
+	return ret;
+}
 
 function loadWorkflowTable() {
 	var table;
@@ -44,13 +66,14 @@ function loadWorkflowTable() {
 				{
 					"class":		  'details-control',
 					"orderable":	  false,
-					"data":		   null,
+					"data":			null,
 					"defaultContent": ''
 				},
 				// hidden fields to display on expand
-				{ "data": "revised_from\.name", "visible" : false },
-				{ "data": "revised_from\.description", "visible" : false },
-				{ "data": "revised_from\.revision", "visible" : false },
+				{ "data": "revised_from\\.id", "visible" : false },
+				{ "data": "revised_from\\.name", "visible" : false },
+				{ "data": "revised_from\\.description", "visible" : false },
+				{ "data": "revised_from\\.revision", "visible" : false },
 			],
 			"order": [[1, 'asc']]
 		} );
@@ -75,7 +98,7 @@ $(document).ready(function() {
 		}
 		else {
 			// Open this row
-			row.child( formatUser(row.data()) ).show();
+			row.child( formatWorkflow(row.data()) ).show();
 			tr.addClass('shown');
 		}
 	} );

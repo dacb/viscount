@@ -39,7 +39,7 @@ class Task(TaskJSONSerializer, db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(32), unique=True)
-	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+	owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	description = db.Column(db.Text, index=False, unique=False, nullable=False)
 	source_file = db.Column(db.Integer, db.ForeignKey('files.id'))
 

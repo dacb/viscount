@@ -53,6 +53,7 @@ class Workflow(WorkflowJSONSerializer, db.Model):
 	description = db.Column(db.Text, index=False, unique=False)
 	revision = db.Column(db.Integer, nullable=False, default=0)
 	revised_from_id = db.Column(db.Integer, db.ForeignKey('workflows.id'))
+	owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 	events = db.relationship('Event', backref='workflow', lazy='dynamic')
 	revisions = db.relationship('Workflow', backref=db.backref('revised_from', remote_side=id), lazy='dynamic')
