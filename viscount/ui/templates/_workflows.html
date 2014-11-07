@@ -2,13 +2,13 @@
 
 	<div class="row">
 		<div class="table-wrapper">
-			<table id="workflows" class="display" cellspacing="0" width="100%">
+			<table id="workflows" class="stripe row-border order-column" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<th>Workflow ID</th>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Revision</th>
+						<th id="workflowID">Workflow ID</th>
+						<th id="workflowName">Name</th>
+						<th id="workflowDescription">Description</th>
+						<th id="workflowRevision">Revision</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -29,21 +29,87 @@ function formatWorkflow(d) {
 	console.log(d);
 	var ret = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
 	if (d.revised_from) {
-		ret += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-		'<tr><td colspan="2">Revised from</td></tr>'+
+		ret += '<tr><td colspan="2">Revised from</td></tr>'+
 		'<tr><td>ID</td><td>'+d.revised_from.id+'</td></tr>'+
 		'<tr><td>Name</td><td>'+d.revised_from.name+'</td></tr>'+
 		'<tr><td>Description</td><td>'+d.revised_from.description+'</td></tr>'+
 		'<tr><td>Revision</td><td>'+d.revised_from.revision+'</td></tr>';
 	}
-	ret += '<tr>'+
-		  '<td><a href="#" class="btn btn-warning" role="button" id="workflow'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a></td>'+
-		'</tr>'+
+	// add linkout buttons
+	ret += '<tr><td colspan="2">'+
+			'<a href="#" class="btn btn-warning" role="button" id="workflow'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a>'+
+			'</td></tr>'+
 	'</table>'+
 	'<script type="text/javascript">$("#workflow'+d.id+'events").click(function(){'+
 	'var table = $("#events").DataTable(); table.column("#eventsWorkflowID").search("'+d.id+'").draw();'+
-	' $("#eventsTabBtn").trigger("click");});<\/script>'
-	;
+	' $("#eventsTabBtn").trigger("click");});<\/script>';
+	// place cytoscape canvas
+	ret += '<div id="cy'+d.id+'" style="height:400px;width=90%;position:relative;border:1px solid #CCC;left:0;top:0;"></div>';
+	ret += '<script type="text/javascript">'+
+	'var cy'+d.id+' = cytoscape({'+
+		'container: document.getElementById("cy'+d.id+'"),'+
+		'ready: function(){ console.log("ready") },'+
+		'elements: {'+
+		'	nodes: ['+
+		'		{ data: { id: "a", parent: "b", foo : "12"} },'+
+		'		{ data: { id: "b" } },'+
+		'		{ data: { id: "c", parent: "b" } },'+
+		'		{ data: { id: "d" } },'+
+		'		{ data: { id: "e" } },'+
+		'		{ data: { id: "f", parent: "e" } }'+
+		'],'+
+		'edges: ['+
+		'		{ data: { id: "ad", source: "a", target: "d" } },'+
+		'		{ data: { id: "eb", source: "e", target: "b" } }'+
+		'		'+
+		']},'+
+		'style: ['+
+		'	{'+
+		'		selector: "node",'+
+		'		css: {'+
+		'			"content": "data(id)",'+
+		'			"text-valign": "center",'+
+		'			"text-halign": "center"'+
+		'		}'+
+		'	},'+
+		'	{'+
+		'		selector: "$node > node",'+
+		'		css: {'+
+		'			"padding-top": "10px",'+
+		'			"padding-left": "10px",'+
+		'			"padding-bottom": "10px",'+
+		'			"padding-right": "10px",'+
+		'			"text-valign": "top",'+
+		'			"text-halign": "center"'+
+		'		}'+
+		'	},'+
+		'	{'+
+		'		selector: "edge",'+
+		'		css: {'+
+		'			"target-arrow-shape": "triangle"'+
+		'	}'+
+		'	},'+
+		'	{'+
+		'		selector: ":selected",'+
+		'		css: {'+
+		'			"background-color": "black",'+
+		'			"line-color": "black",'+
+		'			"target-arrow-color": "black",'+
+		'			"source-arrow-color": "black"'+
+		'		}'+
+		'	}'+
+		'],'+
+		'layout: {'+
+		'	name: "breadthfirst",'+
+		'	padding: 5'+
+		'}'+
+	'});'+
+	'$("a[href=\'#workflowsTab\']").on("shown.bs.tab", function (e) {'+
+	'	cy'+d.id+'.resize();'+
+	'	cy'+d.id+'.fit();'+
+	'});'+
+'<\/script>';
+	
 
 	return ret;
 }
