@@ -27,7 +27,6 @@ def list():
 def create():
 	"""Creates a new _user. Returns the new _user instance."""
 	form = NewUserForm()
-	print form.data
 	if form.validate_on_submit():
 		if _users.find(email=form.data['email']).count() > 0:
 			raise ViscountException(message="A user with that email already exists!")
