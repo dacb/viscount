@@ -92,6 +92,6 @@ def datatables():
 
 
 @route(bp, '/<workflow_id>/cytoscape', methods=['GET'])
-def cytoscape():
+def cytoscape(workflow_id):
 	wf = _workflows.get_or_404(workflow_id)
 	return render_to_cytoscape(wf), 200

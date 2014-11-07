@@ -93,11 +93,10 @@ def render_workflow_to_cytoscape(obj, parent=None):
 def render_to_cytoscape(obj):
 	"""renders an object in the ORM to a cytoscape.js json"""
 	
-	if isinstance(Workflow):
+	if isinstance(obj, Workflow):
 		return render_workflow_to_cytoscape(obj)
-	elif isinstance(Project):
+	elif isinstance(obj, Project):
 		# for workflows, render each workflow with a parent compound node
 		raise CytoscapeException('not implemented')
 	else:
 		raise CytoscapeException('Cytoscape rendering not supported for object type ' + str(type(obj)))
-		
