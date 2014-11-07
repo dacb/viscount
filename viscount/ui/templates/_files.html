@@ -77,7 +77,7 @@ function loadFileTable() {
 		table = $('#files').DataTable( {
 			"processing": true,
 			"serverSide": true,
-			"ajax": { url: "/files", type : "post" },
+			"ajax": { url: "/api/files/datatables", type : "post" },
 			"columns": [
 				{ "data": "id" },
 				{ "data": "name" },

@@ -36,7 +36,7 @@ $(document).ready(function() {
     var table = $('#projects').DataTable( {
         "processing": true,
         "serverSide": true,
-        "ajax": { url: "/projects", type : "post" },
+        "ajax": { url: "/api/projects/datatables", type : "post" },
         "columns": [
             { "data": "id" },
             { "data": "name" },

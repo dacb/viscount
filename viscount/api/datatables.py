@@ -72,6 +72,7 @@ class DataTables:
 	def __init__(self, request, sqla_object, query, column_whitelist=None):
 		"""Initializes the object with the attributes needed, and runs the query
 		"""
+
 		self.request_values = { }
 		for key in request.form.keys():
 			value = request.form.get(key)

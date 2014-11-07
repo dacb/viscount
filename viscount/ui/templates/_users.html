@@ -129,7 +129,7 @@ function loadUserTable() {
     	table = $('#users').DataTable( {
 			"processing": true,
         	"serverSide": true,
-        	"ajax": { url: "/users", type : "post" },
+        	"ajax": { url: "/api/users/datatables", type : "post" },
         	"columns": [
             	{ "data": "id" },
             	{ "data": "username" },

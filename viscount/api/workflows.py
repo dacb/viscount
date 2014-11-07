@@ -4,11 +4,15 @@ viscount.api.workflows
 Workflow related endpoints
 """
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from ..forms import NewWorkflowForm, UpdateWorkflowForm
 from ..services import workflows as _workflows, tasks as _tasks
 from . import ViscountFormException, route
+from ..models import Workflow
+from ..core import db
+from .datatables import DataTables
+
 
 bp = Blueprint('workflows', __name__, url_prefix='/workflows')
 
@@ -67,3 +71,20 @@ def remove_task(workflow_id, task_id):
 	"""Removes a task form a workflow. Returns a 204 response."""
 	_workflows.remove_task(_workflows.get_or_404(workflow_id), _tasks.get_or_404(task_id))
 	return None, 204
+
+
+@route(bp, '/datatables', methods=['GET', 'POST'])
+def datatables():
+	column_whitelist = {
+		"id" : True,
+		"name" : True,
+		"description" : True,
+		"revision" : True,
+		"revised_from.id" : True,
+		"revised_from.name" : True,
+		"revised_from.description" : True,
+		"revised_from.revision" : True
+	}
+	query = db.session.query(Workflow)
+	rowTable = DataTables(request, Workflow, query, column_whitelist)
+	return rowTable.output_result(), 200

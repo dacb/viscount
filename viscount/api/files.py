@@ -4,11 +4,15 @@ viscount.api.files
 File related endpoints
 """
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from ..forms import NewFileForm, UpdateFileForm
 from ..services import files as _files
 from . import ViscountFormException, route
+from ..models import File, User
+from ..core import db
+from .datatables import DataTables
+
 
 bp = Blueprint('files', __name__, url_prefix='/files')
 
@@ -48,3 +52,18 @@ def delete(file_id):
 	"""Deletes a file. Returns a 204 response."""
 	_files.delete(files.get_or_404(file_id))
 	return None, 204
+
+
+@route(bp, '/datatables',  methods = ['GET', 'POST'])
+def datatables():
+	column_whitelist = {
+		"id" : True,
+		"filename" : True,
+		"user.username" : True,
+		"description" : True,
+		"md5sum" : True
+	}
+	query = db.session.query(File). \
+		outerjoin(User, (User.id == File.user_id))
+	rowTable = DataTables(request, File, query)
+	return rowTable.output_result(), 200

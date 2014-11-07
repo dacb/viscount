@@ -10,6 +10,7 @@ from flask import jsonify
 from flask.ext.security.decorators import login_required, roles_required
 
 from ..core import ViscountException, ViscountFormException
+from .datatables import DataTablesException, handle_DataTablesException
 from ..utils import JSONEncoder
 from .. import factory
 
@@ -25,6 +26,7 @@ def create_app(config_override=None, register_security_blueprint=False):
 	# Register custom error handlers
 	app.errorhandler(ViscountException)(handle_ViscountException)
 	app.errorhandler(ViscountFormException)(handle_ViscountFormException)
+	app.errorhandler(DataTablesException)(handle_DataTablesException)
 	app.errorhandler(404)(handle_404)
 	app.errorhandler(500)(handle_500)
 

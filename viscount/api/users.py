@@ -4,11 +4,15 @@ viscount.api.users
 User related endpoints
 """
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from ..forms import NewUserForm, UpdateUserForm
 from ..services import users as _users
 from . import ViscountFormException, ViscountException, route
+from ..models import User
+from ..core import db
+from .datatables import DataTables
+
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -53,3 +57,26 @@ def delete(user_id):
 	"""Deletes a user. Returns a 204 response."""
 	_users.delete(users.get_or_404(user_id))
 	return None, 204
+
+
+@route(bp, '/datatables',  methods = ['GET', 'POST'])
+def datatables():
+	column_whitelist = {
+		'id' : True,
+		'email' : True,
+		'username' : True,
+		'lastName' : True,
+		'firstName' : True,
+		'active' : True,
+		'confirmed_at' : True,
+		'last_login_at' : True,
+		'current_login_at' : True,
+		'last_login_ip' : True,
+		'current_login_ip' : True,
+		'login_count' : True,
+		'registered_at' : True,
+		'roles' : True,
+	}
+	query = db.session.query(User)
+	rowTable = DataTables(request, User, query, column_whitelist)
+	return rowTable.output_result(), 200
