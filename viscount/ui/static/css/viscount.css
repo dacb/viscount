@@ -21,34 +21,6 @@ tr.shown td.details-control {
     background: url('/static/img/details_close.png') no-repeat center center;
 }
 
-#progressOverlay .progress {
-    position:relative;
-    width:80%;
-    top:50%;
-    margin:0 auto;
-}
- 
-#progressOverlay {
-    position:relative;
-    height:100%;
-}
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
+#workflowEditorCytoscape {
+	height : 85%;
 }
