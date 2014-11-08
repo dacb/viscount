@@ -5,7 +5,16 @@ provides workflow related services
 """
 
 from ..core import Service
-from .models import Workflow
+from .models import Workflow, WorkflowTaskInstance, WorkflowTaskInstanceIO
+
+
+class WorkflowsTaskInstanceIOService(Service):
+	__model__ = WorkflowTaskInstanceIO
+
+
+class WorkflowsTaskInstanceService(Service):
+	__model__ = WorkflowTaskInstance
+
 
 class WorkflowsService(Service):
 	__model__ = Workflow

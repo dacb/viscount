@@ -17,9 +17,6 @@ class WorkflowTaskInstance(JSONSerializer, db.Model):
 	task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'), nullable=False)
 	description = db.Column(db.Text, index=False, unique=False)
 
-	#workflow_task_instance_inputs = db.relationship('WorkflowTaskInstanceIO', backref='workflow_task_instance', lazy='dynamic')
-	#workflow_task_instance_outputs = db.relationship('WorkflowTaskInstanceIO', backref='workflow_task_instance', lazy='dynamic')
-
 
 # edges in a workflow graph
 class WorkflowTaskInstanceIO(JSONSerializer, db.Model):
@@ -31,8 +28,8 @@ class WorkflowTaskInstanceIO(JSONSerializer, db.Model):
 	input_task_instance_id = db.Column(db.Integer, db.ForeignKey('workflows_tasks_instances.id'), nullable=False)
 	input_task_file_id = db.Column(db.Integer, db.ForeignKey('tasks_input_files.id'), nullable=False)
 
-	output_task_instance = db.relationship('WorkflowTaskInstance', foreign_keys=[output_task_instance_id])
-	input_task_instance = db.relationship('WorkflowTaskInstance', foreign_keys=[input_task_instance_id])
+	output_task_instance = db.relationship('WorkflowTaskInstance', foreign_keys=[output_task_instance_id], backref='outputs')
+	input_task_instance = db.relationship('WorkflowTaskInstance', foreign_keys=[input_task_instance_id], backref='inputs')
 
 
 class WorkflowJSONSerializer(JSONSerializer):

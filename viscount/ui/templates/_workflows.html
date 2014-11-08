@@ -48,15 +48,13 @@ function formatWorkflow(d) {
 			'processAPIErrorMessages(data);'+
 		'})'+
 		'.success(function(data, textStatus, xhr) {'+
-	'console.log(xhr.status);'+
 	'var cy'+d.id+' = cytoscape({'+
 		'style : xhr.responseJSON.style,'+
 		'elements : xhr.responseJSON.elements,'+
 		'container: document.getElementById("cy'+d.id+'"),'+
 		'ready: function(){ console.log("cy'+d.id+' ready") },'+
 		'layout : {'+
-				'name : "breadthfirst",'+
-				'padding : 5'+
+				'name : "cose",'+
 			'}'+
 	'});'+
 	'$("a[href=\'#workflowsTab\']").on("shown.bs.tab", function (e) {'+

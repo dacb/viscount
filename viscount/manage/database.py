@@ -40,7 +40,8 @@ def populate(default_data=True, sample_data=True):
 	"Populate database with default data"
 
 	if default_data:
-		from viscount.services import roles, users, file_types, tasks, task_input_files, task_output_files, workflows
+		from viscount.services import roles, users, file_types, tasks, task_input_files, task_output_files
+		from viscount.services import workflows, workflow_task_instances, workflow_task_instances_io
 		role_admin = roles.create(name='admin', description='administrator')
 		role_user = roles.create(name='user', description='user')
 		roles.create(name='guest', description='guest (read only)')
@@ -66,6 +67,10 @@ def populate(default_data=True, sample_data=True):
 		bff_html = task_output_file = task_output_files.create(task=bff, file_type=html_file_type, name='HTML report', description='BLAST report in HTML')
 
 		fa2fq_bff = workflows.create(name='BLASTn FASTQ against FASTA', description='BLASTn the sequences in a FASTQ against nucleotide sequences in FASTA', owner_id=admin.id)
+		fa2fq_bff_tif = workflow_task_instances.create(workflow_id=fa2fq_bff.id, task_id=fastq2fasta.id, description=fastq2fasta.description)
+		fa2fq_bff_tib = workflow_task_instances.create(workflow_id=fa2fq_bff.id, task_id=bff.id, description=bff.description)
+		workflow_task_instances_io.create(output_task_instance_id=fa2fq_bff_tif.id, output_task_file_id=fa2fq_fa_output_file.id,
+			input_task_instance_id=fa2fq_bff_tib.id, input_task_file_id=bff_query.id)
 
 
 	if sample_data:

@@ -4,6 +4,8 @@ viscount.api.cytoscape
 Workflow rendereding for cytoscape.js json
 """
 
+from flask import jsonify
+
 from ..services import workflows as _workflows, tasks as _tasks
 from ..models import Workflow
 from ..core import db
@@ -34,28 +36,47 @@ def handle_CytoscapeException(error):
 	return response
 
 
-def render_workflow_to_cytoscape(obj, parent=None):
-	graph = { 'elements' : {
-				'nodes' : [
-					{ 'data' : { 'id' : 'a', 'parent' : 'b' } },
-					{ 'data' : { 'id' : 'b' } },
-					{ 'data' : { 'id' : 'c', 'parent' : 'b' } },
-					{ 'data' : { 'id' : 'd' } },
-					{ 'data' : { 'id' : 'e' } },
-					{ 'data' : { 'id' : 'f', 'parent' : 'e' } },
-				],
-				'edges': [
-					{ 'data' : { 'id' : 'ad', 'source' : 'a', 'target' : 'd' } },
-					{ 'data' : { 'id' : 'eb', 'source' : 'e', 'target' : 'b' } },
-				]
-			},
-			'style' : [
+def render_workflow_to_cytoscape(wf, parent=None):
+	nodes = []
+	edges = []
+	for ti in wf.task_instances.all():
+		nodes.append( { 'data' : { 'id' : 'ti' + str(ti.id), 'name' : ti.task.name, 'description' : ti.description, 'color' : 'gray' } } )
+		for tif in ti.task.input_files.all():
+			nodes.append( { 'data' : {
+				'id' : 'ti' + str(ti.id) + 'tif' + str(tif.id),
+				'parent' : 'ti' + str(ti.id),
+				'name' : tif.name,
+				'description' : tif.description,
+				'file_type' : tif.file_type.name,
+				'classes' : 'input',
+				'color' : 'cyan'
+				} } )
+		for tof in ti.task.output_files.all():
+			nodes.append( { 'data' : {
+				'id' : 'ti' + str(ti.id) + 'tof' + str(tof.id),
+				'parent' : 'ti' + str(ti.id),
+				'name' : tof.name,
+				'description' : tof.description,
+				'file_type' : tof.file_type.name,
+				'classes' : 'output',
+				'color' : 'magenta'
+				} } )
+		for tii in ti.inputs:
+			edges.append( { 'data' : { 'id' : 'tii' + str(tii.id), 'source' : 'ti' + str(tii.output_task_instance.id) + 'tof' + str(tii.output_task_file_id), 'target' : 'ti' + str(ti.id) + 'tif' + str(tii.input_task_file_id), 'color' : 'purple' } } )
+
+
+	graph = {	'elements' : { 'nodes' : nodes , 'edges' : edges },
+				'style' :	[
 					{
 						'selector' : 'node', 
 						'css' : {
-							'content' : 'data(id)',
+							'content' : 'data(name)',
 							'text-valign' : 'center',
 							'text-halign' : 'center',
+							'text-outline-width' : 2,
+							'text-outline-color' : 'data(color)',
+							'background-color' : 'data(color)',
+							'color' : '#fff'
 						},
 					}, {
 						'selector' : '$node > node',
@@ -70,7 +91,12 @@ def render_workflow_to_cytoscape(obj, parent=None):
 					}, {
 						'selector' : 'edge',
 						'css' : {
-							'target-arrow-shape' : 'triange',
+							'opacity' : 0.666,
+							'target-arrow-shape' : 'triangle',
+							'source-arrow-shape' : 'circle',
+							'line-color' : 'magenta',
+							'source-arrow-color' : 'cyan',
+							'target-arrow-color' : 'magenta',
 						}
 					}, {
 						'selector' : ':selected',
