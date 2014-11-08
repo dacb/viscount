@@ -35,35 +35,58 @@
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="panel panel-primary">
-			<div class="panel-heading"><h3 class="panel-title">Create a new user</h3></div>
+			<div class="panel-heading"><h3 class="panel-title">Create a new task</h3></div>
 			<div class="panel-body">
-				<form class="form-horizontal" action="/api/users" method="post" id="createUser" name="createUser">
+				<form action="/api/users" method="post" id="createTask" name="createTask">
+					<fieldset class="form-horizontal">
 					<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 					<div class="form-group">
-						<label for="email" class="control-label col-xs-2">Email</label>
+						<label for="name" class="control-label col-xs-2">Name</label>
 						<div class="col-xs-4">
-							<input type="email" class="form-control" name="email" placeholder="Email">
+							<input type="text" class="form-control" name="name" placeholder="Task name">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="username" class="control-label col-xs-2">Username</label>
+						<label for="description" class="control-label col-xs-2">Description</label>
+						<div class="col-xs-10">
+							<textarea class="col-xs-10" rows="3" name="description" placeholder="Description" required></textarea>
+						</div>
+					</div>
+					</fieldset>
+					<fieldset id="inputs">
+						<legend>Inputs</legend>
+						<div class="col-xs-1"><a href="#"><img src="/static/img/details_open.png"/></a></div>
 						<div class="col-xs-2">
-							<input type="text" class="form-control" name="username" placeholder="Username">
+							<select name="inputs_file_type[]">
+								<option value="">Select a file type</option>
+								{% for file_type in file_types %}
+									<option value="{{ file_type.id }}">{{ file_type.name }}</option>
+								{% endfor %}
+							</select>
 						</div>
+						<div class="col-xs-2">
+							<input type="text" name="name" placeholder="Name"/>
+						</div>
+						<div class="col-xs-2">
+							<input type="text" name="description" placeholder="Description"/>
+						</div>
+					</fieldset>
+					<div class="table-responsive">
+						<table class="table">
+							<tr><th colspan=4 style="text-align:center">Inputs</th></tr>
+							<tr class="TaskInputFile">
+								<td><a href="#"><img src="/static/img/details_open.png"/></a></td>
+							</tr>
+						</table>
 					</div>
-					<div class="form-group">
-						<label for="roles" class="control-label col-xs-2">Roles</label>
-						<div class="col-xs-6">
-							{% for role in roles %}
-								<label class="checkbox-inline">
-									<input type="checkbox" name="roles" value="{{ role.id }}"> {{ role.name }}
-								</label>
-							{% endfor %}
-						</div>
+					<div class="table-responsive">
+						<table class="table">
+							<tr><th colspan=4 style="text-align:center">Outputs</th></tr>
+						</table>
 					</div>
 					<div class="form-group">
 						<div class="col-xs-offset-2 col-xs-10">
-							<button type="submit" id="createUserSubmit" class="btn btn-primary">Create User</button>
+							<button type="submit" id="createTaskSubmit" class="btn btn-primary">Create Task</button>
 						</div>
 					</div>
 				</form>

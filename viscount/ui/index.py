@@ -4,7 +4,7 @@ from flask_wtf import Form
 from flask.ext.security.core import current_user
 
 from . import route
-from ..services import roles as _roles
+from ..services import roles as _roles, file_types as _file_types
 
 bp = Blueprint('ui', __name__)
 
@@ -15,4 +15,4 @@ def index():
 	print current_app.config['INCOMING_DIR']
 	print os.listdir(current_app.config['INCOMING_DIR'])
 	available_files = os.listdir(current_app.config['INCOMING_DIR'])
-	return render_template("index.html", title='Home', user=current_user, roles=_roles.all(), available_files=available_files)
+	return render_template("index.html", title='Home', user=current_user, roles=_roles.all(), available_files=available_files, file_types=_file_types.all())
