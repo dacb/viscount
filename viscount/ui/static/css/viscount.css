@@ -24,3 +24,9 @@ tr.shown td.details-control {
 #workflowEditorCytoscape {
 	height : 85%;
 }
+
+.container-fluid {
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
