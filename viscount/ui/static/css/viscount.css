@@ -30,3 +30,8 @@ tr.shown td.details-control {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+#workflowEditorTitle {
+    padding-top: 60px;
+    margin-top: -60px;
+}
