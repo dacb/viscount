@@ -24,6 +24,7 @@ def create():
 	"""Creates a new _task. Returns the new _task instance."""
 	form = NewTaskForm()
 	if form.validate_on_submit():
+		print(form.data);
 		return _tasks.create(**request.json)
 	raise ViscountFormException(form.errors)
 

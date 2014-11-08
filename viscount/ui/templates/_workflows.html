@@ -37,13 +37,13 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading"><h3 class="panel-title">Create a new task</h3></div>
 			<div class="panel-body">
-				<form action="/api/users" method="post" id="createTask" name="createTask">
+				<form action="/api/tasks" method="post" id="createTask" name="createTask">
 					<fieldset class="form-horizontal">
 					<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 					<div class="form-group">
 						<label for="name" class="control-label col-xs-2">Name</label>
 						<div class="col-xs-4">
-							<input type="text" class="form-control" name="name" placeholder="Task name">
+							<input type="text" class="form-control" name="name" placeholder="Task name" required>
 						</div>
 					</div>
 					<div class="form-group">
@@ -55,7 +55,7 @@
 					<div class="form-group">
 						<label for="source" class="control-label col-xs-2">Source file</label>
 						<div class="col-xs-4">
-							<select name="source" class="form-control">
+							<select name="source" class="form-control" required>
 								<option value="">Select a source file</option>
 								{% for file_type in file_types %}
 									<option value="{{ file_type.id }}">{{ file_type.name }}</option>
@@ -72,7 +72,7 @@
 								</button>
 							</div>
 							<div class="col-xs-2 nopadding">
-								<select name="inputs_file_type[]" class="form-control">
+								<select name="input_file_type[]" class="form-control">
 									<option value="">Select a file type</option>
 									{% for file_type in file_types %}
 										<option value="{{ file_type.id }}">{{ file_type.name }}</option>
@@ -80,16 +80,16 @@
 								</select>
 							</div>
 							<div class="col-xs-2 nopadding">
-								<input class="form-control" type="text" name="name" placeholder="Name"/>
+								<input class="form-control" type="text" name="input_file_name[]" placeholder="Name"/>
 							</div>
 							<div class="col-xs-6 nopadding">
-								<input class="form-control" type="text" name="description" placeholder="Description"/>
+								<input class="form-control" type="text" name="input_file_description[]" placeholder="Description"/>
 							</div>
 						</div>
 					</fieldset>
 					<br/>
 					<div class="form-group">
-						<div class="col-xs-offset-2 col-xs-10">
+						<div class="col-xs-offset-3 col-xs-9">
 							<button type="submit" id="createTaskSubmit" class="btn btn-primary">Create Task</button>
 						</div>
 					</div>
@@ -102,7 +102,6 @@
 <script type="text/javascript">
 
 $("#createTaskAddInput").click(function() {
-	console.log("got here!")
 	var sourceNode = document.querySelector('.formrow');
 	var fieldset = U.$('inputs');
 	var newRow = sourceNode.cloneNode(true);
@@ -113,7 +112,6 @@ $("#createTaskAddInput").click(function() {
 	U.addEvent(btn, 'click', function() {removeRow(btn)});
 	var icon = btn.firstElementChild;
 	icon.setAttribute("class", "glyphicon glyphicon-minus");
-	console.log(btn);
 	fieldset.appendChild(newRow);	
 });
 
@@ -236,4 +234,27 @@ $(document).ready(function() {
 	} );
 
 });
+
+//callback handler for form submit
+$("#createTask").submit(function(event)
+{
+    var postData = $(this).serializeArray();
+    var formURL = $(this).attr("action");
+    var formMethod = $(this).attr("method");
+    $.ajax(
+    {
+        url : formURL,
+        type: formMethod,
+        data : postData,
+		dataType : 'json',
+	})
+		.done(function(data) {
+			alert("successful task creation, must repopulate add task in worflow tools above");
+		})
+		.fail(function(data) {
+			processAPIErrorMessages(data);
+		})
+    event.preventDefault(); //STOP default action
+});
+
 </script>
