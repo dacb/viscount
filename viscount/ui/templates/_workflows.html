@@ -84,18 +84,18 @@ function formatWorkflow(d) {
 	}
 	// add linkout buttons
 	ret += '<tr><td colspan="2">'+
-			'<a href="#" class="btn btn-warning" role="button" id="workflow'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a>'+
-			'&nbsp;&nbsp;&nbsp;&nbsp;'+
 			'<a href="#workflowEditorTitle" class="btn btn-success" role="button" id="workflow'+d.id+'LoadInEditor"> <i class="glyphicon glyphicon-bell"></i> Load in editor </a>'+
+			'&nbsp;&nbsp;&nbsp;&nbsp;'+
+			'<a href="#" class="btn btn-warning" role="button" id="workflow'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a>'+
 			'</td></tr>'+
 	'</table>'+
 	'<script type="text/javascript">'+
+	'$("#workflow'+d.id+'LoadInEditor").click(function(){'+
+		'loadWorkflowInEditor('+d.id+', "'+d.name+'");'+
+	'});'+
 	'$("#workflow'+d.id+'events").click(function(){'+
 	'var table = $("#events").DataTable(); table.column("#eventsWorkflowID").search("'+d.id+'").draw();'+
 	' $("#eventsTabBtn").trigger("click");});'+
-	'$("#workflow'+d.id+'LoadInEditor").click(function(){'+
-		'loadWorkflowInEditor('+d.id+');'+
-	'});'+
 	'<\/script>';
 
 	return ret;
@@ -116,7 +116,8 @@ $("a[href='#workflowsTab']").on("shown.bs.tab", function (e) {
 	cy.fit();
 });
 
-function loadWorkflowInEditor(workflow_id) {
+function loadWorkflowInEditor(workflow_id, workflow_name) {
+	$("#workflowEditorTitle").html("Workflow Editor: " + workflow_name + " (ID " + workflow_id + ")");
 	$.ajax( {
 		url : 'api/workflows/'+workflow_id+'/cytoscape',
 		dataType : "json",
