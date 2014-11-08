@@ -52,38 +52,42 @@
 							<textarea class="col-xs-10" rows="3" name="description" placeholder="Description" required></textarea>
 						</div>
 					</div>
-					</fieldset>
-					<fieldset id="inputs">
-						<legend>Inputs</legend>
-						<div class="col-xs-1"><a href="#"><img src="/static/img/details_open.png"/></a></div>
-						<div class="col-xs-2">
-							<select name="inputs_file_type[]">
-								<option value="">Select a file type</option>
+					<div class="form-group">
+						<label for="source" class="control-label col-xs-2">Source file</label>
+						<div class="col-xs-4">
+							<select name="source" class="form-control">
+								<option value="">Select a source file</option>
 								{% for file_type in file_types %}
 									<option value="{{ file_type.id }}">{{ file_type.name }}</option>
 								{% endfor %}
 							</select>
 						</div>
-						<div class="col-xs-2">
-							<input type="text" name="name" placeholder="Name"/>
-						</div>
-						<div class="col-xs-2">
-							<input type="text" name="description" placeholder="Description"/>
+					</fieldset>
+					<fieldset id="inputs">
+						<legend>Inputs</legend>
+						<div class="container-fluid formrow">
+							<div class="col-xs-1 nopadding" style="text-align:center">
+								<button type="button" class="btn btn-success" role="button" id="createTaskAddInput">
+									<i class="glyphicon glyphicon-plus"/></i>
+								</button>
+							</div>
+							<div class="col-xs-2 nopadding">
+								<select name="inputs_file_type[]" class="form-control">
+									<option value="">Select a file type</option>
+									{% for file_type in file_types %}
+										<option value="{{ file_type.id }}">{{ file_type.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-xs-2 nopadding">
+								<input class="form-control" type="text" name="name" placeholder="Name"/>
+							</div>
+							<div class="col-xs-6 nopadding">
+								<input class="form-control" type="text" name="description" placeholder="Description"/>
+							</div>
 						</div>
 					</fieldset>
-					<div class="table-responsive">
-						<table class="table">
-							<tr><th colspan=4 style="text-align:center">Inputs</th></tr>
-							<tr class="TaskInputFile">
-								<td><a href="#"><img src="/static/img/details_open.png"/></a></td>
-							</tr>
-						</table>
-					</div>
-					<div class="table-responsive">
-						<table class="table">
-							<tr><th colspan=4 style="text-align:center">Outputs</th></tr>
-						</table>
-					</div>
+					<br/>
 					<div class="form-group">
 						<div class="col-xs-offset-2 col-xs-10">
 							<button type="submit" id="createTaskSubmit" class="btn btn-primary">Create Task</button>
@@ -96,6 +100,32 @@
 </div>
 
 <script type="text/javascript">
+
+$("#createTaskAddInput").click(function() {
+	console.log("got here!")
+	var sourceNode = document.querySelector('.formrow');
+	var fieldset = U.$('inputs');
+	var newRow = sourceNode.cloneNode(true);
+	var rows = fieldset.childElementCount - 1; // don't count legend
+	if (rows > 1) {	// change the add to a remove
+		var btn = newRow.firstElementChild.firstElementChild;
+		//btn.id = null;
+		btn.class = "btn btn-danger";
+		U.addEvent(btn, 'click', function() {removeRow(btn)});
+		var icon = btn.firstElementChild;
+		icon.class = "glyphicon glyphicon-minus";
+		console.log(btn);
+	}
+	fieldset.appendChild(newRow);	
+});
+
+function removeRow(obj) {
+	'use strict';
+	var theRow = obj.parentNode;
+	var theRowParent = theRow.parentNode;
+	theRowParent.removeChild(theRow);
+}
+
 function formatWorkflow(d) {
 	var ret = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
 	if (d.revised_from) {
