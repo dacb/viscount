@@ -17,7 +17,7 @@
 		</div>
 	</div>
 	<div class="row-fluid">
-		<div class="col-md-12" id=wworkflowEditorTitle" style="text-align:center">
+		<div class="col-md-12" id="workflowEditorTitle" style="text-align:center">
 			Workflow Editor
 		</div>
 	</div>
@@ -44,37 +44,18 @@ function formatWorkflow(d) {
 	// add linkout buttons
 	ret += '<tr><td colspan="2">'+
 			'<a href="#" class="btn btn-warning" role="button" id="workflow'+d.id+'events"> <i class="glyphicon glyphicon-bell"></i> Events </a>'+
+			'&nbsp;&nbsp;&nbsp;&nbsp;'+
+			'<a href="#workflowEditorTitle" class="btn btn-success" role="button" id="workflow'+d.id+'LoadInEditor"> <i class="glyphicon glyphicon-bell"></i> Load in editor </a>'+
 			'</td></tr>'+
 	'</table>'+
-	'<script type="text/javascript">$("#workflow'+d.id+'events").click(function(){'+
+	'<script type="text/javascript">'+
+	'$("#workflow'+d.id+'events").click(function(){'+
 	'var table = $("#events").DataTable(); table.column("#eventsWorkflowID").search("'+d.id+'").draw();'+
-	' $("#eventsTabBtn").trigger("click");});<\/script>';
-	// place cytoscape canvas
-	ret += '<div id="cy'+d.id+'" style="height:400px;width=90%;position:relative;border:1px solid #CCC;left:0;top:0;"></div>';
-	ret += '<script type="text/javascript">'+
-	'$.ajax( {'+
-		'url : "api/workflows/'+d.id+'/cytoscape",'+
-		'dataType : "json",'+
-		'type : "GET",'+
-	'} ).fail(function(data) {'+
-			'processAPIErrorMessages(data);'+
-		'})'+
-		'.success(function(data, textStatus, xhr) {'+
-	'var cy'+d.id+' = cytoscape({'+
-		'style : xhr.responseJSON.style,'+
-		'elements : xhr.responseJSON.elements,'+
-		'container: document.getElementById("cy'+d.id+'"),'+
-		'ready: function(){ console.log("cy'+d.id+' ready") },'+
-		'layout : {'+
-				'name : "cose",'+
-			'}'+
+	' $("#eventsTabBtn").trigger("click");});'+
+	'$("#workflow'+d.id+'LoadInEditor").click(function(){'+
+		'loadWorkflowInEditor('+d.id+');'+
 	'});'+
-	'$("a[href=\'#workflowsTab\']").on("shown.bs.tab", function (e) {'+
-	'	cy'+d.id+'.resize();'+
-	'	cy'+d.id+'.fit();'+
-	'});'+
-		'});'+
-'<\/script>';
+	'<\/script>';
 
 	return ret;
 }
@@ -96,13 +77,14 @@ $("a[href='#workflowsTab']").on("shown.bs.tab", function (e) {
 
 function loadWorkflowInEditor(workflow_id) {
 	$.ajax( {
-		url : "api/workflows/'+d.id+'/cytoscape",
+		url : 'api/workflows/'+workflow_id+'/cytoscape',
 		dataType : "json",
 		type : "GET",
 	} ).fail(function(data) { processAPIErrorMessages(data); })
 		.success(function(data, textStatus, xhr) {
 			var cy = document.getElementById("workflowEditorCytoscape").cy;
-			cy.load({ style : xhr.responseJSON.style, elements : xhr.responseJSON.elements });
+			cy.load(xhr.responseJSON.elements);
+			cy.style(xhr.responseJSON.style);
 		});
 }
 
