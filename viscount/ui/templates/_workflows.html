@@ -107,21 +107,18 @@ $("#createTaskAddInput").click(function() {
 	var fieldset = U.$('inputs');
 	var newRow = sourceNode.cloneNode(true);
 	var rows = fieldset.childElementCount - 1; // don't count legend
-	if (rows > 1) {	// change the add to a remove
-		var btn = newRow.firstElementChild.firstElementChild;
-		//btn.id = null;
-		btn.class = "btn btn-danger";
-		U.addEvent(btn, 'click', function() {removeRow(btn)});
-		var icon = btn.firstElementChild;
-		icon.class = "glyphicon glyphicon-minus";
-		console.log(btn);
-	}
+	var btn = newRow.firstElementChild.firstElementChild;
+	btn.id = null;
+	btn.setAttribute("class", "btn btn-danger");
+	U.addEvent(btn, 'click', function() {removeRow(btn)});
+	var icon = btn.firstElementChild;
+	icon.setAttribute("class", "glyphicon glyphicon-minus");
+	console.log(btn);
 	fieldset.appendChild(newRow);	
 });
 
 function removeRow(obj) {
-	'use strict';
-	var theRow = obj.parentNode;
+	var theRow = obj.parentNode.parentNode;
 	var theRowParent = theRow.parentNode;
 	theRowParent.removeChild(theRow);
 }
