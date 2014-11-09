@@ -65,7 +65,7 @@
 					</fieldset>
 					<fieldset id="inputs">
 						<legend>Inputs</legend>
-						<div class="container-fluid formrow">
+						<div class="container-fluid formrow-input">
 							<div class="col-xs-1 nopadding" style="text-align:center">
 								<button type="button" class="btn btn-success" role="button" id="createTaskAddInput">
 									<i class="glyphicon glyphicon-plus"/></i>
@@ -88,6 +88,31 @@
 						</div>
 					</fieldset>
 					<br/>
+					<fieldset id="outputs">
+						<legend>Outputs</legend>
+						<div class="container-fluid formrow-output">
+							<div class="col-xs-1 nopadding" style="text-align:center">
+								<button type="button" class="btn btn-success" role="button" id="createTaskAddOutput">
+									<i class="glyphicon glyphicon-plus"/></i>
+								</button>
+							</div>
+							<div class="col-xs-2 nopadding">
+								<select name="outputs-0-file_type_id" class="form-control">
+									<option value="">Select a file type</option>
+									{% for file_type in file_types %}
+										<option value="{{ file_type.id }}">{{ file_type.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-xs-2 nopadding">
+								<input class="form-control" type="text" name="outputs-0-name" placeholder="Name"/>
+							</div>
+							<div class="col-xs-6 nopadding">
+								<input class="form-control" type="text" name="outputs-0-description" placeholder="Description"/>
+							</div>
+						</div>
+					</fieldset>
+					<br/>
 					<div class="form-group">
 						<div class="col-xs-offset-3 col-xs-9">
 							<button type="submit" id="createTaskSubmit" class="btn btn-primary">Create Task</button>
@@ -101,37 +126,45 @@
 
 <script type="text/javascript">
 
-$("#createTaskAddInput").click(function() {
-	var sourceNode = document.querySelector('.formrow');
-	var fieldset = U.$('inputs');
+function createTaskIOAddRow(type) {
+	var sourceNode = document.querySelector('.formrow-'+type);
+	var fieldset = (type == 'input' ? U.$('inputs') : U.$('outputs'));
 	var newRow = $(sourceNode.cloneNode(true));
-	console.log(newRow.find(":input")[1]);
-	var input_name = newRow.find(":input")[1].name;
 	// increment index; the first child is the legend, but we want to increment so -1 + 1 = 0
 	var input_num = fieldset.childElementCount;
 	newRow.find(":input").each(function() {
-		console.log(this)
-		if ($(this).attr('id') != "createTaskAddInput") {
+		var btnId = (type == 'input' ? "createTaskAddInput" : "createTaskAddOutput");
+		if ($(this).attr('id') != btnId) {
 			var name = $(this).attr('name').replace('-0-', '-' + (input_num) + '-');
 			$(this).attr('name', name).val('').removeAttr("checked");
 		}
 	});
 	var btn = newRow.find(":input")[0];
-	console.log(btn);
 	btn.id = null;
 	btn.setAttribute("class", "btn btn-danger");
 	U.addEvent(btn, 'click', function() {removeRow(btn)});
 	var icon = btn.firstElementChild;
 	icon.setAttribute("class", "glyphicon glyphicon-minus");
-	console.log(newRow);
 	fieldset.appendChild(newRow.get(0));	
-});
+};
+
 
 function removeRow(obj) {
 	var theRow = obj.parentNode.parentNode;
 	var theRowParent = theRow.parentNode;
 	theRowParent.removeChild(theRow);
 }
+
+
+$("#createTaskAddInput").click(function() {
+	createTaskIOAddRow('input');
+});
+
+
+$("#createTaskAddOutput").click(function() {
+	createTaskIOAddRow('output');
+});
+
 
 function formatWorkflow(d) {
 	var ret = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';

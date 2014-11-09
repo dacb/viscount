@@ -31,6 +31,7 @@ class NewTaskForm(Form):
 	description = TextAreaField('Description', validators=[Required()])
 	source = IntegerField('Source', validators=[Required()])
 	inputs = FieldList(FormField(NewTaskInputForm))
+	outputs = FieldList(FormField(NewTaskInputForm))
 
 
 class UpdateTaskForm(Form):
