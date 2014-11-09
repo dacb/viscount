@@ -44,8 +44,8 @@ class Task(TaskJSONSerializer, db.Model):
 	source_file = db.Column(db.Integer, db.ForeignKey('files.id'))
 
 	events = db.relationship('Event', backref='task', lazy='dynamic')
-	input_files = db.relationship('TaskInputFile', backref='task', lazy='dynamic')
-	output_files = db.relationship('TaskOutputFile', backref='task', lazy='dynamic')
+	inputs = db.relationship('TaskInputFile', backref='task', lazy='dynamic')
+	outputs = db.relationship('TaskOutputFile', backref='task', lazy='dynamic')
 
 	task_instances = db.relationship('WorkflowTaskInstance', backref='task', lazy='dynamic')
 

@@ -5,6 +5,7 @@ Task related endpoints
 """
 
 from flask import Blueprint, request
+from flask_security.core import current_user
 
 from ..forms import NewTaskForm, UpdateTaskForm
 from ..services import tasks as _tasks
@@ -22,11 +23,15 @@ def list():
 @route(bp, '/', methods=['POST'])
 def create():
 	"""Creates a new _task. Returns the new _task instance."""
-	print(request.json)
 	form = NewTaskForm()
 	print(form.data)
 	if form.validate_on_submit():
-		return _tasks.create(**request.json)
+		task = _tasks.create(name=form.data['name'], description=form.data['description'], owner_id=current_user.id)
+		for input in form.data['inputs']:
+			pass
+		for output in form.data['outputs']:
+			pass
+		return task
 	raise ViscountFormException(form.errors)
 
 
