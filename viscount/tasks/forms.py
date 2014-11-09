@@ -11,13 +11,19 @@ from wtforms.validators import Required, Optional
 
 from ..services import tasks
 
-__all__ = ['NewTaskInputForm', 'NewTaskForm', 'UpdateTaskForm']
+__all__ = ['NewTaskInputForm', 'NewTaskOutputForm', 'NewTaskForm', 'UpdateTaskForm']
+
+
+class NewTaskOutputForm(Form):
+	name = StringField('Output file name', validators=[Required()])
+	description = TextAreaField('Output file description', validators=[Required()])
+	file_type_id = IntegerField('Output file type', validators=[Required()])
 
 
 class NewTaskInputForm(Form):
-	input_file_name = StringField('Input file name', validators=[Required()])
-	input_file_description = TextAreaField('Input file description', validators=[Required()])
-	intut_file_type_id = IntegerField('Input file type', validators=[Required()])
+	name = StringField('Input file name', validators=[Required()])
+	description = TextAreaField('Input file description', validators=[Required()])
+	file_type_id = IntegerField('Input file type', validators=[Required()])
 
 
 class NewTaskForm(Form):

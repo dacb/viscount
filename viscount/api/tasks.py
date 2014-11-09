@@ -22,9 +22,10 @@ def list():
 @route(bp, '/', methods=['POST'])
 def create():
 	"""Creates a new _task. Returns the new _task instance."""
+	print(request.json)
 	form = NewTaskForm()
+	print(form.data)
 	if form.validate_on_submit():
-		print(form.data);
 		return _tasks.create(**request.json)
 	raise ViscountFormException(form.errors)
 

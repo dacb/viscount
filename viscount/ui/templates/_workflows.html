@@ -72,7 +72,7 @@
 								</button>
 							</div>
 							<div class="col-xs-2 nopadding">
-								<select name="input_file_type[]" class="form-control">
+								<select name="inputs-0-file_type_id" class="form-control">
 									<option value="">Select a file type</option>
 									{% for file_type in file_types %}
 										<option value="{{ file_type.id }}">{{ file_type.name }}</option>
@@ -80,10 +80,10 @@
 								</select>
 							</div>
 							<div class="col-xs-2 nopadding">
-								<input class="form-control" type="text" name="input_file_name[]" placeholder="Name"/>
+								<input class="form-control" type="text" name="inputs-0-name" placeholder="Name"/>
 							</div>
 							<div class="col-xs-6 nopadding">
-								<input class="form-control" type="text" name="input_file_description[]" placeholder="Description"/>
+								<input class="form-control" type="text" name="inputs-0-description" placeholder="Description"/>
 							</div>
 						</div>
 					</fieldset>
@@ -104,15 +104,27 @@
 $("#createTaskAddInput").click(function() {
 	var sourceNode = document.querySelector('.formrow');
 	var fieldset = U.$('inputs');
-	var newRow = sourceNode.cloneNode(true);
-	var rows = fieldset.childElementCount - 1; // don't count legend
-	var btn = newRow.firstElementChild.firstElementChild;
+	var newRow = $(sourceNode.cloneNode(true));
+	console.log(newRow.find(":input")[1]);
+	var input_name = newRow.find(":input")[1].name;
+	// increment index; the first child is the legend, but we want to increment so -1 + 1 = 0
+	var input_num = fieldset.childElementCount;
+	newRow.find(":input").each(function() {
+		console.log(this)
+		if ($(this).attr('id') != "createTaskAddInput") {
+			var name = $(this).attr('name').replace('-0-', '-' + (input_num) + '-');
+			$(this).attr('name', name).val('').removeAttr("checked");
+		}
+	});
+	var btn = newRow.find(":input")[0];
+	console.log(btn);
 	btn.id = null;
 	btn.setAttribute("class", "btn btn-danger");
 	U.addEvent(btn, 'click', function() {removeRow(btn)});
 	var icon = btn.firstElementChild;
 	icon.setAttribute("class", "glyphicon glyphicon-minus");
-	fieldset.appendChild(newRow);	
+	console.log(newRow);
+	fieldset.appendChild(newRow.get(0));	
 });
 
 function removeRow(obj) {
