@@ -64,6 +64,6 @@ def datatables():
 		"md5sum" : True
 	}
 	query = db.session.query(File). \
-		outerjoin(User, (User.id == File.user_id))
+		outerjoin(User, (User.id == File.owner_id))
 	rowTable = DataTables(request, File, query)
 	return rowTable.output_result(), 200

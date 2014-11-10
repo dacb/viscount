@@ -32,7 +32,7 @@ def create():
 			raise ViscountException(message="A user with that email already exists!")
 		if _users.find(username=form.data['username']).count() > 0:
 			raise ViscountException(message="A user with that username already exists!")
-		return _users.create(**form.data)
+		return {'data': _users.create(**form.data)}
 	raise ViscountFormException(form.errors)
 
 

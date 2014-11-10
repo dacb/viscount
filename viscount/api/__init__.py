@@ -34,7 +34,7 @@ def create_app(config_override=None, register_security_blueprint=False):
 
 	return app
 
-# define all rountes, enforce valid login
+# define all routes, enforce valid login
 def route(bp, *args, **kwargs):
 	kwargs.setdefault('strict_slashes', False)
 

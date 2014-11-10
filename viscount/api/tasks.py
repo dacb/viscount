@@ -31,7 +31,7 @@ def create():
 			pass
 		for output in form.data['outputs']:
 			pass
-		return task
+		return { 'data' : task }
 	raise ViscountFormException(form.errors)
 
 
