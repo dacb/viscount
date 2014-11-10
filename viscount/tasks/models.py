@@ -31,6 +31,10 @@ class TaskOutputFile(JSONSerializer, db.Model):
 class TaskJSONSerializer(JSONSerializer):
 	__json_modifiers__ = {
 		'events': lambda events, _: [dict(id=event.id) for event in events],
+		'inputs': lambda inputs, _: [dict(id=input_.id) for input_ in inputs],
+		'outputs': lambda outputs, _: [dict(id=output.id) for output in outputs],
+
+		'task_instances': lambda task_instances, _: [dict(id=task_instance.id) for task_instance in task_instances],
 	}
 
 

@@ -41,7 +41,7 @@ def render_workflow_to_cytoscape(wf, parent=None):
 	edges = []
 	for ti in wf.task_instances.all():
 		nodes.append( { 'data' : { 'id' : 'ti' + str(ti.id), 'name' : ti.task.name, 'description' : ti.description, 'color' : 'gray' } } )
-		for tif in ti.task.input_files.all():
+		for tif in ti.task.inputs.all():
 			nodes.append( { 'data' : {
 				'id' : 'ti' + str(ti.id) + 'tif' + str(tif.id),
 				'parent' : 'ti' + str(ti.id),
@@ -51,7 +51,7 @@ def render_workflow_to_cytoscape(wf, parent=None):
 				'classes' : 'input',
 				'color' : 'cyan'
 				} } )
-		for tof in ti.task.output_files.all():
+		for tof in ti.task.outputs.all():
 			nodes.append( { 'data' : {
 				'id' : 'ti' + str(ti.id) + 'tof' + str(tof.id),
 				'parent' : 'ti' + str(ti.id),
